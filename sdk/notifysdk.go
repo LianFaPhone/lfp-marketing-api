@@ -1,58 +1,56 @@
 package sdk
 
 import (
-	"encoding/json"
 	"bytes"
+	"encoding/json"
 	"fmt"
-	"net/http"
-	"io/ioutil"
 	"io"
+	"io/ioutil"
+	"net/http"
 
 	"errors"
-
 )
 
 var GNotifySdk NotifySdk
 
-type  SmsSend struct {
-	TempName *string                `valid:"optional" json:"temp_name,omitempty"` //groupname+lang 联合使用
-	TempId   *int64                  `valid:"optional" json:"temp_id,omitempty"` //groupid+lang联合使用
-	Params    []string             `valid:"-" json:"params,omitempty"`    //optional
-	Phone    []string                 `valid:"optional" json:"phone,omitempty"` //require
-	Author   *string                `valid:"optional" json:"author,omitempty"`
-	PlayTp   int                   `valid:"optional" json:"play_tp,omitempty"`  // 0短信，1语音
-	IsRecord int                   `valid:"optional" json:"is_record,omitempty"`  // 0不记录，1记录
-	ReTry    int                    `valid:"optional" json:"retry,omitempty"`  // 0不，1是
+type SmsSend struct {
+	TempName *string  `valid:"optional" json:"temp_name,omitempty"` //groupname+lang 联合使用
+	TempId   *int64   `valid:"optional" json:"temp_id,omitempty"`   //groupid+lang联合使用
+	Params   []string `valid:"-" json:"params,omitempty"`           //optional
+	Phone    []string `valid:"optional" json:"phone,omitempty"`     //require
+	Author   *string  `valid:"optional" json:"author,omitempty"`
+	PlayTp   int      `valid:"optional" json:"play_tp,omitempty"`   // 0短信，1语音
+	IsRecord int      `valid:"optional" json:"is_record,omitempty"` // 0不记录，1记录
+	ReTry    int      `valid:"optional" json:"retry,omitempty"`     // 0不，1是
 }
 
 type Response struct {
 	Code    int         `json:"code"`
-	Message string `json:"message"`
+	Message string      `json:"message"`
 	Data    interface{} `json:"data,omitempty"`
 }
 
-type NotifySdk struct{
+type NotifySdk struct {
 	addr string
 }
 
-func (this * NotifySdk) Init(addr string) error {
+func (this *NotifySdk) Init(addr string) error {
 	this.addr = addr
 	return nil
 }
 
-func (this *NotifySdk) SendSms(Params []string,phone, tempName string, PlayTp int) error {
+func (this *NotifySdk) SendSms(Params []string, phone, tempName string, PlayTp int) error {
 	param := &SmsSend{
 		TempName: &tempName,
-		Params: Params,
-		Phone: []string{phone},
-		Author: new(string),
-
+		Params:   Params,
+		Phone:    []string{phone},
+		Author:   new(string),
 	}
-	data,err := json.Marshal(param)
+	data, err := json.Marshal(param)
 	if err != nil {
 		return err
 	}
-	resData,err := HttpSend(this.addr + "/v1/ft/notify/sms/send",bytes.NewReader(data),  "POST", nil)
+	resData, err := HttpSend(this.addr+"/v1/ft/notify/sms/send", bytes.NewReader(data), "POST", nil)
 	if err != nil {
 		return err
 	}
@@ -66,12 +64,6 @@ func (this *NotifySdk) SendSms(Params []string,phone, tempName string, PlayTp in
 	return nil
 }
 
-
-
-
-
-
-
 func HttpSend(url string, body io.Reader, method string, headers map[string]string) ([]byte, error) {
 	if len(method) == 0 {
 		method = "GET"
@@ -82,7 +74,7 @@ func HttpSend(url string, body io.Reader, method string, headers map[string]stri
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	for k,v := range headers {
+	for k, v := range headers {
 		fmt.Println(k, v)
 		req.Header.Set(k, v)
 	}
@@ -98,7 +90,7 @@ func HttpSend(url string, body io.Reader, method string, headers map[string]stri
 
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	if len(content) == 0 {

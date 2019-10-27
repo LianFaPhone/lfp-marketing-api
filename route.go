@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/kataras/iris"
-	"github.com/iris-contrib/middleware/cors"
 	"LianFaPhone/lfp-marketing-api/controllers"
-	. "LianFaPhone/lfp-marketing-api/controllers/order"
 	. "LianFaPhone/lfp-marketing-api/controllers/area"
+	. "LianFaPhone/lfp-marketing-api/controllers/order"
+	"github.com/iris-contrib/middleware/cors"
+	"github.com/kataras/iris"
 )
 
-func (this *WebServer) routes()  {
+func (this *WebServer) routes() {
 	app := this.mIris
 	crs := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
@@ -20,20 +20,38 @@ func (this *WebServer) routes()  {
 	app.Any("/", func(ctx iris.Context) {
 		ctx.JSON(
 			map[string]interface{}{
-			"code": 0,
-		})
+				"code": 0,
+			})
 	})
 	//interceptor := new(controllers.Interceptor)
 
-
-	v1 := app.Party("/v1/ft/market", crs/*, interceptor.Interceptor*/)
+	oldSaveDataPy := app.Party("/saveData", crs /*, interceptor.Interceptor*/)
 	{
-			//活动，添加，list，更新，警用 全是后端的
+		oldCO := new(CardOrder)
+		{
+			oldSaveDataPy.Post("/", oldCO.OldApply)
+		}
+	}
+
+	jsPy := app.Party("/js", crs /*, interceptor.Interceptor*/)
+	{
+		ac := new(ChinaAddrCode)
+		{
+			jsPy.Get("/list.json", ac.Gets2)
+			jsPy.Get("/town/{param:path}", ac.GetStreet2)
+		}
+	}
+
+	v1 := app.Party("/v1/ft/market", crs /*, interceptor.Interceptor*/)
+	{
+		//活动，添加，list，更新，警用 全是后端的
 		cardParty := v1.Party("/card")
 		{
 			ac := new(CardOrder)
 			{
 				cardParty.Post("/apply", ac.Apply)
+				cardParty.Post("/apply-fulfil", ac.Apply)
+				cardParty.Any("/verify", ac.FtUpdatePhotoUrls)
 			}
 			pp := new(controllers.PhoneNumberPool)
 			{
@@ -62,9 +80,14 @@ func (this *WebServer) routes()  {
 			regionCodeParty.Post("/street/gets", ac.GetStreet)
 			regionCodeParty.Post("/region/gets", ac.Gets)
 		}
+		//photosupload
+		photoParty := v1.Party("/photo")
+		{
+			ac := new(controllers.UploadFile)
+
+			photoParty.Any("/upload", ac.PhotoUpload)
+		}
 
 	}
 
-
 }
-

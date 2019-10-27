@@ -3,15 +3,15 @@ package common
 import (
 	"github.com/pborman/uuid"
 	//"github.com/garyburd/redigo/redis"
+	. "LianFaPhone/lfp-base/log/zap"
 	"LianFaPhone/lfp-marketing-api/db"
 	"LianFaPhone/lfp-marketing-api/sdk"
+	"encoding/json"
+	"errors"
 	"fmt"
+	pkgredis "github.com/go-redis/redis"
 	"go.uber.org/zap"
 	"time"
-	"errors"
-	"encoding/json"
-	. "LianFaPhone/lfp-base/log/zap"
-	pkgredis "github.com/go-redis/redis"
 )
 
 const (
@@ -29,17 +29,17 @@ const (
 )
 
 type Verification struct {
-	Id          string `json:"-"`
-	Operating   string `json:"operating"`
-	Type        string `json:"type"`
-	UserID      uint   `json:"user_id"`
-	Status      bool   `json:"status"`
-	RetryNumber int    `json:"-"`
-	RetryCount  int    `json:"retry_count"`
-	Value       string `json:"value"`
-	Recipient   string `json:"recipient"`
+	Id          string      `json:"-"`
+	Operating   string      `json:"operating"`
+	Type        string      `json:"type"`
+	UserID      uint        `json:"user_id"`
+	Status      bool        `json:"status"`
+	RetryNumber int         `json:"-"`
+	RetryCount  int         `json:"retry_count"`
+	Value       string      `json:"value"`
+	Recipient   string      `json:"recipient"`
 	redis       *db.DbRedis `json:"-"`
-	record      bool   `json:"-"`
+	record      bool        `json:"-"`
 }
 
 func NewVerification(redis *db.DbRedis, operating string, t string) *Verification {
@@ -57,6 +57,7 @@ func (v *Verification) Generate() string {
 	v.Status = false
 	return v.Id
 }
+
 /*
 func (v *Verification) GenerateEmail(userId uint,  recipient string, tpl, lang string) (string, error) {
 	var err error
@@ -97,11 +98,11 @@ func (v *Verification) GenerateEmail(userId uint,  recipient string, tpl, lang s
 	return v.Id, nil
 }*/
 
-func (v *Verification) GenerateSms(userId uint, recipient string, tpl,lang string, playTp int) (string, error) {
+func (v *Verification) GenerateSms(userId uint, recipient string, tpl, lang string, playTp int) (string, error) {
 	var err error
 
-	if len(recipient) == 0 || len(tpl) == 0 || len(lang) == 0{
-		return "",errors.New(fmt.Sprintf("nil in one of recipient[%s]tpl[%s]lang[%s]",recipient, tpl, lang))
+	if len(recipient) == 0 || len(tpl) == 0 || len(lang) == 0 {
+		return "", errors.New(fmt.Sprintf("nil in one of recipient[%s]tpl[%s]lang[%s]", recipient, tpl, lang))
 	}
 
 	v.UserID = userId
@@ -110,7 +111,7 @@ func (v *Verification) GenerateSms(userId uint, recipient string, tpl,lang strin
 	v.Recipient = recipient
 	v.Value = RandomDigit(6)
 
-	err = sdk.GNotifySdk.SendSms([]string{v.Value},recipient, tpl, playTp)
+	err = sdk.GNotifySdk.SendSms([]string{v.Value}, recipient, tpl, playTp)
 
 	//body, err := ParseTextTemplate(tpl, &struct {
 	//	Value string
@@ -215,7 +216,7 @@ func (v *Verification) Verify(id string, userId uint, value, recipient string) (
 		return false, err
 	}
 	if !v.record {
-		return false,nil
+		return false, nil
 	}
 
 	if (v.Type != VerificationTypeGa) && (recipient != v.Recipient) {
@@ -237,7 +238,7 @@ func (v *Verification) Verify(id string, userId uint, value, recipient string) (
 		}
 	}
 
-	ZapLog().With(zap.String("id", id), zap.Uint("userid", userId), zap.String("value", value),zap.String("recipient",recipient), zap.Any("Verification", v)).Info("Verify")
+	ZapLog().With(zap.String("id", id), zap.Uint("userid", userId), zap.String("value", value), zap.String("recipient", recipient), zap.Any("Verification", v)).Info("Verify")
 	//	glog.Info("id:", id, "userid:", userId, "value", value)
 	//	glog.Infof("%+v", v)
 
@@ -271,7 +272,7 @@ func (v *Verification) save() error {
 		return err
 	}
 
-	ttl, err := v.redis.GetConn().TTL(VerificationPrefix+v.Id).Result()
+	ttl, err := v.redis.GetConn().TTL(VerificationPrefix + v.Id).Result()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("redis TTL")
 		//		glog.Error(err.Error())
@@ -281,7 +282,7 @@ func (v *Verification) save() error {
 	//	return nil
 	//}
 
-	if ttl  > 0 {
+	if ttl > 0 {
 		expire = ttl
 	} else {
 		expire = time.Duration(time.Second * VerificationCacheTime)
@@ -299,7 +300,7 @@ func (v *Verification) save() error {
 
 func (v *Verification) read() error {
 	var err error
-	result, err := v.redis.GetConn().Get(VerificationPrefix+v.Id).Bytes()
+	result, err := v.redis.GetConn().Get(VerificationPrefix + v.Id).Bytes()
 	if err == pkgredis.Nil {
 		v.record = false
 		return nil

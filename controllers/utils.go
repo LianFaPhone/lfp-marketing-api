@@ -2,22 +2,31 @@ package controllers
 
 import (
 	"github.com/shopspring/decimal"
-	"strings"
 	"math"
+	"strings"
 	"sync"
 )
 
-const(
+const (
 	CONST_MIN_RED_DIV_BASE = 10
 )
 
-func GetFileExt(name string ) string {
+func GetFileExt(name string) string {
 	idx := strings.Index(name, ".")
 	if idx < 0 {
 		return ""
 	}
 	return name[idx:]
 }
+
+func GetFileName(path string) string {
+	idx := strings.LastIndex(path, "/")
+	if idx < 0 {
+		return ""
+	}
+	return path[idx:]
+}
+
 //
 //func GetClaimsFromCtx(ctx iris.Context) *ApiKeyClaims {
 //	cl := ctx.Values().Get("apikey_claims")
@@ -47,12 +56,10 @@ func GetFileExt(name string ) string {
 //	return &models.SqlPairCondition{"activity_uuid in (?)", claims}
 //}
 
-
-
-func GenMinPrecision(totalCoin *decimal.Decimal, totalRed, totalRob *int64){
+func GenMinPrecision(totalCoin *decimal.Decimal, totalRed, totalRob *int64) {
 	testPrecision := totalCoin.Div(decimal.New((*totalRed)*(*totalRob)*CONST_MIN_RED_DIV_BASE, 0))
 	n := decimal.New(1, 0).Div(testPrecision)
-	f,_ := n.Float64()
+	f, _ := n.Float64()
 
 	math.Ceil(math.Log10(f))
 
@@ -73,7 +80,6 @@ func Substr(str string, start int, end int) string {
 	return string(rs[start:end])
 }
 
-
 func SecretPhone(phone string) string {
 	if phone == "" {
 		return ""
@@ -82,16 +88,16 @@ func SecretPhone(phone string) string {
 	return Substr(phone, 0, 3) + "***" + Substr(phone, len(phone)-4, len(phone))
 }
 
-type IdGener struct{
-	id  int
+type IdGener struct {
+	id int
 	sync.Mutex
 }
 
-func (this * IdGener) Gen() int {
+func (this *IdGener) Gen() int {
 	data := 0
 	this.Lock()
 	this.id++
-	data = (this.id)%1000
+	data = (this.id) % 10000
 	this.Unlock()
 	return data
 }

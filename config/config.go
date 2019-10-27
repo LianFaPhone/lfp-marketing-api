@@ -2,9 +2,9 @@ package config
 
 import (
 	"fmt"
+	"github.com/ulule/limiter"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"github.com/ulule/limiter"
 )
 
 var GConfig Config
@@ -63,14 +63,14 @@ func PreProcess() error {
 		GConfig.Cache.RobberTimeout = 600
 	}
 
-	for i:=0; i < len(GConfig.BussinessLimits.PhoneSms); i++ {
+	for i := 0; i < len(GConfig.BussinessLimits.PhoneSms); i++ {
 		rate, err := limiter.NewRateFromFormatted(GConfig.BussinessLimits.PhoneSms[i])
 		if err != nil {
 			return err
 		}
 		GPreConfig.PhoneSmsLimits = append(GPreConfig.PhoneSmsLimits, &rate)
 	}
-	for i:=0; i < len(GConfig.BussinessLimits.IpSms); i++ {
+	for i := 0; i < len(GConfig.BussinessLimits.IpSms); i++ {
 		rate, err := limiter.NewRateFromFormatted(GConfig.BussinessLimits.IpSms[i])
 		if err != nil {
 			return err
@@ -80,58 +80,59 @@ func PreProcess() error {
 	return nil
 }
 
-type PreConfig struct{
+type PreConfig struct {
 	PhoneSmsLimits []*limiter.Rate
-	IpSmsLimits []*limiter.Rate
+	IpSmsLimits    []*limiter.Rate
 }
 
 type Config struct {
-	Server  System      `yaml:"system"`
-	Redis   Redis       `yaml:"redis"`
-	Db      Mysql       `yaml:"mysql"`
-	Cache   Cache       `yaml:"cache"`
-	User    User        `yaml:"user"`
+	Server System `yaml:"system"`
+	Redis  Redis  `yaml:"redis"`
+	Db     Mysql  `yaml:"mysql"`
+	Cache  Cache  `yaml:"cache"`
+	User   User   `yaml:"user"`
 	//Aws     Aws          `yaml:"aws"`
-	BussinessLimits BussinessLimits   `yaml:"bussiness_limits"`
-	BasNotify       BasNotify         `yaml:"bas_notify"`
-	MarketMain     MarketMain         `yaml:"marketing_main"`
-	IdCardCheck    IdCardCheck        `yaml:"idcard_check"`
-
+	BussinessLimits BussinessLimits `yaml:"bussiness_limits"`
+	BasNotify       BasNotify       `yaml:"bas_notify"`
+	MarketMain      MarketMain      `yaml:"marketing_main"`
+	IdCardCheck     IdCardCheck     `yaml:"idcard_check"`
+	ChuangLan       ChuangLan       `yaml:"chuanglan"`
+	Aliyun          Aliyun         `yaml:"aliyun"`
 }
 
 type System struct {
-	Port    string      `yaml:"port"`
-	Debug   bool        `yaml:"debug"`
-	LogPath string      `yaml:"log_path"`
-	Monitor string      `yaml:"monitor"`
-	BkPort    string      `yaml:"bk_port"`
+	Port    string `yaml:"port"`
+	Debug   bool   `yaml:"debug"`
+	LogPath string `yaml:"log_path"`
+	Monitor string `yaml:"monitor"`
+	BkPort  string `yaml:"bk_port"`
 }
 
 type Cache struct {
-	ActivityMaxKey   int      `yaml:"activity_max_key"`
-	ActivityTimeout  int      `yaml:"activity_timeout"`
-	SponsorActivityMaxKey   int      `yaml:"sponsor_activity_max_key"`
-	SponsorActivityTimeout  int      `yaml:"sponsor_activity_timeout"`
-	SponsorMaxKey   int      `yaml:"sponsor_max_key"`
-	SponsorTimeout  int      `yaml:"sponsor_timeout"`
-	PageMaxKey   int     	 `yaml:"page_max_key"`
-	PageTimeout   int     	 `yaml:"page_timeout"`
-	ShareInfoMaxKey    int   `yaml:"shareinfo_max_key"`
-	ShareInfoTimeout   int   `yaml:"shareinfo_timeout"`
-	RobberMaxKey          int `yaml:"robber_max_key"`
-	RobberTimeout         int   `yaml:"robber_timeout"`
+	ActivityMaxKey         int `yaml:"activity_max_key"`
+	ActivityTimeout        int `yaml:"activity_timeout"`
+	SponsorActivityMaxKey  int `yaml:"sponsor_activity_max_key"`
+	SponsorActivityTimeout int `yaml:"sponsor_activity_timeout"`
+	SponsorMaxKey          int `yaml:"sponsor_max_key"`
+	SponsorTimeout         int `yaml:"sponsor_timeout"`
+	PageMaxKey             int `yaml:"page_max_key"`
+	PageTimeout            int `yaml:"page_timeout"`
+	ShareInfoMaxKey        int `yaml:"shareinfo_max_key"`
+	ShareInfoTimeout       int `yaml:"shareinfo_timeout"`
+	RobberMaxKey           int `yaml:"robber_max_key"`
+	RobberTimeout          int `yaml:"robber_timeout"`
 }
 
 type Redis struct {
-	Network     string  `yaml:"network"`
-	Host        string  `yaml:"host"`
-	Port        string  `yaml:"port"`
-	Password    string  `yaml:"password"`
-	Database    int  `yaml:"database"`
-	MaxIdle     int     `yaml:"maxIdle"`
-	MaxActive   int     `yaml:"maxActive"`
-	IdleTimeout int     `yaml:"idleTimeout"`
-	Prefix      string  `yaml:"prefix"`
+	Network     string `yaml:"network"`
+	Host        string `yaml:"host"`
+	Port        string `yaml:"port"`
+	Password    string `yaml:"password"`
+	Database    int    `yaml:"database"`
+	MaxIdle     int    `yaml:"maxIdle"`
+	MaxActive   int    `yaml:"maxActive"`
+	IdleTimeout int    `yaml:"idleTimeout"`
+	Prefix      string `yaml:"prefix"`
 }
 
 type Mysql struct {
@@ -147,32 +148,43 @@ type Mysql struct {
 	ParseTime     bool   `yaml:"parseTime"`
 }
 
-type User struct{
-	Name string   `yaml:"name"`
-	Pwd  string   `yaml:"pwd"`
+type User struct {
+	Name string `yaml:"name"`
+	Pwd  string `yaml:"pwd"`
 }
 
-type Aliyun struct{
-	AccessKeyId string   `yaml:"accessKeyId"`
-	AccessKeySecret  string    `yaml:"accessKeySecret"`
-	OssEndpoint  string    `yaml:"oss_endpoint"`
+type Aliyun struct {
+	AccessKeyId     string `yaml:"accessKeyId"`
+	AccessKeySecret string `yaml:"accessKeySecret"`
+	OssEndpoint     string `yaml:"oss_endpoint"`
+	BucketName     string `yaml:"bucket_name"`
+
 }
 
 type BussinessLimits struct {
-	PhoneSms  []string `yaml:"phone_sms"`
-	IpSms  []string `yaml:"ip_sms"`
+	PhoneSms []string `yaml:"phone_sms"`
+	IpSms    []string `yaml:"ip_sms"`
 }
 
-type  BasNotify struct {
-	Addr                   string `yaml:"addr"`
-	VerifyCodeSmsTmp       string `yaml:"verifycode_sms_tmp"`
+type BasNotify struct {
+	Addr             string `yaml:"addr"`
+	VerifyCodeSmsTmp string `yaml:"verifycode_sms_tmp"`
+	SwitchFlag       bool   `yaml:"switch_flag"`
 }
 
-type MarketMain struct{
-	FissionPackAddr       string     `yaml:"fission_pack_addr"`
-	LuckDrawPackAddr       string     `yaml:"luckdraw_pack_addr"`
+type MarketMain struct {
+	FissionPackAddr  string `yaml:"fission_pack_addr"`
+	LuckDrawPackAddr string `yaml:"luckdraw_pack_addr"`
 }
 
-type IdCardCheck struct{
-	AppCode       string     `yaml:"appcode"`
+type IdCardCheck struct {
+	AppCode string `yaml:"appcode"`
+}
+
+type ChuangLan struct {
+	AppId           string `yaml:"appId"`
+	AppKey          string `yaml:"appKey"`
+	IdcardCheck_url string `yaml:"idcardcheck_url"`
+	UnnCheck_url    string `yaml:"unncheck_url"`
+	Host            string
 }

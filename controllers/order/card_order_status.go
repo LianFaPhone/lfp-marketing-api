@@ -1,16 +1,15 @@
 package order
 
-import(
+import (
 	. "LianFaPhone/lfp-marketing-api/controllers"
-	"github.com/kataras/iris"
 	"LianFaPhone/lfp-marketing-api/models"
+	"github.com/kataras/iris"
 )
 
-
-type OrderStatus struct{
+type OrderStatus struct {
 	Controllers
 }
 
-func (this * OrderStatus) Gets(ctx iris.Context){
+func (this *OrderStatus) Gets(ctx iris.Context) {
 	this.Response(ctx, models.OrderStatusArr)
 }

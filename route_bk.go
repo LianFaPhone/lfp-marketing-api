@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/kataras/iris"
-	"github.com/iris-contrib/middleware/cors"
 	"LianFaPhone/lfp-marketing-api/controllers"
 	. "LianFaPhone/lfp-marketing-api/controllers/order"
+	"github.com/iris-contrib/middleware/cors"
+	"github.com/kataras/iris"
 )
 
-func (this *WebServer) bkroutes()  {
+func (this *WebServer) bkroutes() {
 	app := this.mBkIris
 	crs := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
@@ -23,7 +23,6 @@ func (this *WebServer) bkroutes()  {
 			})
 	})
 	//interceptor := new(controllers.Interceptor)
-
 
 	v1bk := app.Party("/v1/bk/market", crs)
 	{
@@ -55,10 +54,21 @@ func (this *WebServer) bkroutes()  {
 			ac := new(CardOrder)
 
 			simPy.Post("/list", ac.BkList)
+			simPy.Post("/list-all", ac.BkList)
+			simPy.Post("/list-new", ac.BkList)
+			simPy.Post("/list-export", ac.BkList)
+			simPy.Post("/list-deliver", ac.BkList)
+			simPy.Post("/list-waitdone", ac.BkList)
+			simPy.Post("/list-alreadydone", ac.BkList)
+			simPy.Post("/list-recyclebin", ac.BkList)
+			simPy.Post("/list-unmatch", ac.BkList)
+			simPy.Post("/list-activated", ac.BkList)
 			simPy.Post("/update", ac.BkUpdate)
 			simPy.Post("/status-sets", ac.BkUpdatesStatus)
-			simPy.Post("/extra-import", ac.BkOrderExtraInport)
-
+			simPy.Post("/express-import", ac.BkOrderExtraInport)
+			simPy.Post("/idcard-check", ac.BkIdCardCheck)
+			simPy.Post("/active-import", ac.BkOrderActiveInport)
+			simPy.Post("/new-import", ac.BkOrderNewInport)
 		}
 		datePy := v1bk.Party("/datesheet")
 		{
@@ -77,12 +87,28 @@ func (this *WebServer) bkroutes()  {
 			ac := new(controllers.ClassTp)
 
 			classPy.Post("/gets", ac.Gets)
+			classPy.Post("/add", ac.Add)
+			classPy.Post("/get", ac.Get)
+			classPy.Post("/update", ac.Update)
+			classPy.Post("/list", ac.List)
 		}
 		statusPy := v1bk.Party("/orderstatus")
 		{
 			ac := new(OrderStatus)
 
 			statusPy.Post("/gets", ac.Gets)
+		}
+		photoPy := v1bk.Party("/photo")
+		{
+			ac := new(controllers.UploadFile)
+
+			photoPy.Any("/download", ac.PhotoDownload)
+		}
+		ossmarketPy := v1bk.Party("/oss-market")
+		{
+			ac := new(controllers.UploadFile)
+
+			ossmarketPy.Any("/upload", ac.UpSso)
 		}
 
 	}

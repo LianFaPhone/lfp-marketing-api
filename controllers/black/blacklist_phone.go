@@ -1,16 +1,16 @@
 package black
 
 import (
-	. "LianFaPhone/lfp-marketing-api/controllers"
-"github.com/kataras/iris"
-"LianFaPhone/lfp-marketing-api/api"
-"go.uber.org/zap"
 	apibackend "LianFaPhone/lfp-api/errdef"
-. "LianFaPhone/lfp-base/log/zap"
-"LianFaPhone/lfp-marketing-api/models"
+	. "LianFaPhone/lfp-base/log/zap"
+	"LianFaPhone/lfp-marketing-api/api"
+	. "LianFaPhone/lfp-marketing-api/controllers"
+	"LianFaPhone/lfp-marketing-api/models"
+	"github.com/kataras/iris"
+	"go.uber.org/zap"
 )
 
-type BlacklistPhone struct{
+type BlacklistPhone struct {
 	Controllers
 }
 
@@ -20,7 +20,7 @@ func (this *BlacklistPhone) List(ctx iris.Context) {
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
-		ZapLog().Error( "param err", zap.Error(err))
+		ZapLog().Error("param err", zap.Error(err))
 		return
 	}
 
@@ -32,8 +32,8 @@ func (this *BlacklistPhone) List(ctx iris.Context) {
 	//	condPair= append(condPair, &models.SqlPairCondition{"created_at <= ?", param.EndCreatedAt})
 	//}
 
-	ll,err := new(models.BlacklistPhone).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
-	if err != nil{
+	ll, err := new(models.BlacklistPhone).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
+	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
@@ -47,7 +47,7 @@ func (this *BlacklistPhone) Update(ctx iris.Context) {
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
-		ZapLog().Error( "param err", zap.Error(err))
+		ZapLog().Error("param err", zap.Error(err))
 		return
 	}
 
@@ -66,7 +66,7 @@ func (this *BlacklistPhone) Add(ctx iris.Context) {
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
-		ZapLog().Error( "param err", zap.Error(err))
+		ZapLog().Error("param err", zap.Error(err))
 		return
 	}
 
@@ -78,4 +78,3 @@ func (this *BlacklistPhone) Add(ctx iris.Context) {
 	}
 	this.Response(ctx, nil)
 }
-

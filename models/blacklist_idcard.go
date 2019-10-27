@@ -1,72 +1,80 @@
 package models
 
-import(
-	"LianFaPhone/lfp-marketing-api/db"
-	"LianFaPhone/lfp-marketing-api/common"
+import (
 	"LianFaPhone/lfp-marketing-api/api"
+	"LianFaPhone/lfp-marketing-api/common"
+	"LianFaPhone/lfp-marketing-api/db"
 )
 
-type BlacklistIdcard struct{
-	Id         		*int64      `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"` //加上type:int(11)后AUTO_INCREMENT无效
-	IdCard    	    *string     `json:"idcard,omitempty"     gorm:"column:idcard;type:varchar(30)"` //订单号
+type BlacklistIdcard struct {
+	Id     *int64  `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"` //加上type:int(11)后AUTO_INCREMENT无效
+	IdCard *string `json:"idcard,omitempty"     gorm:"column:idcard;type:varchar(30)"`                 //订单号
 	Table
 }
 
-
-func (this * BlacklistIdcard) TableName() string{
+func (this *BlacklistIdcard) TableName() string {
 	return "blacklist_idcard"
 }
 
-func (this * BlacklistIdcard) ParseAdd(p * api.BkBlacklistIdcardAdd) *BlacklistIdcard {
+func (this *BlacklistIdcard) ParseAdd(p *api.BkBlacklistIdcardAdd) *BlacklistIdcard {
 	this.IdCard = p.IdCard
 	this.Valid = new(int)
 	*this.Valid = 1
 	return this
 }
 
-func (this * BlacklistIdcard) Parse(p * api.BkBlacklistIdcard) *BlacklistIdcard {
+func (this *BlacklistIdcard) Parse(p *api.BkBlacklistIdcard) *BlacklistIdcard {
 	this.Id = p.Id
 	this.IdCard = p.IdCard
 	this.Valid = p.Valid
 	return this
 }
 
-func (this * BlacklistIdcard) ParseList(p * api.BkBlacklistIdcardList) *BlacklistIdcard {
+func (this *BlacklistIdcard) ParseList(p *api.BkBlacklistIdcardList) *BlacklistIdcard {
 	this.Id = p.Id
 	this.IdCard = p.IdCard
 	this.Valid = p.Valid
 	return this
 }
 
-func (this * BlacklistIdcard) Add() error {
+func (this *BlacklistIdcard) Add() error {
 	err := db.GDbMgr.Get().Create(this).Error
 	if err != nil {
-		return  err
+		return err
 	}
 	return nil
 }
 
-func (this * BlacklistIdcard) Update() error {
+func (this *BlacklistIdcard) Update() error {
 	err := db.GDbMgr.Get().Model(this).Where("id = ? ", this.Id).Updates(this).Error
 	if err != nil {
-		return  err
+		return err
 	}
 	return nil
 }
 
-func (this * BlacklistIdcard) Del() error {
+func (this *BlacklistIdcard) ExistByIdCard(idcard string) (bool, error) {
+	count := 0
+	err := db.GDbMgr.Get().Model(this).Where("idcard = ? and valid = 1", idcard).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+func (this *BlacklistIdcard) Del() error {
 	err := db.GDbMgr.Get().Model(this).Where("id = ? ", this.Id).Delete(this).Error
 	if err != nil {
-		return  err
+		return err
 	}
 	return nil
 }
 
-func (this *BlacklistIdcard) ListWithConds(page, size int64, needFields []string,  condPair []*SqlPairCondition) (*common.Result, error) {
+func (this *BlacklistIdcard) ListWithConds(page, size int64, needFields []string, condPair []*SqlPairCondition) (*common.Result, error) {
 	var list []*BlacklistIdcard
 	query := db.GDbMgr.Get().Where(this)
 
-	for i:=0; i < len(condPair);i++ {
+	for i := 0; i < len(condPair); i++ {
 		if condPair[i] == nil {
 			continue
 		}
