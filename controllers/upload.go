@@ -3,6 +3,8 @@ package controllers
 import (
 //	s3 "LianFaPhone/bas-tools/sdk.aws.s3"
 	"github.com/kataras/iris"
+	"net/url"
+	"strings"
 
 	"crypto/md5"
 	"fmt"
@@ -162,8 +164,11 @@ func (this *UploadFile) UpSso(ctx iris.Context) {
 			this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), "S3_UpLoad_ERRORS")
 			return
 		}
-
-		results = append(results, LogoFileAddr{filename, filename})
+		addr := strings.TrimPrefix(config.GConfig.Aliyun.OssEndpoint, "http://")
+		addr = strings.TrimPrefix(config.GConfig.Aliyun.OssEndpoint, "https://")
+		addr = "https://"+config.GConfig.Aliyun.BucketName+"."+addr+"/"+url.PathEscape(filename)
+		//注意oss开启https
+		results = append(results, LogoFileAddr{filename, addr})
 	}
 
 	this.Response(ctx, results)
