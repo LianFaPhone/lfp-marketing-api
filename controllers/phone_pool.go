@@ -118,11 +118,11 @@ func (this *PhoneNumberPool) BkLock(ctx iris.Context) {
 	flag, err := new(models.PhoneNumberPool).LockNumberById( *param.Id, nowTime,  600, userId)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
-		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.OriginDesc())
 		return
 	}
 	if !flag {
-		this.ExceptionSerive(ctx, apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.Code(), apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.Desc())
+		this.ExceptionSerive(ctx, apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.Code(), apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.OriginDesc())
 		return
 	}
 	this.Response(ctx, nil)
@@ -142,11 +142,11 @@ func (this *PhoneNumberPool) BkUnLock(ctx iris.Context) {
 	flag, err := new(models.PhoneNumberPool).UnLockNumberById( *param.Id, nowTime,   userId)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
-		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.OriginDesc())
 		return
 	}
 	if !flag {
-		this.ExceptionSerive(ctx, apibackend.BASERR_CARDMARKET_PHONEPOOL_UNLOCK_FAIL.Code(), apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.Desc())
+		this.ExceptionSerive(ctx, apibackend.BASERR_CARDMARKET_PHONEPOOL_UNLOCK_FAIL.Code(), apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.OriginDesc())
 		return
 	}
 	this.Response(ctx, nil)

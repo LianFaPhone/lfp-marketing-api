@@ -152,7 +152,7 @@ func (this *PhoneNumberPool) LockNumberByNumber( number string, nowTime, expireT
 }
 
 func (this *PhoneNumberPool) UnLockNumberById( id, nowTime int64, user string) (bool, error) {
-	query := db.GDbMgr.Get().Model(this).Where("id = ? and valid = 1 and lock_expire_at <= ? and use_flag = 0 and lock_user = ?", id, nowTime, user).Updates(map[string]interface{}{"lock_expire_at":0})
+	query := db.GDbMgr.Get().Model(this).Where("id = ? and valid = 1 and lock_expire_at >= ? and use_flag = 0 and lock_user = ?", id, nowTime, user).Updates(map[string]interface{}{"lock_expire_at":0})
 	if query.Error != nil {
 		return false, query.Error
 
@@ -161,7 +161,7 @@ func (this *PhoneNumberPool) UnLockNumberById( id, nowTime int64, user string) (
 }
 
 func (this *PhoneNumberPool) UnLockNumberByNumber( number string, nowTime int64, user string) (bool, error) {
-	query := db.GDbMgr.Get().Model(this).Where("number = ? and valid = 1 and lock_expire_at <= ? and use_flag = 0 and lock_user = ?", number, nowTime, user).Updates(map[string]interface{}{"lock_expire_at":0})
+	query := db.GDbMgr.Get().Model(this).Where("number = ? and valid = 1 and lock_expire_at >= ? and use_flag = 0 and lock_user = ?", number, nowTime, user).Updates(map[string]interface{}{"lock_expire_at":0})
 	if query.Error != nil {
 		return false, query.Error
 
