@@ -42,6 +42,7 @@ func (this *BlacklistArea) List(ctx iris.Context) {
 }
 
 func (this *BlacklistArea) Update(ctx iris.Context) {
+
 	param := new(api.BkBlacklistArea)
 
 	err := Tools.ShouldBindJSON(ctx, param)
@@ -52,6 +53,7 @@ func (this *BlacklistArea) Update(ctx iris.Context) {
 	}
 
 	err = new(models.BlacklistArea).Parse(param).Update()
+
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -61,6 +63,7 @@ func (this *BlacklistArea) Update(ctx iris.Context) {
 }
 
 func (this *BlacklistArea) Add(ctx iris.Context) {
+
 	param := new(api.BkBlacklistAreaAdd)
 
 	err := Tools.ShouldBindJSON(ctx, param)

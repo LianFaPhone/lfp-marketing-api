@@ -27,6 +27,7 @@ type (
 		Town         *string `valid:"optional" json:"town,omitempty"`          //东明路街道, town street
 		TownCode     *string `valid:"optional" json:"town_code,omitempty"`     //东明路街道
 		Address      *string `valid:"optional" json:"address,omitempty"`       //小区及门牌号
+
 		ClassBigTp   *int    `valid:"optional" json:"class_big_tp,omitempty"`
 		ClassTp      *int    `valid:"optional" json:"class_tp,omitempty"`
 		ClassName   *string `valid:"optional" json:"class_name,omitempty"`
@@ -39,6 +40,7 @@ type (
 		FinishFlag     *int    `valid:"optional" json:"finish_flag,omitempty"`
 		NumberPoolFlag  *int `valid:"optional" json:"numberpool_flag,omitempty"` //选的号码
 		SessionId string    `valid:"optional" json:"session_id,omitempty"`
+
 	}
 
 	ResCardOrderApply struct {

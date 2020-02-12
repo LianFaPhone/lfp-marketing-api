@@ -5,6 +5,7 @@ import (
 	. "LianFaPhone/lfp-base/log/zap"
 	"LianFaPhone/lfp-marketing-api/api"
 	"LianFaPhone/lfp-marketing-api/common"
+
 	. "LianFaPhone/lfp-marketing-api/controllers"
 	"LianFaPhone/lfp-marketing-api/db"
 	"LianFaPhone/lfp-marketing-api/idcard-api"
@@ -121,6 +122,8 @@ type CardOrder struct {
 //	this.Response(ctx, nil)
 //}
 
+
+
 //申请订单
 func (this *CardOrder) Apply(ctx iris.Context) {
 	param := new(api.CardOrderApply)
@@ -188,7 +191,6 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 			return
 		}
 		if !succFlag {
-//			tx.Rollback()
 			ZapLog().Error("phone Number be use err")
 			this.ExceptionSerive(ctx, apibackend.BASERR_CARDMARKET_PHONEPOOL_USE_FAIL.Code(), apibackend.BASERR_CARDMARKET_PHONEPOOL_USE_FAIL.Desc())
 			return
@@ -507,6 +509,7 @@ func (this *CardOrder) BkOrderExtraInport(ctx iris.Context) {
 	if res.SuccCount > 0 {
 		tasker.GNotifyTasker.Push()
 	}
+
 	res.FailCount = len(params) - res.SuccCount
 
 	this.Response(ctx, res)
@@ -592,6 +595,8 @@ func (this *CardOrder) BkOrderNewInport(ctx iris.Context) {
 
 	this.Response(ctx, res)
 }
+
+
 
 
 func (this *CardOrder) BkIdCardCheck(ctx iris.Context) {

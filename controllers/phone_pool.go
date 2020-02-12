@@ -7,7 +7,9 @@ import (
 	"LianFaPhone/lfp-marketing-api/models"
 	"github.com/kataras/iris"
 	"go.uber.org/zap"
+
 	"time"
+
 )
 
 type PhoneNumberPool struct {
@@ -46,6 +48,7 @@ func (this *PhoneNumberPool) FtList(ctx iris.Context) {
 	//}
 
 	ll, err := new(models.PhoneNumberPool).FtParseList(param).ListWithConds(param.Page, param.Size, []string{"number", "level"}, conds)
+
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -308,10 +311,12 @@ func (this *PhoneNumberPool) Adds(ctx iris.Context) {
 		FailNumber: make([]*string, 0),
 	}
 
+
 	condTime := time.Now().Unix() - 3600*24*60
 
 	for i := 0; i < len(params); i++ {
 		uniqueFlag, err := new(models.PhoneNumberPool).UniqueByNumber(*params[i].Number, condTime)
+
 		if err != nil {
 			ZapLog().With(zap.Error(err)).Error("UniqueByNumber err")
 			//this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())

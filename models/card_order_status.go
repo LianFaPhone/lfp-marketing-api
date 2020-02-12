@@ -9,6 +9,7 @@ const (
 	CONST_OrderStatus_New  = 1     //新订单
 	CONST_OrderStatus_Name = "新订单" //
 
+
 	CONST_OrderStatus_New_UnFinish  = 10     //新订单
 	CONST_OrderStatus_New_UnFinish_Name = "新订单未完成" //
 

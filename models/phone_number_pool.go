@@ -12,6 +12,7 @@ type (
 		Id      *int64  `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"` //加上type:int(11)后AUTO_INCREMENT无效
 		Number  *string `json:"number,omitempty"     gorm:"column:number;type:varchar(20);unique;index"`    //订单号
 		UseFlag *int    `json:"use_flag,omitempty"     gorm:"column:use_flag;type:tinyint(2);index"`
+
 		LockExpireAt *int64 `json:"lock_expire_at,omitempty"     gorm:"column:lock_expire_at;type:bigint(20);"`
 		LockUser  *string  `json:"lock_user,omitempty"     gorm:"column:lock_user;type:varchar(70);"`
 		UseUser  *string  `json:"use_user,omitempty"     gorm:"column:use_user;type:varchar(70);"`
@@ -19,6 +20,7 @@ type (
 		OrderNo  *string  `json:"order_no,omitempty"     gorm:"column:order_no;type:varchar(70);"`
 		BuyerName *string `json:"buyer_name,omitempty"     gorm:"column:buyer_name;type:varchar(20);"`
 		BuyerPhone *string `json:"buyer_phone,omitempty"     gorm:"column:buyer_phone;type:varchar(20);"`
+
 		Table
 	}
 )
@@ -27,7 +29,7 @@ func (this *PhoneNumberPool) TableName() string {
 	return "phone_number_pool"
 }
 
-func (this *PhoneNumberPool) Parse(p *api.BkPhoneNumber) *PhoneNumberPool {
+func (this *PhoneNumberPool) Parse(p * api.BkPhoneNumber) *PhoneNumberPool {
 	this.Id = p.Id
 	this.Number = p.Number
 	this.UseFlag = p.UseFlag
@@ -128,6 +130,7 @@ func (this *PhoneNumberPool) UseNumber(number string) (bool, error) {
 	query := db.GDbMgr.Get().Model(this).Where("number = ? ", number).Update("use_flag", 1)
 	if query.Error != nil {
 		return false, query.Error
+
 	}
 	return query.RowsAffected > 0, nil
 }
@@ -152,6 +155,7 @@ func (this *PhoneNumberPool) UnLockNumberById( id, nowTime int64, user string) (
 	query := db.GDbMgr.Get().Model(this).Where("id = ? and valid = 1 and lock_expire_at <= ? and use_flag = 0 and lock_user = ?", id, nowTime, user).Updates(map[string]interface{}{"lock_expire_at":0})
 	if query.Error != nil {
 		return false, query.Error
+
 	}
 	return query.RowsAffected > 0, nil
 }
@@ -160,6 +164,7 @@ func (this *PhoneNumberPool) UnLockNumberByNumber( number string, nowTime int64,
 	query := db.GDbMgr.Get().Model(this).Where("number = ? and valid = 1 and lock_expire_at <= ? and use_flag = 0 and lock_user = ?", number, nowTime, user).Updates(map[string]interface{}{"lock_expire_at":0})
 	if query.Error != nil {
 		return false, query.Error
+
 	}
 	return query.RowsAffected > 0, nil
 }
@@ -184,6 +189,7 @@ func (this *PhoneNumberPool) UnUseNumberById(id int64, user string) (bool, error
 	query := db.GDbMgr.Get().Model(this).Where("id = ? and valid = 1 and use_flag = 1 and use_user = ?", id,  user).Updates(map[string]interface{}{"order_no":"", "use_flag": 0, "buyer_name":"", "buyer_phone": "", "lock_expire_at":0})
 	if query.Error != nil {
 		return false, query.Error
+
 	}
 	return query.RowsAffected > 0, nil
 }
@@ -232,6 +238,7 @@ func (this *PhoneNumberPool) ListWithConds(page, size int64, needFields []string
 	return new(common.Result).PageQuery(query, &PhoneNumberPool{}, &list, page, size, nil, "")
 }
 
+
 func (this *PhoneNumberPool) CountWithConds(condPair []*SqlPairCondition) (int64, error) {
 	var count int64
 	query := db.GDbMgr.Get().Where(this)
@@ -247,3 +254,4 @@ func (this *PhoneNumberPool) CountWithConds(condPair []*SqlPairCondition) (int64
 	err := query.Count(&count).Error
 	return count ,err
 }
+

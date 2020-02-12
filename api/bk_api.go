@@ -272,21 +272,25 @@ type (
 	}
 
 	BkBlacklistAreaAdd struct {
+
 		Province     *string `valid:"optional" json:"province,omitempty" `     //省份
 		ProvinceCode *string `valid:"optional" json:"province_code,omitempty"` //省份
 		City         *string `valid:"optional" json:"city,omitempty"`          //城市
 		CityCode     *string `valid:"optional" json:"city_code,omitempty"`     //城市
 		Area         *string `valid:"optional" json:"area,omitempty"`          //区
 		AreaCode     *string `valid:"optional" json:"area_code,omitempty" `    //区
+
 	}
 
 	BkBlacklistArea struct {
 		Id           *int64  `valid:"optional" json:"id,omitempty"`
+
 		Province     *string `valid:"optional" json:"province,omitempty" `     //省份
 		ProvinceCode *string `valid:"optional" json:"province_code,omitempty"` //省份
 		City         *string `valid:"optional" json:"city,omitempty"`          //城市
 		CityCode     *string `valid:"optional" json:"city_code,omitempty"`     //城市
 		Area         *string `valid:"optional" json:"area,omitempty"`          //区
+
 		AreaCode     *string `valid:"optional" json:"area_code,omitempty"`     //区
 		Valid        *int    `valid:"optional"  json:"valid,omitempty"`
 	}
@@ -325,11 +329,14 @@ type (
 		FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
 		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		ShortChain *string `valid:"optional" json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
+
+
 	}
 
 	BkCardClass struct{
 		Id    *int   `valid:"required"  json:"id,omitempty"   "` //加上type:int(11)后AUTO_INCREMENT无效
 		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
+
 		BigTp    *int    `valid:"optional" json:"big_tp,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Tp    *int    `valid:"optional" json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `

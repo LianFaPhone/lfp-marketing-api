@@ -16,6 +16,7 @@ type ClassTp struct {
 }
 
 func (this *ClassTp) Gets(ctx iris.Context) {
+
 	ll, err := new(models.CardClass).Gets()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
@@ -23,6 +24,7 @@ func (this *ClassTp) Gets(ctx iris.Context) {
 		return
 	}
 	this.Response(ctx, ll)
+
 }
 
 
@@ -65,6 +67,7 @@ func (this *ClassTp) Get(ctx iris.Context) {
 	}
 	this.Response(ctx, ll)
 }
+
 
 func (this *ClassTp) FtGet(ctx iris.Context) {
 	//设置套餐，图片，上传文件

@@ -12,7 +12,9 @@ type CardOrder struct {
 	Id         *int64  `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"`  //加上type:int(11)后AUTO_INCREMENT无效
 	OrderNo    *string `json:"order_no,omitempty"     gorm:"column:order_no;type:varchar(30);unique;index"` //订单号
 	ClassIsp   *int    `json:"class_isp,omitempty"     gorm:"column:class_isp;type:int(11);"`               //运营商
+
 	ClassBigTp    *int    `json:"class_big_tp,omitempty"     gorm:"column:class_big_tp;type:int(11);"`                 //手机卡套餐类型
+
 	ClassTp    *int    `json:"class_tp,omitempty"     gorm:"column:class_tp;type:int(11);"`                 //手机卡套餐类型
 	ClassName  *string `json:"class_name,omitempty"     gorm:"-"`
 	Status     *int    `json:"status,omitempty"     gorm:"column:status;type:int(11);"` //订单状态
@@ -323,6 +325,7 @@ func (this *CardOrder) UpdateByOrderNo() error {
 	err := db.GDbMgr.Get().Model(this).Where("order_no = ? ", this.OrderNo).Updates(this).Error
 	if err != nil {
 		return err
+
 	}
 	return nil
 }
@@ -331,6 +334,7 @@ func (this *CardOrder) UpdateStatusByOrderNo(orderNo string, status int) error {
 	err := db.GDbMgr.Get().Model(this).Where("order_no = ? ", orderNo).Update("status", status).Error
 	if err != nil {
 		return err
+
 	}
 	return nil
 }
@@ -339,6 +343,7 @@ func (this *CardOrder) UpdatesStatus(ids []*int64, Status int) error {
 	err := db.GDbMgr.Get().Model(this).Where("id IN (?)", ids).Update("status", Status).Error
 	if err != nil {
 		return err
+
 	}
 	return nil
 }
@@ -347,6 +352,7 @@ func (this *CardOrder) UpdatesStatusByOrderNo(nos []*string, Status int) error {
 	err := db.GDbMgr.Get().Model(this).Where("order_no IN (?)", nos).Update("status", Status).Error
 	if err != nil {
 		return err
+
 	}
 	return nil
 }
@@ -469,3 +475,4 @@ func (this *CardOrder) GetLimitByCond2(limit int, condPair []*SqlPairCondition) 
 	}
 	return arr, err
 }
+

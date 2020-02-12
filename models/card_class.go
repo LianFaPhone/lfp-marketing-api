@@ -1,5 +1,6 @@
 package models
 
+
 import (
 	"LianFaPhone/lfp-marketing-api/api"
 	"LianFaPhone/lfp-tools/huawei-buy/huaweiWebSnap/src/github.com/jinzhu/gorm"
@@ -10,6 +11,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/db"
 
 )
+
 
 type ClassTp struct {
 	ISP   int    `json:"isp,omitempty"`
@@ -201,6 +203,7 @@ func init() {
 type CardClass struct{
 	Id    *int   `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"` //加上type:int(11)后AUTO_INCREMENT无效
 	ISP   *int    `json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
+
 	BigTp    *int    `json:"big_tp,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无
 	Tp    *int    `json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 
@@ -223,12 +226,14 @@ func (this * CardClass) ParseAdd(p *api.BkCardClassAdd) *CardClass {
 		ISP: p.ISP,
 		Tp:  p.Tp,
 		Name: p.Name,
+
 		Detail: p.Detail,
 		ImgUrl: p.ImgUrl,
 		FileUrl: p.FileUrl,
 		SmsFlag: p.SmsFlag,
 		BigTp: p.BigTp,
 		ShortChain: p.ShortChain,
+
 	}
 	cc.Valid = new(int)
 	*cc.Valid = 1
@@ -247,6 +252,7 @@ func (this * CardClass) Parse(p *api.BkCardClass) *CardClass {
 		SmsFlag: p.SmsFlag,
 		BigTp: p.BigTp,
 		ShortChain: p.ShortChain,
+
 	}
 }
 
@@ -255,11 +261,13 @@ func (this * CardClass) ParseList(p *api.BkCardClassList) *CardClass {
 		ISP: p.ISP,
 		Tp:  p.Tp,
 		Name: p.Name,
+
 		Detail: p.Detail,
 		ImgUrl: p.ImgUrl,
 		FileUrl: p.FileUrl,
 		SmsFlag: p.SmsFlag,
 		BigTp: p.BigTp,
+
 	}
 }
 
@@ -270,6 +278,7 @@ func (this *CardClass) Get() (*CardClass, error) {
 	}
 	return this,nil
 }
+
 
 func (this *CardClass) Gets() ([]*CardClass, error) {
 	var arr []*CardClass

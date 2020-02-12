@@ -25,6 +25,7 @@ func (this *WebServer) routes() {
 	})
 	//interceptor := new(controllers.Interceptor)
 
+
 	//oldSaveDataPy := app.Party("/saveData", crs /*, interceptor.Interceptor*/)
 	//{
 	//	oldCO := new(CardOrder)
@@ -52,12 +53,14 @@ func (this *WebServer) routes() {
 				cardClassParty.Get("/get", cc.FtGet)
 			}
 		}
+
 		cardParty := v1.Party("/card")
 		{
 			ac := new(CardOrder)
 			{
 				cardParty.Post("/apply", ac.Apply)
 				cardParty.Post("/order/confirm", ac.FtConfirm)
+
 				cardParty.Post("/apply-fulfil", ac.Apply)
 				cardParty.Any("/verify", ac.FtUpdatePhotoUrls)
 			}
