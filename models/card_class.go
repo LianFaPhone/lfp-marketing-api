@@ -3,7 +3,7 @@ package models
 
 import (
 	"LianFaPhone/lfp-marketing-api/api"
-	"LianFaPhone/lfp-tools/huawei-buy/huaweiWebSnap/src/github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 import (
