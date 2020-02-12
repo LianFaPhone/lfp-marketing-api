@@ -40,6 +40,7 @@ type (
 		FinishFlag     *int    `valid:"optional" json:"finish_flag,omitempty"`
 		NumberPoolFlag  *int `valid:"optional" json:"numberpool_flag,omitempty"` //选的号码
 		SessionId string    `valid:"optional" json:"session_id,omitempty"`
+		ThirdOrderNo    *string `valid:"optional"  json:"third_order_no,omitempty" ` //订单号
 
 	}
 

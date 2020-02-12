@@ -13,6 +13,10 @@ type Qa struct{
 	Table
 }
 
+func (this *Qa) TableName() string{
+	return "qa"
+}
+
 func (this *Qa) ParseAdd(p *api.BkQaAdd) *Qa {
 	this.Title = p.Title
 	this.Content = p.Content

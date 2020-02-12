@@ -38,6 +38,7 @@ const (
 var PathToOrderStatus = map[string] int {
 	"all": -1,
 	"new": 1 ,
+	"new_unfinish":10,
 	"export": 2 ,
 	"deliver": 3 ,
 	"waitdone": 5 ,
@@ -48,6 +49,7 @@ var PathToOrderStatus = map[string] int {
 }
 
 var OrderStatusMap = map[int]string{
+	CONST_OrderStatus_New_UnFinish:      CONST_OrderStatus_New_UnFinish_Name,
 	CONST_OrderStatus_New:               CONST_OrderStatus_Name,
 	CONST_OrderStatus_Already_Export:    CONST_OrderStatus_Already_Export_Name,
 	CONST_OrderStatus_Already_Delivered: CONST_OrderStatus_Already_Delivered_Name,
@@ -59,6 +61,7 @@ var OrderStatusMap = map[int]string{
 }
 
 var OrderStatusArr = []*OrderStatus{
+	&OrderStatus{CONST_OrderStatus_New_UnFinish, CONST_OrderStatus_New_UnFinish_Name},
 	&OrderStatus{CONST_OrderStatus_New, CONST_OrderStatus_Name},
 	&OrderStatus{CONST_OrderStatus_Already_Export, CONST_OrderStatus_Already_Export_Name},
 	&OrderStatus{CONST_OrderStatus_Already_Delivered, CONST_OrderStatus_Already_Delivered_Name},

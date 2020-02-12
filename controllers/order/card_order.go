@@ -170,14 +170,14 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 	modelParam := new(models.CardOrder).FtParseAdd(param, orderNo)
 
 //	tx := db.GDbMgr.Get().Begin()
-	uniqueFlag, err := modelParam.LockUniqueByIdCardAndTime(*param.IdCard, time.Now().Unix()-24*3600*30*6, *param.ClassTp)
+	upFlag, err := modelParam.LimitCheckByIdCardAndTime(*param.IdCard, time.Now().Unix()-24*3600*30*3, *param.ClassTp, 3)
 	if err != nil {
 //		tx.Rollback()
 		ZapLog().With(zap.Error(err)).Error("database err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
 	}
-	if !uniqueFlag {
+	if upFlag {
 //		tx.Rollback()
 		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_EXISTS.Code(), apibackend.BASERR_OBJECT_EXISTS.Desc())
 		return
