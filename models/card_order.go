@@ -1,54 +1,60 @@
 package models
 
-import(
+import (
 	"LianFaPhone/lfp-marketing-api/api"
-	"LianFaPhone/lfp-marketing-api/db"
 	"LianFaPhone/lfp-marketing-api/common"
+	"LianFaPhone/lfp-marketing-api/db"
 	"github.com/jinzhu/gorm"
+	"time"
 )
 
+type CardOrder struct {
+	Id         *int64  `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"`  //加上type:int(11)后AUTO_INCREMENT无效
+	OrderNo    *string `json:"order_no,omitempty"     gorm:"column:order_no;type:varchar(30);unique;index"` //订单号
+	ClassIsp   *int    `json:"class_isp,omitempty"     gorm:"column:class_isp;type:int(11);"`               //运营商
+	ClassBigTp    *int    `json:"class_big_tp,omitempty"     gorm:"column:class_big_tp;type:int(11);"`                 //手机卡套餐类型
+	ClassTp    *int    `json:"class_tp,omitempty"     gorm:"column:class_tp;type:int(11);"`                 //手机卡套餐类型
+	ClassName  *string `json:"class_name,omitempty"     gorm:"-"`
+	Status     *int    `json:"status,omitempty"     gorm:"column:status;type:int(11);"` //订单状态
+	StatusName *string `json:"status_name,omitempty"     gorm:"-"`
+	TrueName   *string `json:"true_name,omitempty"     gorm:"column:true_name;type:varchar(10)"` //姓名
+	IdCard     *string `json:"idcard,omitempty"     gorm:"column:idcard;type:varchar(25)"`       //身份证
+	//	CountryCode     *string    `json:"country_code,omitempty"     gorm:"column:country_code;type:varchar(4)"` //国家码
+	Phone         *string `json:"phone,omitempty"     gorm:"column:phone;type:varchar(20)"`                 //手机号
+	Province      *string `json:"province,omitempty"     gorm:"column:province;type:varchar(15)"`           //省份
+	ProvinceCode  *string `json:"province_code,omitempty"     gorm:"column:province_code;type:varchar(15)"` //省份
+	City          *string `json:"city,omitempty"     gorm:"column:city;type:varchar(15)"`                   //城市
+	CityCode      *string `json:"city_code,omitempty"     gorm:"column:city_code;type:varchar(15)"`         //城市
+	Area          *string `json:"area,omitempty"     gorm:"column:area;type:varchar(20)"`                   //区
+	AreaCode      *string `json:"area_code,omitempty"     gorm:"column:area_code;type:varchar(15)"`         //区
+	Town          *string `json:"town,omitempty"     gorm:"column:town;type:varchar(20)"`                   //镇街道
+	Address       *string `json:"address,omitempty"     gorm:"column:address;type:varchar(50)"`             //剩余地址
+	Express       *string `json:"express,omitempty"     gorm:"column:express;type:varchar(20)"`             //快递名称
+	ExpressNo     *string `json:"express_no,omitempty"     gorm:"column:express_no;type:varchar(30)"`       //快递单号
+	ExpressRemark *string `json:"remark,omitempty"     gorm:"column:remark;type:varchar(50)"`               //备注
+	DeliverAt     *int64  `json:"deliver_at,omitempty"     gorm:"column:deliver_at;type:bigint(20)"`        //发货时间
+	ICCID         *string `json:"ICCID,omitempty"     gorm:"column:ICCID;type:varchar(22)"`                 //手机卡唯一识别码
+	NewPhone      *string `json:"new_phone,omitempty"     gorm:"column:new_phone;type:varchar(20)"`         //新手机号
+	Guishudi      *string `json:"guishudi,omitempty"     gorm:"column:guishudi;type:varchar(30)"`           //归属于哪个门店
+	Dataurl1      *string `json:"dataurl1,omitempty"     gorm:"column:dataurl1;type:varchar(50)"`           //身份证照片地址
+	Dataurl2      *string `json:"dataurl2,omitempty"     gorm:"column:dataurl2;type:varchar(50)"`           //身份证照片地址
+	Dataurl3      *string `json:"dataurl3,omitempty"     gorm:"column:dataurl3;type:varchar(50)"`           //免冠照地址
+	IP            *string `json:"ip,omitempty"     gorm:"column:ip;type:varchar(40)"`                       //ip地址
+	Ips           *int    `json:"ips,omitempty"     gorm:"column:ips;type:int(10)"`                         //同一个ip下单次数
+	PhoneOSTp     *int    `json:"device_os_tp,omitempty"     gorm:"column:device_os_tp;type:int(11)"`       //设备类型
+	PhoneOSName   *string `json:"device_os_name,omitempty"     gorm:"-"`
+	IdCardAudit   *int    `json:"idcard_audit,omitempty"     gorm:"column:idcard_audit;type:tinyint(2)"`      //身份证是否审核通过
+	BspExpress    *string `json:"bsp_express,omitempty"     gorm:"column:bsp_express;type:varchar(20)"`       //快递名称
+	BspExpressNo  *string `json:"bsp_express_no,omitempty"     gorm:"column:bsp_express_no;type:varchar(30)"` //快递单号
+	//	BspExpressRemark   *string    `json:"bsp_express_remark,omitempty"     gorm:"column:bsp_express_remark;type:varchar(50)"`
+	BspStatus     *int    `json:"bsp_status,omitempty"     gorm:"column:bsp_status;type:int(11);"` //订单状态
+	BspStatusName *string `json:"bsp_status_name,omitempty"     gorm:"-"`
+	Message       *string `json:"message,omitempty"     gorm:"column:message;type:varchar(30)"`  //湖南反馈信息
+	BspRsp        *string `json:"bsp_rsp,omitempty"     gorm:"column:bsp_rsp;type:varchar(150)"` //湖南反馈信息
+	NbMsg         *string `json:"nb_msg,omitempty"     gorm:"column:nb_msg;type:varchar(20)"`    //宁波反馈信息
 
-type CardOrder struct{
-	Id         		*int64      `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"` //加上type:int(11)后AUTO_INCREMENT无效
-	OrderNo    	    *string     `json:"order_no,omitempty"     gorm:"column:order_no;type:varchar(30);unique;index"` //订单号
-	//ClassID    		*int64     `json:"class_id,omitempty"     gorm:"column:class_id;type:bigint(20)"`
-	//ClassName  		*string    `json:"class_name,omitempty"     gorm:"column:class_name;type:varchar(50)"`
-	ClassIsp     *int           `json:"class_isp,omitempty"     gorm:"column:class_isp;type:int(11);"` //运营商
-	ClassTp     *int           `json:"class_tp,omitempty"     gorm:"column:class_tp;type:int(11);"`   //手机卡套餐类型
-	ClassName   *string    `json:"class_name,omitempty"     gorm:"-"`
-	Status          *int        `json:"status,omitempty"     gorm:"column:status;type:int(11);"`    //订单状态
-	StatusName  	*string    `json:"status_name,omitempty"     gorm:"-"`
-	TrueName  		*string    `json:"true_name,omitempty"     gorm:"column:true_name;type:varchar(10)"` //姓名
-	IdCard  		*string    `json:"idcard,omitempty"     gorm:"column:idcard;type:varchar(25)"`            //身份证
-	CountryCode     *string    `json:"country_code,omitempty"     gorm:"column:country_code;type:varchar(4)"` //国家码
-	Phone  			*string    `json:"phone,omitempty"     gorm:"column:phone;type:varchar(20)"`              //手机号
-	Province 		*string   `json:"province,omitempty"     gorm:"column:province;type:varchar(15)"`         //省份
-	City    		*string    `json:"city,omitempty"     gorm:"column:city;type:varchar(15)"`    //城市
-	Area    		*string    `json:"area,omitempty"     gorm:"column:area;type:varchar(20)"`    //区
-	Town    		*string    `json:"town,omitempty"     gorm:"column:town;type:varchar(20)"`     //镇街道
-	Address    		*string    `json:"address,omitempty"     gorm:"column:address;type:varchar(40)"`     //剩余地址
-	Express    		*string    `json:"express,omitempty"     gorm:"column:express;type:varchar(20)"` //快递名称
-	ExpressNo    	*string     `json:"express_no,omitempty"     gorm:"column:express_no;type:varchar(30)"` //快递单号
-	ExpressRemark   *string    `json:"remark,omitempty"     gorm:"column:remark;type:varchar(50)"`  //备注
-	DeliverAt 		*int64   `json:"deliver_at,omitempty"     gorm:"column:deliver_at;type:bigint(20)"`     //发货时间
-	ICCID          	*string    `json:"ICCID,omitempty"     gorm:"column:ICCID;type:varchar(20)"`            //手机卡唯一识别码
-	NewPhone       	*string    `json:"new_phone,omitempty"     gorm:"column:new_phone;type:varchar(20)"`    //新手机号
-	Guishudi       	*string    `json:"guishudi,omitempty"     gorm:"column:guishudi;type:varchar(30)"`      //归属于哪个门店
-	Dataurl1       	*string    `json:"dataurl1,omitempty"     gorm:"column:dataurl1;type:varchar(20)"`   //身份证照片地址
-	Dataurl2       	*string    `json:"dataurl2,omitempty"     gorm:"column:dataurl2;type:varchar(20)"`   //身份证照片地址
-	Dataurl3       	*string    `json:"dataurl3,omitempty"     gorm:"column:dataurl3;type:varchar(20)"`   //免冠照地址
-	IP             	*string    `json:"ip,omitempty"     gorm:"column:ip;type:varchar(40)"`    //ip地址
-	Ips            	*int       `json:"ips,omitempty"     gorm:"column:ips;type:int(10)"`  //同一个ip下单次数
-	PhoneOSTp       *int       `json:"device_os_tp,omitempty"     gorm:"column:device_os_tp;type:int(11)"` //设备类型
-	PhoneOSName       *string     `json:"device_os_name,omitempty"     gorm:"-"`
-	IdCardAudit     *int       `json:"idcard_audit,omitempty"     gorm:"column:idcard_audit;type:tinyint(2)"` //身份证是否审核通过
-	//PushFlag        *int       `json:"push_flag,omitempty"     gorm:"column:push_flag;type:tinyint(2)"` //bsp推送状态
-	//PushTryCount    *int       `json:"push_try_count,omitempty"     gorm:"column:push_try_count;type:int(11)"` //bsp推送尝试次数
-	//LastPushAt  	*int64     `json:"last_push_at,omitempty"     gorm:"column:last_push_at;type:bigint(20)"` //bsp推送尝试次数
-	//SmsFlag 	    *int       `json:"sms_flag,omitempty"     gorm:"column:sms_flag;type:tinyint(2)"` //短信通知用户
-
+	IsBacklist *int `json:"is_blacklist,omitempty"     gorm:"-"`
 	Table
-
 
 	//"id": "255418",
 	//"orderID": "DD1909021538227895",
@@ -80,32 +86,67 @@ type CardOrder struct{
 }
 
 func (this *CardOrder) TableName() string {
-	return "sim_card_order"
+	return "card_order"
 }
 
 func (this *CardOrder) FtParseAdd(p *api.CardOrderApply, OrderId string) *CardOrder {
 	acty := &CardOrder{
-		OrderNo:     &OrderId,
-		TrueName:    p.TrueName,
-		IdCard:      p.IdCard,
-		ClassTp:     p.ClassTp,
-		CountryCode: p.CountryCode,
-		Phone:       p.Phone,
-		Province:    p.Province,
-		City:        p.City,
-		Area:        p.Area,
-		Town:        p.Town,
-		Address:     p.Address,
-		IP:          &p.IP,
-		Ips:         p.Ips,
-		PhoneOSTp:   p.PhoneOSTp,
-		IdCardAudit: new(int),
+		OrderNo:  &OrderId,
+		TrueName: p.TrueName,
+		IdCard:   p.IdCard,
+		ClassTp:  p.ClassTp,
+		//		CountryCode: p.CountryCode,
+		Phone:        p.Phone,
+		Province:     p.Province,
+		ProvinceCode: p.ProvinceCode,
+		City:         p.City,
+		CityCode:     p.CityCode,
+		Area:         p.Area,
+		AreaCode:     p.AreaCode,
+		Town:         p.Town,
+		Address:      p.Address,
+		IP:           &p.IP,
+		Ips:          p.Ips,
+		PhoneOSTp:    p.PhoneOSTp,
+		IdCardAudit:  new(int),
 		//PushFlag:    new(int),
 		//PushTryCount:    new(int),
 		//SmsFlag: new(int),
 		ClassIsp: p.ClassISP,
 		NewPhone: p.Number,
-		Status: p.Status,
+		Status:   p.Status,
+	}
+
+	if acty.Valid == nil {
+		acty.Valid = new(int)
+		*acty.Valid = 1
+	}
+	*acty.IdCardAudit = CONST_IDCARD_Audit_pending
+	//*acty.PushFlag = 0
+	//*acty.PushTryCount = 0
+	//*acty.SmsFlag = 0
+
+	return acty
+}
+
+func (this *CardOrder) FtParseAdd2(p *api.OldCardOrderApply, OrderId string, ClassTp, Status int, Province, City, Area, Town, Address, IP string) *CardOrder {
+	acty := &CardOrder{
+		OrderNo:  &OrderId,
+		TrueName: p.TrueName,
+		IdCard:   p.IdCard,
+		ClassTp:  &ClassTp,
+		Phone:    p.Phone,
+		Province: &Province,
+		City:     &City,
+		Area:     &Area,
+		Town:     &Town,
+		Address:  &Address,
+		IP:       &IP,
+
+		IdCardAudit: new(int),
+		//PushFlag:    new(int),
+		//PushTryCount:    new(int),
+		Status: &Status,
 	}
 
 	if acty.Valid == nil {
@@ -122,25 +163,25 @@ func (this *CardOrder) FtParseAdd(p *api.CardOrderApply, OrderId string) *CardOr
 
 func (this *CardOrder) BkParse(p *api.BkCardOrder) *CardOrder {
 	acty := &CardOrder{
-		Id : p.Id,
-		ClassTp: p.ClassId,
-		Status: p.Status,
-		TrueName: p.TrueName,
-		IdCard: p.IdCard,
-		Phone: p.Phone,
-		NewPhone: p.NewPhone,
-		Province: p.Province,
-		DeliverAt: p.DeliverAt,
-		City: p.City,
-		Area: p.Area,
-		Town: p.Town,
-		Address: p.Address,
-		PhoneOSTp: p.PhoneOSTp,
-		IP : p.IP,
-		Express: p.Express,
-		ExpressNo: p.ExpressNo,
+		OrderNo:            p.OrderNo,
+		ClassTp:       p.ClassId,
+		Status:        p.Status,
+		TrueName:      p.TrueName,
+		IdCard:        p.IdCard,
+		Phone:         p.Phone,
+		NewPhone:      p.NewPhone,
+		Province:      p.Province,
+		DeliverAt:     p.DeliverAt,
+		City:          p.City,
+		Area:          p.Area,
+		Town:          p.Town,
+		Address:       p.Address,
+		PhoneOSTp:     p.PhoneOSTp,
+		IP:            p.IP,
+		Express:       p.Express,
+		ExpressNo:     p.ExpressNo,
 		ExpressRemark: p.ExpressRemark,
-		ICCID: p.ICCID,
+		ICCID:         p.ICCID,
 	}
 
 	acty.Valid = p.Valid
@@ -150,45 +191,54 @@ func (this *CardOrder) BkParse(p *api.BkCardOrder) *CardOrder {
 
 func (this *CardOrder) BkParseExtraImport(p *api.BkCardOrderExtraImprot) *CardOrder {
 	acty := &CardOrder{
-		OrderNo: p.OrderNo,
+		OrderNo:  p.OrderNo,
 		NewPhone: p.NewPhone,
 
-		Express: p.Express,
+		Express:   p.Express,
 		ExpressNo: p.ExpressNo,
-		ICCID: p.ICCID,
-		Guishudi: p.Guishudi,
-
+		ICCID:     p.ICCID,
+		Guishudi:  p.Guishudi,
+		Status:    new(int),
+		DeliverAt: new(int64),
 	}
-
+	*acty.DeliverAt = time.Now().Unix()
+	*acty.Status = CONST_OrderStatus_Already_Delivered
 	return acty
 }
 
 func (this *CardOrder) BkParseList(p *api.BkCardOrderList) *CardOrder {
 	acty := &CardOrder{
-		Id : p.Id,
-		ClassTp : p.ClassTp,
-		Status: p.Status,
-		TrueName : p.TrueName,
-		IdCard : p.IdCard,
-		Phone: p.Phone,
-		Province: p.Province,
-		City : p.City,
-		Area: p.Area,
-		Town: p.Town,
-		Address: p.Address,
-		PhoneOSTp :p.PhoneOSTp,
-		IP: p.IP,
-
+		Id:        p.Id,
+		ClassTp:   p.ClassTp,
+		Status:    p.Status,
+		TrueName:  p.TrueName,
+		IdCard:    p.IdCard,
+		Phone:     p.Phone,
+		Province:  p.Province,
+		City:      p.City,
+		Area:      p.Area,
+		Town:      p.Town,
+		Address:   p.Address,
+		PhoneOSTp: p.PhoneOSTp,
+		IP:        p.IP,
 	}
 	acty.Valid = p.Valid
 	return acty
 }
 
-func (this *CardOrder) TxLockUniqueByIdCardAndTime(tx *gorm.DB, idcard string, createdAt int64, classTp int) (bool, error) {
+func (this *CardOrder) FtParseStatus(p *api.FtCardOrderStatus) *CardOrder {
+	acty := &CardOrder{
+		OrderNo: &p.OrderNo,
+		Status:    p.Status,
+	}
+	return acty
+}
+
+func (this *CardOrder) LockUniqueByIdCardAndTime(idcard string, createdAt int64, classTp int) (bool, error) {
 	count := 0
-	err := tx.Model(this).Set("gorm:query_option", "FOR UPDATE").Where("idcard = ? and class_tp = ? and created_at >= ? and valid = 1", idcard, classTp, createdAt).Count(&count).Error
+	err := db.GDbMgr.Get().Model(this).Where("idcard = ? and class_tp = ? and created_at >= ? and valid = 1", idcard, classTp, createdAt).Count(&count).Error
 	if err != nil {
-		return  false,err
+		return false, err
 	}
 	return count == 0, nil
 }
@@ -196,7 +246,7 @@ func (this *CardOrder) TxLockUniqueByIdCardAndTime(tx *gorm.DB, idcard string, c
 func (this *CardOrder) Add() error {
 	err := db.GDbMgr.Get().Create(this).Error
 	if err != nil {
-		return  err
+		return err
 	}
 	return nil
 }
@@ -204,7 +254,7 @@ func (this *CardOrder) Add() error {
 func (this *CardOrder) TxAdd(gb *gorm.DB) error {
 	err := gb.Create(this).Error
 	if err != nil {
-		return  err
+		return err
 	}
 	return nil
 }
@@ -213,7 +263,7 @@ func (this *CardOrder) CountByConds(condPair []*SqlPairCondition) (int64, error)
 	var count int64
 	query := db.GDbMgr.Get().Model(this).Where(this)
 
-	for i:=0; i < len(condPair);i++ {
+	for i := 0; i < len(condPair); i++ {
 		if condPair[i] == nil {
 			continue
 		}
@@ -222,14 +272,14 @@ func (this *CardOrder) CountByConds(condPair []*SqlPairCondition) (int64, error)
 
 	err := query.Count(&count).Error
 
-	return count,err
+	return count, err
 }
 
-func (this *CardOrder) ListWithConds(page, size int64, needFields []string,  condPair []*SqlPairCondition) (*common.Result, error) {
+func (this *CardOrder) ListWithConds(page, size int64, needFields []string, condPair []*SqlPairCondition) (*common.Result, error) {
 	var list []*CardOrder
 	query := db.GDbMgr.Get().Where(this)
 
-	for i:=0; i < len(condPair);i++ {
+	for i := 0; i < len(condPair); i++ {
 		if condPair[i] == nil {
 			continue
 		}
@@ -248,7 +298,7 @@ func (this *CardOrder) ListAreaCountWithConds(page, size int64, condPair []*SqlP
 	var list []*CardAreasheet
 	query := db.GDbMgr.Get().Where(this)
 
-	for i:=0; i < len(condPair);i++ {
+	for i := 0; i < len(condPair); i++ {
 		if condPair[i] == nil {
 			continue
 		}
@@ -263,7 +313,24 @@ func (this *CardOrder) ListAreaCountWithConds(page, size int64, condPair []*SqlP
 func (this *CardOrder) Update() error {
 	err := db.GDbMgr.Get().Model(this).Where("id = ? ", this.Id).Updates(this).Error
 	if err != nil {
-		return  err
+		return err
+	}
+	return nil
+}
+
+
+func (this *CardOrder) UpdateByOrderNo() error {
+	err := db.GDbMgr.Get().Model(this).Where("order_no = ? ", this.OrderNo).Updates(this).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (this *CardOrder) UpdateStatusByOrderNo(orderNo string, status int) error {
+	err := db.GDbMgr.Get().Model(this).Where("order_no = ? ", orderNo).Update("status", status).Error
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -271,22 +338,36 @@ func (this *CardOrder) Update() error {
 func (this *CardOrder) UpdatesStatus(ids []*int64, Status int) error {
 	err := db.GDbMgr.Get().Model(this).Where("id IN (?)", ids).Update("status", Status).Error
 	if err != nil {
-		return  err
+		return err
 	}
 	return nil
 }
 
-func (this *CardOrder) UpdatesPhotosByOrderNo(OrderNo, url1, url2, url3 string) error {
-	err := db.GDbMgr.Get().Model(this).Where("order_no = ?", OrderNo).Updates(map[string]string{"dataurl1":url1, "dataurl2":url2, "dataurl3":url3}).Error
+func (this *CardOrder) UpdatesStatusByOrderNo(nos []*string, Status int) error {
+	err := db.GDbMgr.Get().Model(this).Where("order_no IN (?)", nos).Update("status", Status).Error
 	if err != nil {
-		return  err
+		return err
+	}
+	return nil
+}
+
+func (this *CardOrder) UpdatesStatusByNewphone(phones []*string, Status int) (int64,error) {
+
+	query := db.GDbMgr.Get().Model(this).Where("new_phone IN (?)", phones).Update("status", Status)
+	return query.RowsAffected, query.Error
+}
+
+func (this *CardOrder) UpdatesPhotosByOrderNo(OrderNo, url1, url2, url3 string) error {
+	err := db.GDbMgr.Get().Model(this).Where("order_no = ?", OrderNo).Updates(map[string]string{"dataurl1": url1, "dataurl2": url2, "dataurl3": url3}).Error
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
 func (this *CardOrder) UpdatesByOrderNo() (int64, error) {
 	query := db.GDbMgr.Get().Model(this).Where("order_no = ?", this.OrderNo).Updates(this)
-	return query.RowsAffected,query.Error
+	return query.RowsAffected, query.Error
 
 }
 
@@ -294,17 +375,53 @@ func (this *CardOrder) Get() (*CardOrder, error) {
 	acty := new(CardOrder)
 	err := db.GDbMgr.Get().Where("id = ?", this.Id).Last(acty).Error
 	if err == gorm.ErrRecordNotFound {
-		return nil,nil
+		return nil, nil
 	}
-	return acty,err
+	return acty, err
 }
 
+func (this *CardOrder) GetByIdcardAndPhone(conds *SqlPairCondition) (*CardOrder, error) {
+	acty := new(CardOrder)
+	query := db.GDbMgr.Get().Where("idcard = ? and phone = ?", this.IdCard, this.Phone)
+	if conds != nil {
+		query = query.Where(conds.Key, conds.Value)
+	}
+	err := query.Last(acty).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return acty, err
+}
+
+func (this *CardOrder) GetByOrderNo(no string) (*CardOrder, error) {
+	acty := new(CardOrder)
+	err := db.GDbMgr.Get().Where("order_no = ?", no).Last(acty).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return acty, err
+}
+
+func (this *CardOrder) GetById(id int64) (*CardOrder, error) {
+	acty := new(CardOrder)
+	err := db.GDbMgr.Get().Where("id = ?", id).Last(acty).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return acty, err
+}
+
+func (this *CardOrder) Del() error {
+	err := db.GDbMgr.Get().Where("id = ?", this.Id).Delete(&CardOrder{}).Error
+
+	return err
+}
 
 func (this *CardOrder) GetByIp(ip string, condPair []*SqlPairCondition) (*CardOrder, error) {
 	acty := new(CardOrder)
 	query := db.GDbMgr.Get().Where("ip = ?", ip)
 
-	for i:=0; i < len(condPair);i++ {
+	for i := 0; i < len(condPair); i++ {
 		if condPair[i] == nil {
 			continue
 		}
@@ -312,16 +429,16 @@ func (this *CardOrder) GetByIp(ip string, condPair []*SqlPairCondition) (*CardOr
 	}
 	err := query.Last(acty).Error
 	if err == gorm.ErrRecordNotFound {
-		return nil,nil
+		return nil, nil
 	}
-	return acty,err
+	return acty, err
 }
 
 func (this *CardOrder) GetLimitByCond(limit int, condPair []*SqlPairCondition) ([]*CardOrder, error) {
 	var arr []*CardOrder
 	query := db.GDbMgr.Get().Where(this)
 
-	for i:=0; i < len(condPair);i++ {
+	for i := 0; i < len(condPair); i++ {
 		if condPair[i] == nil {
 			continue
 		}
@@ -330,7 +447,25 @@ func (this *CardOrder) GetLimitByCond(limit int, condPair []*SqlPairCondition) (
 
 	err := query.Order("id DESC").Find(&arr).Error
 	if err == gorm.ErrRecordNotFound {
-		return nil,nil
+		return nil, nil
 	}
-	return arr,err
+	return arr, err
+}
+
+func (this *CardOrder) GetLimitByCond2(limit int, condPair []*SqlPairCondition) ([]*CardOrder, error) {
+	var arr []*CardOrder
+	query := db.GDbMgr.Get().Where(this)
+
+	for i := 0; i < len(condPair); i++ {
+		if condPair[i] == nil {
+			continue
+		}
+		query = query.Where(condPair[i].Key, condPair[i].Value)
+	}
+
+	err := query.Order("id").Find(&arr).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return arr, err
 }

@@ -1,13 +1,14 @@
 package main
 
 import (
-	"github.com/kataras/iris"
-	"github.com/iris-contrib/middleware/cors"
 	"LianFaPhone/lfp-marketing-api/controllers"
+	"LianFaPhone/lfp-marketing-api/controllers/black"
 	. "LianFaPhone/lfp-marketing-api/controllers/order"
+	"github.com/iris-contrib/middleware/cors"
+	"github.com/kataras/iris"
 )
 
-func (this *WebServer) bkroutes()  {
+func (this *WebServer) bkroutes() {
 	app := this.mBkIris
 	crs := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
@@ -24,19 +25,24 @@ func (this *WebServer) bkroutes()  {
 	})
 	//interceptor := new(controllers.Interceptor)
 
-
 	v1bk := app.Party("/v1/bk/market", crs)
 	{
-		phoneNumberPy := v1bk.Party("/phone_number")
+		phoneNumberPy := v1bk.Party("/numberpool")
 		{
 			ac := new(controllers.PhoneNumberPool)
 
 			phoneNumberPy.Post("/adds", ac.Adds)
 			phoneNumberPy.Post("/update", ac.Update)
-			phoneNumberPy.Post("/get", ac.Get)
+			phoneNumberPy.Any("/get", ac.Get)
 			phoneNumberPy.Post("/list", ac.BkList)
+
+			phoneNumberPy.Post("/lock", ac.BkLock)
+			phoneNumberPy.Post("/unlock", ac.BkUnLock)
+			phoneNumberPy.Post("/use", ac.BkUse)
+			phoneNumberPy.Post("/unuse", ac.BkUnUse)
+
 		}
-		phoneNumberLvPy := v1bk.Party("/phone_number_level")
+		phoneNumberLvPy := v1bk.Party("/numberpool_level")
 		{
 			ac := new(controllers.PhoneNumberLevel)
 
@@ -48,17 +54,29 @@ func (this *WebServer) bkroutes()  {
 		{
 			ac := new(controllers.PhoneOs)
 
-			osphonePy.Post("/gets", ac.Gets)
+			osphonePy.Any("/gets", ac.Gets)
 		}
 		simPy := v1bk.Party("/card_order")
 		{
 			ac := new(CardOrder)
 
 			simPy.Post("/list", ac.BkList)
+			simPy.Post("/list-all", ac.BkList)
+			simPy.Post("/list-new", ac.BkList)
+			simPy.Post("/list-new-unfinish", ac.BkList)
+			simPy.Post("/list-export", ac.BkList)
+			simPy.Post("/list-deliver", ac.BkList)
+			simPy.Post("/list-waitdone", ac.BkList)
+			simPy.Post("/list-alreadydone", ac.BkList)
+			simPy.Post("/list-recyclebin", ac.BkList)
+			simPy.Post("/list-unmatch", ac.BkList)
+			simPy.Post("/list-activated", ac.BkList)
 			simPy.Post("/update", ac.BkUpdate)
 			simPy.Post("/status-sets", ac.BkUpdatesStatus)
-			simPy.Post("/extra-import", ac.BkOrderExtraInport)
-
+			simPy.Post("/express-import", ac.BkOrderExtraInport)
+			simPy.Post("/idcard-check", ac.BkIdCardCheck)
+			simPy.Post("/active-import", ac.BkOrderActiveInport)
+			simPy.Post("/new-import", ac.BkOrderNewInport)
 		}
 		datePy := v1bk.Party("/datesheet")
 		{
@@ -76,7 +94,11 @@ func (this *WebServer) bkroutes()  {
 		{
 			ac := new(controllers.ClassTp)
 
-			classPy.Post("/gets", ac.Gets)
+			classPy.Any("/gets", ac.Gets)
+			classPy.Post("/add", ac.Add)
+			classPy.Any("/get", ac.Get)
+			classPy.Post("/update", ac.Update)
+			classPy.Post("/list", ac.List)
 		}
 		statusPy := v1bk.Party("/orderstatus")
 		{
@@ -84,6 +106,45 @@ func (this *WebServer) bkroutes()  {
 
 			statusPy.Post("/gets", ac.Gets)
 		}
+		photoPy := v1bk.Party("/photo")
+		{
+			ac := new(controllers.UploadFile)
 
+			photoPy.Any("/download", ac.PhotoDownload)
+		}
+		ossmarketPy := v1bk.Party("/oss-market")
+		{
+			ac := new(controllers.UploadFile)
+
+			ossmarketPy.Any("/upload", ac.UpSso)
+		}
+		blacklistPhonePy := v1bk.Party("/blacklist/phone")
+		{
+			cc := new(black.BlacklistPhone)
+			blacklistPhonePy.Post("/add", cc.Add)
+			blacklistPhonePy.Post("/update", cc.Update)
+			blacklistPhonePy.Post("/list", cc.List)
+		}
+		blacklistIdcardPy := v1bk.Party("/blacklist/idcard")
+		{
+			cc := new(black.BlacklistIdCard)
+			blacklistIdcardPy.Post("/add", cc.Add)
+			blacklistIdcardPy.Post("/update", cc.Update)
+			blacklistIdcardPy.Post("/list", cc.List)
+		}
+		blacklistAreaPy := v1bk.Party("/blacklist/area")
+		{
+			cc := new(black.BlacklistArea)
+			blacklistAreaPy.Post("/add", cc.Add)
+			blacklistAreaPy.Post("/update", cc.Update)
+			blacklistAreaPy.Post("/list", cc.List)
+		}
+		qaPy := v1bk.Party("/qa")
+		{
+			cc := new(controllers.QaCtrler)
+			qaPy.Post("/add", cc.Add)
+			qaPy.Post("/update", cc.Update)
+			qaPy.Post("/list", cc.List)
+		}
 	}
 }

@@ -1,34 +1,34 @@
 package models
 
 import (
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"LianFaPhone/lfp-base/log/zap"
 	"LianFaPhone/lfp-marketing-api/config"
-	"go.uber.org/zap"
 	"LianFaPhone/lfp-marketing-api/db"
 	"fmt"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"go.uber.org/zap"
 )
 
 func InitDbTable() {
 	log.ZapLog().Info("start InitDbTable")
 	if !config.GConfig.Db.Debug {
-		log.ZapLog().Info("end InitDbTable" )
+		log.ZapLog().Info("end InitDbTable")
 		fmt.Println(config.GConfig.Db.Debug)
 		return
 	}
-	err := db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate(&CardOrder{}, &CardDatesheet{}).Error
+	err := db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate(&CardOrder{}, &CardDatesheet{}, &CardAreasheet{}).Error
 	if err != nil {
 		log.ZapLog().Error("AutoMigrate err", zap.Error(err))
 	}
-	err = db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate( &IdRecorder{}, &ActiveCode{}, &BlacklistIdcard{}).Error
+	err = db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate(&IdRecorder{}, &ActiveCode{}, &BlacklistIdcard{}).Error
 	if err != nil {
 		log.ZapLog().Error("AutoMigrate err", zap.Error(err))
 	}
-	err = db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate( &BlacklistPhone{}, &BlacklistArea{}).Error
+	err = db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate(&BlacklistPhone{}, &BlacklistArea{}).Error
 	if err != nil {
 		log.ZapLog().Error("AutoMigrate err", zap.Error(err))
 	}
-	err = db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate( &BsStreet{}).Error
+	err = db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate(&BsStreet{}, &CardOrderNotify{}, &IdRecorder{}).Error
 	if err != nil {
 		log.ZapLog().Error("AutoMigrate err", zap.Error(err))
 	}
@@ -36,7 +36,10 @@ func InitDbTable() {
 	if err != nil {
 		log.ZapLog().Error("AutoMigrate err", zap.Error(err))
 	}
-
+	err = db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate(&BsProvice{}, &BsCity{}, &BsArea{}, &CardOrderHistory{}, &CardClass{}).Error
+	if err != nil {
+		log.ZapLog().Error("AutoMigrate err", zap.Error(err))
+	}
 
 	log.ZapLog().Info("end InitDbTable")
 }

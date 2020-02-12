@@ -1,21 +1,20 @@
-package black
+package controllers
 
 import (
 	apibackend "LianFaPhone/lfp-api/errdef"
 	. "LianFaPhone/lfp-base/log/zap"
 	"LianFaPhone/lfp-marketing-api/api"
-	. "LianFaPhone/lfp-marketing-api/controllers"
 	"LianFaPhone/lfp-marketing-api/models"
 	"github.com/kataras/iris"
 	"go.uber.org/zap"
 )
 
-type BlacklistIdCard struct {
+type QaCtrler struct {
 	Controllers
 }
 
-func (this *BlacklistIdCard) List(ctx iris.Context) {
-	param := new(api.BkBlacklistIdcardList)
+func (this *QaCtrler) Add(ctx iris.Context) {
+	param := new(api.BkQaAdd)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -24,15 +23,45 @@ func (this *BlacklistIdCard) List(ctx iris.Context) {
 		return
 	}
 
-	//condPair := make([]*models.SqlPairCondition, 0, 2)
-	//if param.StartCreatedAt != nil {
-	//	condPair= append(condPair, &models.SqlPairCondition{"created_at >= ?", param.StartCreatedAt})
-	//}
-	//if param.EndCreatedAt != nil {
-	//	condPair= append(condPair, &models.SqlPairCondition{"created_at <= ?", param.EndCreatedAt})
-	//}
+	err = new(models.Qa).ParseAdd(param).Add()
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("Update err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		return
+	}
+	this.Response(ctx, nil)
+}
 
-	ll, err := new(models.BlacklistIdcard).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
+func (this *QaCtrler) Update(ctx iris.Context) {
+	param := new(api.BkQa)
+
+	err := Tools.ShouldBindJSON(ctx, param)
+	if err != nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		ZapLog().Error("param err", zap.Error(err))
+		return
+	}
+
+	err = new(models.Qa).Parse(param).Update()
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("Update err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		return
+	}
+	this.Response(ctx, nil)
+}
+
+func (this *QaCtrler) List(ctx iris.Context) {
+	param := new(api.BkQaList)
+
+	err := Tools.ShouldBindJSON(ctx, param)
+	if err != nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		ZapLog().Error("param err", zap.Error(err))
+		return
+	}
+
+	ll, err := new(models.Qa).ListWithConds(param.Page, param.Size, param.LikeStr,nil, nil)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -41,40 +70,3 @@ func (this *BlacklistIdCard) List(ctx iris.Context) {
 	this.Response(ctx, ll)
 }
 
-func (this *BlacklistIdCard) Update(ctx iris.Context) {
-	param := new(api.BkBlacklistIdcard)
-
-	err := Tools.ShouldBindJSON(ctx, param)
-	if err != nil {
-		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
-		ZapLog().Error("param err", zap.Error(err))
-		return
-	}
-
-	err = new(models.BlacklistIdcard).Parse(param).Update()
-	if err != nil {
-		ZapLog().With(zap.Error(err)).Error("Update err")
-		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
-		return
-	}
-	this.Response(ctx, nil)
-}
-
-func (this *BlacklistIdCard) Add(ctx iris.Context) {
-	param := new(api.BkBlacklistIdcardAdd)
-
-	err := Tools.ShouldBindJSON(ctx, param)
-	if err != nil {
-		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
-		ZapLog().Error("param err", zap.Error(err))
-		return
-	}
-
-	err = new(models.BlacklistIdcard).ParseAdd(param).Add()
-	if err != nil {
-		ZapLog().With(zap.Error(err)).Error("Update err")
-		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
-		return
-	}
-	this.Response(ctx, nil)
-}

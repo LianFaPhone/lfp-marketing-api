@@ -1,20 +1,19 @@
 package db
 
 import (
-"fmt"
-"github.com/jinzhu/gorm"
-_ "github.com/jinzhu/gorm/dialects/mysql"
-"time"
+	"fmt"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"time"
 )
 
 var GDbMgr DbMgr
 
 type DbMgr struct {
-	mConn *gorm.DB
-	mOption   *DbOptions
-	mFlag bool
+	mConn   *gorm.DB
+	mOption *DbOptions
+	mFlag   bool
 }
-
 
 func (this *DbMgr) Init(options *DbOptions) (err error) {
 	if this.mFlag {
@@ -23,7 +22,7 @@ func (this *DbMgr) Init(options *DbOptions) (err error) {
 	this.mOption = options
 	fmt.Println("db=", *options)
 	this.mConn, err = gorm.Open("mysql",
-		options.User+":"+options.Pass+"@tcp("+options.Host+":"+options.Port+")/"+options.DbName+"?charset=utf8&parseTime=True&loc=Local")
+		options.User+":"+options.Pass+"@tcp("+options.Host+":"+options.Port+")/"+options.DbName+"?charset=utf8mb4&parseTime=True&loc=Local")
 	if err != nil {
 		return err
 	}

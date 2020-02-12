@@ -1,17 +1,17 @@
 package main
 
 import (
-
 	"LianFaPhone/lfp-marketing-api/config"
 	//"BastionPay/bas-filetransfer-srv/api"
+	"LianFaPhone/lfp-marketing-api/controllers"
 	"LianFaPhone/lfp-marketing-api/db"
 	"LianFaPhone/lfp-marketing-api/models"
-	"LianFaPhone/lfp-marketing-api/controllers"
 	"math/rand"
 	"time"
 
 	"LianFaPhone/lfp-marketing-api/sdk"
 	"LianFaPhone/lfp-marketing-api/tasker"
+	"os"
 )
 
 func Loader() error {
@@ -31,7 +31,7 @@ func Loader() error {
 	}
 	models.InitDbTable()
 	db.GCache.Init()
-	//db.GCache.SetActivityFunc(new(models.Activity).InnerGetByUuid)
+	db.GCache.SetBlacklistArea(new(models.BlacklistArea).InnerGetBy)
 	//db.GCache.SetShareInfoFunc(new(models.ShareInfo).InnerGetByAcId)
 	//db.GCache.SetPageFunc(new(models.Page).InnerGetByAcId)
 	//db.GCache.SetRobberFunc(new(models.Robber).InnerGetRedIdAndPhone)
@@ -47,9 +47,12 @@ func Loader() error {
 	sdk.GNotifySdk.Init(config.GConfig.BasNotify.Addr)
 	tasker.GTasker.Init()
 	tasker.GTasker.Start()
+	tasker.GNotifyTasker.Init()
+	tasker.GNotifyTasker.Start()
 	if err := controllers.Init(); err != nil {
 		return err
 	}
+	os.MkdirAll("./photos",os.ModePerm)
 	rand.Seed(time.Now().Unix())
 	return nil
 }

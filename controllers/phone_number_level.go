@@ -1,25 +1,25 @@
 package controllers
 
 import (
-	"github.com/kataras/iris"
-	"go.uber.org/zap"
-	"LianFaPhone/lfp-marketing-api/api"
-	"LianFaPhone/lfp-marketing-api/models"
 	apibackend "LianFaPhone/lfp-api/errdef"
 	. "LianFaPhone/lfp-base/log/zap"
+	"LianFaPhone/lfp-marketing-api/api"
+	"LianFaPhone/lfp-marketing-api/models"
+	"github.com/kataras/iris"
+	"go.uber.org/zap"
 )
 
-type PhoneNumberLevel struct{
+type PhoneNumberLevel struct {
 	Controllers
 }
 
-func (this * PhoneNumberLevel) FtGets(ctx iris.Context) {
+func (this *PhoneNumberLevel) FtGets(ctx iris.Context) {
 	param := new(api.BkPhoneNumberLevelGets)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
-		ZapLog().Error( "param err", zap.Error(err))
+		ZapLog().Error("param err", zap.Error(err))
 		return
 	}
 
@@ -28,8 +28,8 @@ func (this * PhoneNumberLevel) FtGets(ctx iris.Context) {
 		*param.Valid = 1
 	}
 
-	ll,err := new(models.PhoneNumberLevel).ParseGets(param).Gets()
-	if err != nil{
+	ll, err := new(models.PhoneNumberLevel).ParseGets(param).Gets()
+	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
@@ -37,18 +37,18 @@ func (this * PhoneNumberLevel) FtGets(ctx iris.Context) {
 	this.Response(ctx, ll)
 }
 
-func (this * PhoneNumberLevel) Update(ctx iris.Context) {
+func (this *PhoneNumberLevel) Update(ctx iris.Context) {
 	param := new(api.BkPhoneNumberLevelUpdate)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
-		ZapLog().Error( "param err", zap.Error(err))
+		ZapLog().Error("param err", zap.Error(err))
 		return
 	}
 
 	err = new(models.PhoneNumberLevel).ParseUpdate(param).Update()
-	if err != nil{
+	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
@@ -56,17 +56,17 @@ func (this * PhoneNumberLevel) Update(ctx iris.Context) {
 	this.Response(ctx, nil)
 }
 
-func (this * PhoneNumberLevel) Add(ctx iris.Context) {
+func (this *PhoneNumberLevel) Add(ctx iris.Context) {
 	param := new(api.BkPhoneNumberLevelAdd)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
-		ZapLog().Error( "param err", zap.Error(err))
+		ZapLog().Error("param err", zap.Error(err))
 		return
 	}
 
-	uFlag,err := new(models.PhoneNumberLevel).UniqueByLevel(*param.Level)
+	uFlag, err := new(models.PhoneNumberLevel).UniqueByLevel(*param.Level)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("UniqueByLevel err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -78,7 +78,7 @@ func (this * PhoneNumberLevel) Add(ctx iris.Context) {
 	}
 
 	err = new(models.PhoneNumberLevel).ParseAdd(param).Add()
-	if err != nil{
+	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
@@ -86,18 +86,18 @@ func (this * PhoneNumberLevel) Add(ctx iris.Context) {
 	this.Response(ctx, nil)
 }
 
-func (this * PhoneNumberLevel) List(ctx iris.Context) {
+func (this *PhoneNumberLevel) List(ctx iris.Context) {
 	param := new(api.BkPhoneNumberLevelList)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
-		ZapLog().Error( "param err", zap.Error(err))
+		ZapLog().Error("param err", zap.Error(err))
 		return
 	}
 
-	ll,err := new(models.PhoneNumberLevel).ParseList(param).ListWithConds(param.Page, param.Size, nil,nil)
-	if err != nil{
+	ll, err := new(models.PhoneNumberLevel).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
+	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return

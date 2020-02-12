@@ -10,12 +10,12 @@ import (
 	"go.uber.org/zap"
 )
 
-type BlacklistIdCard struct {
+type BlacklistArea struct {
 	Controllers
 }
 
-func (this *BlacklistIdCard) List(ctx iris.Context) {
-	param := new(api.BkBlacklistIdcardList)
+func (this *BlacklistArea) List(ctx iris.Context) {
+	param := new(api.BkBlacklistAreaList)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -32,7 +32,7 @@ func (this *BlacklistIdCard) List(ctx iris.Context) {
 	//	condPair= append(condPair, &models.SqlPairCondition{"created_at <= ?", param.EndCreatedAt})
 	//}
 
-	ll, err := new(models.BlacklistIdcard).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
+	ll, err := new(models.BlacklistArea).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -41,8 +41,8 @@ func (this *BlacklistIdCard) List(ctx iris.Context) {
 	this.Response(ctx, ll)
 }
 
-func (this *BlacklistIdCard) Update(ctx iris.Context) {
-	param := new(api.BkBlacklistIdcard)
+func (this *BlacklistArea) Update(ctx iris.Context) {
+	param := new(api.BkBlacklistArea)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -51,7 +51,7 @@ func (this *BlacklistIdCard) Update(ctx iris.Context) {
 		return
 	}
 
-	err = new(models.BlacklistIdcard).Parse(param).Update()
+	err = new(models.BlacklistArea).Parse(param).Update()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -60,8 +60,8 @@ func (this *BlacklistIdCard) Update(ctx iris.Context) {
 	this.Response(ctx, nil)
 }
 
-func (this *BlacklistIdCard) Add(ctx iris.Context) {
-	param := new(api.BkBlacklistIdcardAdd)
+func (this *BlacklistArea) Add(ctx iris.Context) {
+	param := new(api.BkBlacklistAreaAdd)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -70,7 +70,7 @@ func (this *BlacklistIdCard) Add(ctx iris.Context) {
 		return
 	}
 
-	err = new(models.BlacklistIdcard).ParseAdd(param).Add()
+	err = new(models.BlacklistArea).ParseAdd(param).Add()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
