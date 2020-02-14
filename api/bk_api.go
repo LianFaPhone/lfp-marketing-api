@@ -329,6 +329,9 @@ type (
 		FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
 		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		ShortChain *string `valid:"optional" json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
+		LongChain *string `valid:"optional" json:"long_chain,omitempty"     gorm:"column:long_chain;type:varchar(250)"`
+		ThirdLongChain *string `valid:"optional" json:"third_long_chain,omitempty"     gorm:"column:third_long_chain;type:varchar(250)"`
+		MaxLimit    *int    `valid:"optional" json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 
 
 	}
@@ -345,6 +348,10 @@ type (
 		FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
 		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		ShortChain *string `valid:"optional" json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
+		LongChain *string `valid:"optional" json:"long_chain,omitempty"     gorm:"column:long_chain;type:varchar(250)"`
+		ThirdLongChain *string `valid:"optional" json:"third_long_chain,omitempty"     gorm:"column:third_long_chain;type:varchar(250)"`
+		MaxLimit    *int    `valid:"optional" json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+
 	}
 
 	BkCardClassList struct{
@@ -380,6 +387,13 @@ type (
 
 	BkQaList struct{
 		LikeStr      *string  `valid:"required" json:"like_str,omitempty"`
+		Page         int64   `valid:"required" json:"page,omitempty"`
+		Size         int64   `valid:"optional" json:"size,omitempty"`
+	}
+
+	BkCardOrderLogList struct{
+		OrderId    *int64   `valid:"optional" json:"order_id,omitempty"  gorm:"column:order_id;type:bigint(20);"` //订单号
+		OrderNo    *string  `valid:"optional" json:"order_no,omitempty"   gorm:"column:order_no;type:varchar(30);index"` //订单号
 		Page         int64   `valid:"required" json:"page,omitempty"`
 		Size         int64   `valid:"optional" json:"size,omitempty"`
 	}

@@ -78,13 +78,27 @@ func (this *ClassTp) FtGet(ctx iris.Context) {
 		return
 	}
 
-	ll, err := new(models.CardClass).GetByName(className)
+	cc, err := new(models.CardClass).GetByNameFromCache(className)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
 	}
-	this.Response(ctx, ll)
+	if cc == nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_NOT_FOUND.Desc())
+		return
+	}
+
+	dd := &models.CardClass{
+		ISP: cc.ISP,
+		BigTp: cc.BigTp,
+		Tp: cc.Tp,
+		Name: cc.Name,
+		ImgUrl: cc.ImgUrl,
+		SmsFlag: cc.SmsFlag,
+	}
+
+	this.Response(ctx, dd)
 }
 
 

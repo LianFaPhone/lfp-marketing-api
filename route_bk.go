@@ -56,6 +56,12 @@ func (this *WebServer) bkroutes() {
 
 			osphonePy.Any("/gets", ac.Gets)
 		}
+		cardOrderLogPy := v1bk.Party("/card_order_log")
+		{
+			ac := new(CardOrderLog)
+
+			cardOrderLogPy.Post("/list", ac.BkList)
+		}
 		simPy := v1bk.Party("/card_order")
 		{
 			ac := new(CardOrder)

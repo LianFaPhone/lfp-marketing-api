@@ -25,11 +25,10 @@ func LoadConfig(path string) *Config {
 }
 
 func PreProcess() error {
-	if GConfig.Cache.ActivityMaxKey < 100 {
-		GConfig.Cache.ActivityMaxKey = 100
-	}
-	if GConfig.Cache.ActivityTimeout < 300 {
-		GConfig.Cache.ActivityTimeout = 3600
+	if GConfig.Cache.CardClassByNameMaxKey < 10 {
+		GConfig.Cache.CardClassByNameMaxKey = 10	}
+	if GConfig.Cache.CardClassByNameTimeout < 300 {
+		GConfig.Cache.CardClassByNameTimeout = 3600
 	}
 	if GConfig.Cache.SponsorActivityMaxKey < 100 {
 		GConfig.Cache.SponsorActivityMaxKey = 100
@@ -98,6 +97,8 @@ type Config struct {
 	IdCardCheck     IdCardCheck     `yaml:"idcard_check"`
 	ChuangLan       ChuangLan       `yaml:"chuanglan"`
 	Aliyun          Aliyun         `yaml:"aliyun"`
+	Baidu           Baidu          `yaml:"baidu"`
+	Task            Task           `yaml:"task"`
 }
 
 type System struct {
@@ -109,8 +110,8 @@ type System struct {
 }
 
 type Cache struct {
-	ActivityMaxKey         int `yaml:"activity_max_key"`
-	ActivityTimeout        int `yaml:"activity_timeout"`
+	CardClassByNameMaxKey         int `yaml:"cardclassbyname_max_key"`
+	CardClassByNameTimeout        int `yaml:"cardclassbyname_timeout"`
 	SponsorActivityMaxKey  int `yaml:"sponsor_activity_max_key"`
 	SponsorActivityTimeout int `yaml:"sponsor_activity_timeout"`
 	SponsorMaxKey          int `yaml:"sponsor_max_key"`
@@ -186,5 +187,28 @@ type ChuangLan struct {
 	AppKey          string `yaml:"appKey"`
 	IdcardCheck_url string `yaml:"idcardcheck_url"`
 	UnnCheck_url    string `yaml:"unncheck_url"`
-	Host            string
+	Host            string `yaml:"host"`
+}
+
+type Baidu struct {
+	DwzToken string  `yaml:"dwz_token"`
+	DwzUrl   string  `yaml:"dwz_url"`
+}
+
+type Task struct{
+	SheetFlag bool  `yaml:"sheet_flag"`
+	SheetTicker int64  `yaml:"sheet_ticker"`
+	IpsFlag bool  `yaml:"ips_flag"`
+	IpsTicker int64  `yaml:"ips_ticker"`
+	HisFlag bool  `yaml:"his_flag"`
+	HisTicker int64  `yaml:"his_ticker"`
+	NotifyFlag bool  `yaml:"notify_flag"`
+	NotifyTicker int64  `yaml:"notify_ticker"`
+	Unfinish5MNotifyFlag bool  `yaml:"unfinish_5m_notify_flag"`
+	Unfinish5MNotifyTicker int64  `yaml:"unfinish_5m_notify_ticker"`
+	Unfinish5HNotifyFlag bool  `yaml:"unfinish_5h_notify_flag"`
+	Unfinish5HNotifyTicker int64  `yaml:"unfinish_5h_notify_ticker"`
+
+	ActiveFlag bool  `yaml:"active_flag"`
+	ActiveTicker int64  `yaml:"active_ticker"`
 }

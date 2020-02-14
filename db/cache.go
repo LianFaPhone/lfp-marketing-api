@@ -11,6 +11,8 @@ var GCache Cache
 
 type Cache struct {
 	BlacklistAreaCache gcache.Cache
+	CardClassByNameCache gcache.Cache
+	CardClassByTpCache gcache.Cache
 }
 
 func (this *Cache) Init() {
@@ -38,4 +40,28 @@ func (this *Cache) RemoveBlacklistArea(tp string) {
 		return
 	}
 	this.BlacklistAreaCache.Remove(tp)
+}
+
+//**************************************************/
+func (this *Cache) GetCardClassByName(code string) (interface{}, error) {
+	if this.CardClassByNameCache == nil {
+		return nil, errors.New("not init")
+	}
+	value, err := this.CardClassByNameCache.Get(code)
+	if err != nil {
+		return nil, err
+	}
+
+	return value, nil
+}
+
+func (this *Cache) SetCardClassByName(f func(key interface{}) (interface{}, *time.Duration, error)) {
+	this.CardClassByNameCache = gcache.New(config.GConfig.Cache.SponsorMaxKey).LRU().LoaderExpireFunc(f).Build()
+}
+
+func (this *Cache) RemoveCardClassByName(tp string) {
+	if this.CardClassByNameCache == nil {
+		return
+	}
+	this.CardClassByNameCache.Remove(tp)
 }

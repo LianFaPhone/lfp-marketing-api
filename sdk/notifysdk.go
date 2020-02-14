@@ -22,6 +22,7 @@ type SmsSend struct {
 	PlayTp   int      `valid:"optional" json:"play_tp,omitempty"`   // 0短信，1语音
 	IsRecord int      `valid:"optional" json:"is_record,omitempty"` // 0不记录，1记录
 	ReTry    int      `valid:"optional" json:"retry,omitempty"`     // 0不，1是
+	PlatformTp *int   `valid:"optional" json:"platform_tp,omitempty"`
 }
 
 type Response struct {
@@ -39,7 +40,7 @@ func (this *NotifySdk) Init(addr string) error {
 	return nil
 }
 
-func (this *NotifySdk) SendSms(Params []string, phone, tempName string, PlayTp int) error {
+func (this *NotifySdk) SendSms(Params []string, phone, tempName string, PlayTp int, PlatformTp *int) error {
 	param := &SmsSend{
 		TempName: &tempName,
 		Params:   Params,

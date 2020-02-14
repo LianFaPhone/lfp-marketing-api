@@ -102,7 +102,7 @@ func (this *NotifyTasker) notifyWork() {
 				switch *msgs[j].Tp {
 				case models.CONST_OrderNotifyTp_Express:
 					param := []string{*order.Express, *order.ExpressNo}
-					if err := sdk.GNotifySdk.SendSms(param, *order.Phone, "express_no", 0); err != nil {
+					if err := sdk.GNotifySdk.SendSms(param, *order.Phone, "express_no", 0, nil); err != nil {
 						ZapLog().Error("GNotifySdk.SendSms err", zap.Error(err))
 						if err := new(models.CardOrderNotify).IncrTryCount(*msgs[j].Id); err != nil {
 							ZapLog().Error("IncrTryCount err", zap.Error(err))

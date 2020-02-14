@@ -2,9 +2,7 @@ package tasker
 
 import (
 	. "LianFaPhone/lfp-base/log/zap"
-	"LianFaPhone/lfp-marketing-api/db"
 	"LianFaPhone/lfp-marketing-api/models"
-	"fmt"
 	"go.uber.org/zap"
 	"time"
 )
@@ -32,11 +30,19 @@ func (this *Tasker) run() {
 	//dateSheetTicker := time.NewTicker(time.Hour *2)
 	//ipsTicker := time.NewTicker(time.Minute *10)
 	activeCodeTicker := time.NewTicker(time.Hour * 10)
+	activeCodeTicker.Stop()
 
-	cardOrderSheetTicker := time.NewTicker(time.Minute * 1)
+	cardOrderSheetTicker := time.NewTicker(time.Minute * 10)
+	cardOrderSheetTicker.Stop()
 	cardOrderIpsTicker := time.NewTicker(time.Minute * 6)
 
 	cardOrderHistoryTicker := time.NewTicker(time.Hour * 6)
+	cardOrderHistoryTicker.Stop()
+
+	cardOrderUnFinishSms5MinTicker := time.NewTicker(time.Minute * 3)
+	cardOrderUnFinishSms5MinTicker.Stop()
+	cardOrderUnFinishSms1HourTicker := time.NewTicker(time.Minute * 60)
+	cardOrderUnFinishSms1HourTicker.Stop()
 
 	go func() {
 		defer models.PanicPrint()
@@ -49,6 +55,18 @@ func (this *Tasker) run() {
 			case <-cardOrderHistoryTicker.C:
 				go this.orderHistory()
 
+			}
+		}
+	}()
+
+	go func() {
+		defer models.PanicPrint()
+		for {
+			select {
+			case <-cardOrderUnFinishSms5MinTicker.C:
+				this.newUnFinishSmsWork5min()
+			case <-cardOrderUnFinishSms1HourTicker.C:
+				this.newUnFinishSmsWork5hour()
 			}
 		}
 	}()
@@ -78,344 +96,3 @@ func (this *Tasker) activeCodeWork() {
 	}
 }
 
-//多节点的时候考虑并发问题，或者加个开关，只让一个服务计算
-func (this *Tasker) sheetWork() {
-	defer models.PanicPrint()
-
-	ZapLog().Info("start to sheetWork")
-
-	idRecord, err := new(models.IdRecorder).GetByName("card_order_sheet")
-	if err != nil {
-		ZapLog().Error("IdRecorder GetByName err", zap.Error(err))
-		return
-	}
-	if idRecord == nil {
-		return
-	}
-
-	startId := int64(0)
-	if idRecord.IdTag != nil {
-		startId = *idRecord.IdTag
-	}
-
-	//todayUt := time.Now()
-	//dateStr := todayUt.In(time.FixedZone("UTC", 8*3600)).Format("2006/01/02")
-	//
-	//lastUt := time.Unix(todayUt.Unix() -14*3600, 0)
-	//lastDateStr := lastUt.In(time.FixedZone("UTC", 8*3600)).Format("2006/01/02")
-
-	for true {
-		conds := []*models.SqlPairCondition{
-			&models.SqlPairCondition{"id > ?", startId},
-		}
-
-		orders, err := new(models.CardOrder).GetLimitByCond(10, conds)
-		if err != nil {
-			ZapLog().Error("CardOrder GetLimitByCond err", zap.Error(err))
-			return
-		}
-		if orders == nil || len(orders) <= 0 {
-			return
-		}
-
-		dateMap, AreaMap, maxId := this.genSheetMap(orders)
-
-		if maxId > 0 {
-			flag := this.StoreSheet(dateMap, AreaMap, maxId, idRecord.Id)
-			if !flag {
-				return
-			}
-			startId = maxId
-		}
-
-		if len(orders) < 10 {
-			break
-		}
-
-		time.Sleep(time.Second * 5)
-	}
-
-	return
-}
-
-func (this *Tasker) StoreSheet(dateMap map[string]*models.CardDatesheet, AreaMap map[string]*models.CardAreasheet, maxId, idRecordId int64) bool {
-	tx := db.GDbMgr.Get().Begin()
-	if err := new(models.IdRecorder).TxUpdate(tx, idRecordId, maxId); err != nil {
-		tx.Rollback()
-		ZapLog().Error("IdRecorder TxUpdate err", zap.Error(err))
-		return false
-	}
-	for _, v := range dateMap {
-		sheet, err := new(models.CardDatesheet).TxGetByDateAndTp(tx, *v.Date, v.ClassTp)
-		if err != nil {
-			ZapLog().Error("CardDatesheet GetByDate err", zap.Error(err))
-			tx.Rollback()
-			return false
-		}
-		if sheet == nil || sheet.Id == nil {
-			err = v.TxAdd(tx)
-			if err != nil {
-				ZapLog().Error("saveSheet err", zap.Error(err))
-				tx.Rollback()
-				return false
-			}
-		} else {
-			v.Id = sheet.Id
-			if sheet.OrderCount == nil {
-				sheet.OrderCount = new(int64)
-				*sheet.OrderCount = 0
-			}
-			if v.OrderCount == nil {
-				v.OrderCount = new(int64)
-				*v.OrderCount = 0
-			}
-			*v.OrderCount += *sheet.OrderCount
-			err = v.TxUpdate(tx)
-			if err != nil {
-				ZapLog().Error("saveSheet err", zap.Error(err))
-				tx.Rollback()
-				return false
-			}
-		}
-	}
-
-	for _, v := range AreaMap {
-		sheet, err := new(models.CardAreasheet).TxGetByConds(tx, *v.DateAt, v.Province, v.City, v.ClassTp, v.ClassISP)
-		if err != nil {
-			ZapLog().Error("CardDatesheet GetByDate err", zap.Error(err))
-			tx.Rollback()
-			return false
-		}
-		if sheet == nil || sheet.Id == nil {
-			err = v.TxAdd(tx)
-			if err != nil {
-				ZapLog().Error("saveSheet err", zap.Error(err))
-				tx.Rollback()
-				return false
-			}
-		} else {
-			v.Id = sheet.Id
-			if sheet.OrderCount == nil {
-				sheet.OrderCount = new(int64)
-				*sheet.OrderCount = 0
-			}
-			if v.OrderCount == nil {
-				v.OrderCount = new(int64)
-				*v.OrderCount = 0
-			}
-			*v.OrderCount += *sheet.OrderCount
-			err = v.TxUpdate(tx)
-			if err != nil {
-				ZapLog().Error("saveSheet err", zap.Error(err))
-				tx.Rollback()
-				return false
-			}
-		}
-	}
-
-	//
-	tx.Commit()
-	return true
-}
-
-func (this *Tasker) genSheetMap(orders []*models.CardOrder) (map[string]*models.CardDatesheet, map[string]*models.CardAreasheet, int64) {
-	maxId := int64(0)
-	dateMap := make(map[string]*models.CardDatesheet)
-	AreaMap := make(map[string]*models.CardAreasheet)
-	for j := 0; j < len(orders); j++ {
-		if *orders[j].Id > maxId {
-			maxId = *orders[j].Id
-		}
-		if orders[j].CreatedAt == nil {
-			continue
-		}
-		dateStr := time.Unix(*orders[j].CreatedAt, 0).In(time.FixedZone("UTC", 8*3600)).Format("2006/01/02")
-		dateInt := GenDay2(*orders[j].CreatedAt)
-
-		datesheet, ok := dateMap[dateStr]
-		if !ok {
-			datesheet = &models.CardDatesheet{
-				Date:       &dateStr,
-				OrderCount: new(int64),
-			}
-			*datesheet.OrderCount = 0
-			dateMap[dateStr] = datesheet
-		}
-		if datesheet.OrderCount == nil {
-			datesheet.OrderCount = new(int64)
-			*datesheet.OrderCount = 0
-		}
-		*datesheet.OrderCount = *datesheet.OrderCount + 1
-
-		if orders[j].ClassTp != nil {
-			datesheet, ok = dateMap[fmt.Sprintf("%s_%d", dateStr, *orders[j].ClassTp)]
-			if !ok {
-				datesheet = &models.CardDatesheet{
-					Date:       &dateStr,
-					ClassTp:    orders[j].ClassTp,
-					OrderCount: new(int64),
-				}
-				*datesheet.OrderCount = 0
-				dateMap[fmt.Sprintf("%s_%d", dateStr, *orders[j].ClassTp)] = datesheet
-			}
-			if datesheet.OrderCount == nil {
-				datesheet.OrderCount = new(int64)
-				*datesheet.OrderCount = 0
-			}
-			*datesheet.OrderCount = *datesheet.OrderCount + 1
-			tps, ok := models.ClassTpMap[*orders[j].ClassTp]
-			if ok {
-				datesheet.ClassISP = &tps.ISP
-			}
-		}
-
-		///////////////////////
-
-		if orders[j].Province == nil {
-			continue
-		}
-
-		//省，总
-		key := ""
-		//key := fmt.Sprintf("%d_%s", dateInt, *orders[j].Province)
-		//areasheet,ok  := AreaMap[key]
-		//if !ok {
-		//	areasheet = &models.CardAreasheet{
-		//		DateAt: &dateInt,
-		//		Province: orders[j].Province,
-		//		City: new(string),
-		//		ClassTp: new(int),
-		//		ClassISP: new(int),
-		//		OrderCount: new(int64),
-		//	}
-		//	*areasheet.ClassTp = 0
-		//	*areasheet.ClassISP = 0
-		//	*areasheet.OrderCount = 0
-		//	AreaMap[key] = areasheet
-		//}
-		//if areasheet.OrderCount == nil {
-		//	areasheet.OrderCount = new(int64)
-		//	*areasheet.OrderCount = 0
-		//}
-		//*areasheet.OrderCount = *areasheet.OrderCount + 1
-
-		//省，运营商
-		//if orders[j].ClassIsp != nil {
-		//	key = fmt.Sprintf("%d_%s_%d", dateInt, *orders[j].Province, *orders[j].ClassIsp)
-		//	areasheet,ok  = AreaMap[key]
-		//	if !ok {
-		//		areasheet = &models.CardAreasheet{
-		//			DateAt: &dateInt,
-		//			Province: orders[j].Province,
-		//			City: new(string),
-		//			ClassTp: new(int),
-		//			ClassISP: orders[j].ClassIsp,
-		//			OrderCount: new(int64),
-		//		}
-		//		*areasheet.ClassTp = 0
-		//		*areasheet.OrderCount = 0
-		//		AreaMap[key] = areasheet
-		//	}
-		//	if areasheet.OrderCount == nil {
-		//		areasheet.OrderCount = new(int64)
-		//		*areasheet.OrderCount = 0
-		//	}
-		//	*areasheet.OrderCount = *areasheet.OrderCount + 1
-		//}
-
-		//省，运营商,套餐
-		//if orders[j].ClassIsp != nil && orders[j].ClassTp != nil {
-		//	key = fmt.Sprintf("%d_%s_%d_%d", dateInt, *orders[j].Province, *orders[j].ClassIsp, *orders[j].ClassTp)
-		//	areasheet,ok  := AreaMap[key]
-		//	if !ok {
-		//		areasheet = &models.CardAreasheet{
-		//			DateAt: &dateInt,
-		//			Province: orders[j].Province,
-		//			City: new(string),
-		//			ClassTp: orders[j].ClassTp,
-		//			ClassISP: orders[j].ClassIsp,
-		//			OrderCount: new(int64),
-		//		}
-		//		*areasheet.OrderCount = 0
-		//		AreaMap[key] = areasheet
-		//	}
-		//	if areasheet.OrderCount == nil {
-		//		areasheet.OrderCount = new(int64)
-		//		*areasheet.OrderCount = 0
-		//	}
-		//	*areasheet.OrderCount = *areasheet.OrderCount + 1
-		//}
-
-		if orders[j].City == nil {
-			continue
-		}
-
-		//省,市， 运营商
-		//if orders[j].ClassIsp != nil {
-		//	key = fmt.Sprintf("%d_%s_%s_%d", dateInt, *orders[j].Province,*orders[j].City, *orders[j].ClassIsp)
-		//	areasheet,ok  := AreaMap[key]
-		//	if !ok {
-		//		areasheet = &models.CardAreasheet{
-		//			DateAt: &dateInt,
-		//			Province: orders[j].Province,
-		//			City: orders[j].City,
-		//			ClassTp: new(int),
-		//			ClassISP: orders[j].ClassIsp,
-		//			OrderCount: new(int64),
-		//		}
-		//		*areasheet.ClassTp = 0
-		//		*areasheet.OrderCount = 0
-		//		AreaMap[key] = areasheet
-		//	}
-		//	if areasheet.OrderCount == nil {
-		//		areasheet.OrderCount = new(int64)
-		//		*areasheet.OrderCount = 0
-		//	}
-		//	*areasheet.OrderCount = *areasheet.OrderCount + 1
-		//}
-
-		//省，市，运营商,套餐
-		if orders[j].ClassIsp != nil && orders[j].ClassTp != nil {
-			key = fmt.Sprintf("%d_%s_%s_%d_%d", dateInt, *orders[j].Province, *orders[j].City, *orders[j].ClassIsp, *orders[j].ClassTp)
-			areasheet, ok := AreaMap[key]
-			if !ok {
-				areasheet = &models.CardAreasheet{
-					DateAt:     &dateInt,
-					Province:   orders[j].Province,
-					City:       orders[j].City,
-					ClassTp:    orders[j].ClassTp,
-					ClassISP:   orders[j].ClassIsp,
-					OrderCount: new(int64),
-				}
-				*areasheet.OrderCount = 0
-				AreaMap[key] = areasheet
-			}
-			if areasheet.OrderCount == nil {
-				areasheet.OrderCount = new(int64)
-				*areasheet.OrderCount = 0
-			}
-			*areasheet.OrderCount = *areasheet.OrderCount + 1
-		}
-	}
-
-	return dateMap, AreaMap, maxId
-}
-
-func GenDay(ut time.Time) int64 {
-	t1 := ut.Year()  //年
-	t2 := ut.Month() //月
-	t3 := ut.Day()   //日
-	loc := time.FixedZone("UTC", 8*3600)
-	currentTimeData := time.Date(t1, t2, t3, 0, 0, 0, 0, loc)
-	return currentTimeData.Unix()
-}
-
-func GenDay2(tt int64) int64 {
-	ut := time.Unix(tt, 0)
-	t1 := ut.Year()  //年
-	t2 := ut.Month() //月
-	t3 := ut.Day()   //日
-	loc := time.FixedZone("UTC", 8*3600)
-	currentTimeData := time.Date(t1, t2, t3, 0, 0, 0, 0, loc)
-	return currentTimeData.Unix()
-}

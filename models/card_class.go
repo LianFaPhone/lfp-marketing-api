@@ -3,7 +3,11 @@ package models
 
 import (
 	"LianFaPhone/lfp-marketing-api/api"
+	"LianFaPhone/lfp-marketing-api/config"
 	"github.com/jinzhu/gorm"
+	"github.com/juju/errors"
+	"math/rand"
+	"time"
 )
 
 import (
@@ -206,14 +210,15 @@ type CardClass struct{
 
 	BigTp    *int    `json:"big_tp,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无
 	Tp    *int    `json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-
+	MaxLimit    *int    `json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 	Name  *string `json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 	Detail *string `json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"` //拼音首字母缩写
 	SmsFlag *int    `json:"sms_flag,omitempty"      gorm:"column:sms_flag;type:tinyint(4)"`
 	ShortChain *string `json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
 	ImgUrl *string `json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
 	FileUrl *string `json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
-
+	LongChain *string `json:"long_chain,omitempty"     gorm:"column:long_chain;type:varchar(250)"`
+	ThirdLongChain *string `json:"third_long_chain,omitempty"     gorm:"column:third_long_chain;type:varchar(250)"`
 	Table
 }
 
@@ -226,13 +231,15 @@ func (this * CardClass) ParseAdd(p *api.BkCardClassAdd) *CardClass {
 		ISP: p.ISP,
 		Tp:  p.Tp,
 		Name: p.Name,
-
+		MaxLimit: p.MaxLimit,
 		Detail: p.Detail,
 		ImgUrl: p.ImgUrl,
 		FileUrl: p.FileUrl,
 		SmsFlag: p.SmsFlag,
 		BigTp: p.BigTp,
 		ShortChain: p.ShortChain,
+		LongChain : p.LongChain,
+		ThirdLongChain :p.ThirdLongChain,
 
 	}
 	cc.Valid = new(int)
@@ -252,6 +259,9 @@ func (this * CardClass) Parse(p *api.BkCardClass) *CardClass {
 		SmsFlag: p.SmsFlag,
 		BigTp: p.BigTp,
 		ShortChain: p.ShortChain,
+		LongChain : p.LongChain,
+		ThirdLongChain :p.ThirdLongChain,
+		MaxLimit: p.MaxLimit,
 
 	}
 }
@@ -294,6 +304,17 @@ func (this *CardClass) Gets() ([]*CardClass, error) {
 
 func (this *CardClass) GetByName(name string) (*CardClass, error) {
 	err := db.GDbMgr.Get().Model(this).Where("name = ? ", name).Last(this).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil,nil
+	}
+	if err != nil {
+		return nil,err
+	}
+	return this,nil
+}
+
+func (this *CardClass) GetByTp(tp int) (*CardClass, error) {
+	err := db.GDbMgr.Get().Model(this).Where("tp = ? ", tp).Last(this).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil,nil
 	}
@@ -346,4 +367,40 @@ func (this *CardClass) ListWithConds(page, size int64, needFields []string, cond
 	}
 
 	return new(common.Result).PageQuery(query, &CardClass{}, &list, page, size, nil, "")
+}
+
+func (this *CardClass) GetByNameFromCache(name string) (*CardClass, error) {
+	data,err := db.GCache.GetCardClassByName(name)
+	if err == gorm.ErrRecordNotFound {
+		return nil,nil
+	}
+	if err != nil {
+		return nil,err
+	}
+	if data == nil {
+		return nil, nil
+	}
+
+	acty, ok := data.(*CardClass)
+	if !ok {
+		return nil, errors.Annotate(err, "type err")
+	}
+	return acty,nil
+}
+
+func (this *CardClass) InnerGetByName(input interface{}) (interface{}, *time.Duration, error) {
+	expire := time.Second * time.Duration(config.GConfig.Cache.CardClassByNameTimeout+rand.Intn(600))
+	userKey,ok := input.(string)
+	if !ok {
+
+		return nil,nil, errors.New("type err")
+	}
+	acty,err := new(CardClass).GetByName(userKey)
+	if err != nil {
+		return nil, nil, errors.Annotate(err, "Activity GetByIdAndFields")
+	}
+	if acty == nil {
+		return nil, nil, gorm.ErrRecordNotFound  // nil,nil,nil可能将是永远不超时
+	}
+	return  acty, &expire, nil
 }

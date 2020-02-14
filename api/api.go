@@ -41,7 +41,7 @@ type (
 		NumberPoolFlag  *int `valid:"optional" json:"numberpool_flag,omitempty"` //选的号码
 		SessionId string    `valid:"optional" json:"session_id,omitempty"`
 		ThirdOrderNo    *string `valid:"optional"  json:"third_order_no,omitempty" ` //订单号
-
+		Log            *string  `valid:"optional"  json:"log,omitempty" `
 	}
 
 	ResCardOrderApply struct {
@@ -50,7 +50,8 @@ type (
 
 	FtCardOrderStatus struct {
 		OrderNo   string   `valid:"required"  json:"order_no,omitempty"`    //订单号
-		Status     *int    `valid:"optional"  json:"status,omitempty"` //订单状态
+		//Status     *int    `valid:"optional"  json:"status,omitempty"` //订单状态
+		Log       *string    `valid:"optional"  json:"log,omitempty"`
 	}
 
 	ResChinaAddrCode struct {
@@ -101,4 +102,6 @@ type (
 		SessionId  *string   `valid:"required" json:"session_id,omitempty"`
 		Number *string `valid:"required" json:"number,omitempty"`
 	}
+
+
 )

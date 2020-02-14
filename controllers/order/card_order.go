@@ -139,6 +139,14 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 		countryCode = *param.CountryCode
 	}
 
+	limit := 3
+	if param.ClassName != nil {
+		cc, err := new(models.CardClass).GetByNameFromCache(*param.ClassName)
+		if err == nil && cc != nil && cc.MaxLimit != nil {
+			limit = *cc.MaxLimit
+		}
+	}
+
 	//检测id是否有效
 	recipient := countryCode + *param.Phone
 	if param.VerifyId != nil {
@@ -170,7 +178,7 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 	modelParam := new(models.CardOrder).FtParseAdd(param, orderNo)
 
 //	tx := db.GDbMgr.Get().Begin()
-	upFlag, err := modelParam.LimitCheckByIdCardAndTime(*param.IdCard, time.Now().Unix()-24*3600*30*3, *param.ClassTp, 3)
+	upFlag, err := modelParam.LimitCheckByIdCardAndTime(*param.IdCard, time.Now().Unix()-24*3600*30*3, *param.ClassTp, limit)
 	if err != nil {
 //		tx.Rollback()
 		ZapLog().With(zap.Error(err)).Error("database err")
@@ -207,8 +215,12 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 //	tx.Commit()
 
 	go func() {
+		if param.Log != nil && len(*param.Log) > 1 {
+			new(models.CardOrderLog).FtParseAdd(nil, &orderNo, param.Log).Add()
+		}
+
 		return
-		if err := sdk.GNotifySdk.SendSms(nil, *param.Phone, "wangka_complete", 0); err != nil {
+		if err := sdk.GNotifySdk.SendSms(nil, *param.Phone, "wangka_complete", 0, nil); err != nil {
 			ZapLog().With(zap.Error(err), zap.String("phone", *param.Phone)).Error("GNotifySdk.SendSms[wangka_complete] err")
 		}
 	}()
@@ -225,11 +237,17 @@ func (this *CardOrder) FtConfirm(ctx iris.Context) {
 		return
 	}
 
-	err = new(models.CardOrder).UpdateStatusByOrderNo(param.OrderNo, models.CONST_OrderStatus_New_UnFinish)
+	err = new(models.CardOrder).UpdateStatusByOrderNo(param.OrderNo, models.CONST_OrderStatus_New)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("database err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
+	}
+
+	if param.Log != nil && len(*param.Log) > 1 {
+		go func (){
+			new(models.CardOrderLog).FtParseAdd(nil, &param.OrderNo, param.Log).Add()
+		}()
 	}
 	this.Response(ctx, nil)
 }
