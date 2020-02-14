@@ -244,7 +244,7 @@ func (this *CardOrder) BkParseList(p *api.BkCardOrderList) *CardOrder {
 func (this *CardOrder) FtParseStatus(p *api.FtCardOrderStatus) *CardOrder {
 	acty := &CardOrder{
 		OrderNo: &p.OrderNo,
-		Status:    p.Status,
+		//Status:    p.Status,
 	}
 	return acty
 }
