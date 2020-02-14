@@ -111,7 +111,7 @@ func (v *Verification) GenerateSms(userId uint, recipient string, tpl, lang stri
 	v.Recipient = recipient
 	v.Value = RandomDigit(6)
 
-	err = sdk.GNotifySdk.SendSms([]string{v.Value}, recipient, tpl, playTp)
+	err = sdk.GNotifySdk.SendSms([]string{v.Value}, recipient, tpl, playTp, nil)
 
 	//body, err := ParseTextTemplate(tpl, &struct {
 	//	Value string
