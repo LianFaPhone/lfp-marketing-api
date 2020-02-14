@@ -1,7 +1,7 @@
 package baidu_api
 
 import (
-	common "LianFaPhone/lfp-common"
+	common "LianFaPhone/lfp-marketing-api/common"
 	"LianFaPhone/lfp-marketing-api/config"
 	"bytes"
 	"encoding/json"
