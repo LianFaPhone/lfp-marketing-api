@@ -14,9 +14,11 @@ func (this *WebServer) routes() {
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"POST", "GET", "OPTIONS", "PUT", "DELETE"},
 		AllowedHeaders:   []string{"*" /*,"Access-Control-Allow-Origin","Authorization", "X-Requested-With", "X_Requested_With", "Content-Type", "Access-Token", "Accept-Language", "Api-Key", "Req-Real-Ip"*/},
-		ExposedHeaders:   []string{"Access-Control-Allow-Origin"},
+		//ExposedHeaders:   []string{"Access-Control-Allow-Origin"},
 		AllowCredentials: true,
 	})
+
+	//app.Use(crs)
 
 	app.Any("/", func(ctx iris.Context) {
 		ctx.JSON(
