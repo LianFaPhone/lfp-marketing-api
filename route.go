@@ -18,14 +18,14 @@ func (this *WebServer) routes() {
 		AllowCredentials: true,
 	})
 
-	cors := func(ctx iris.Context) {
+	resHeadHandle := func(ctx iris.Context) {
 		ctx.Header("Access-Control-Allow-Origin", "*")
 		ctx.Header("Access-Control-Allow-Headers", "*")
 
 		ctx.Next()
 	}
 
-	app.Use(cors)
+	app.Use(resHeadHandle)
 
 	app.Any("/", func(ctx iris.Context) {
 		ctx.JSON(
