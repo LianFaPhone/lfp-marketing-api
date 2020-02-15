@@ -51,7 +51,7 @@ type (
 
 func (this *ReCardSearch) Send(proCode, proName, cityCode, cityName, Searchkey string,page,size int) ([]string, error) {
 	this.MsgType = "LiveHKSelectNumberReq"
-	this.Version = GConfig.Server.Version
+	this.Version = Const_Version
 	this.Selecttype = page
 	this.Count = size
 	this.Province = proName
@@ -91,7 +91,7 @@ func (this *ReCardSearch) Send(proCode, proName, cityCode, cityName, Searchkey s
 
 func (this *ReCloseNumber) Send(proCode, cityCode, number, token string) (bool, error) {
 	this.MsgType = "LiveHKLockNumberReq"
-	this.Version = GConfig.Server.Version
+	this.Version = Const_Version
 	this.ProvCode = proCode
 	this.CityCode = cityCode
 	this.Number  = number
