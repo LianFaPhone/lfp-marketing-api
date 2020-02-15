@@ -1,8 +1,9 @@
 package ydhk
 
 import (
-	"LianFaPhone/lfp-common"
-	. "LianFaPhone/lfp-tools/autoorder-yidonghuaka/config"
+	"LianFaPhone/lfp-marketing-api/common"
+
+	//. "LianFaPhone/lfp-tools/autoorder-yidonghuaka/config"
 	"bytes"
 	"encoding/json"
 	"fmt"

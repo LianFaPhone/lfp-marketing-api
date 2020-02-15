@@ -3,7 +3,7 @@ package ydhk
 import (
 	//. "LianFaPhone/lfp-tools/autoorder-yidonghuaka/config"
 	//"LianFaPhone/lfp-base/log/zap"
-	"LianFaPhone/lfp-common"
+	"LianFaPhone/lfp-marketing-api/common"
 	"bytes"
 	"crypto/aes"
 	"encoding/base64"

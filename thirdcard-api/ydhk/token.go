@@ -1,7 +1,7 @@
 package ydhk
 
 import (
-"LianFaPhone/lfp-common"
+"LianFaPhone/lfp-marketing-api/common"
 
 "bytes"
 "encoding/json"
