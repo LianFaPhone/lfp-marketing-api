@@ -26,6 +26,7 @@ func (this *WebServer) routes() {
 	}
 
 	app.Use(resHeadHandle)
+	//app.Use(crs)
 
 	app.Any("/", func(ctx iris.Context) {
 		ctx.JSON(

@@ -37,6 +37,10 @@ func (this *Sms) Send(ctx iris.Context) {
 		param.CountryCode = new(string)
 		*param.CountryCode = "0086"
 	}
+	if param.Language == nil {
+		param.Language = new(string)
+		*param.Language = "zh-CN"
+	}
 
 	//业务频率限制下
 	recipient := *param.CountryCode + *param.Phone
