@@ -4,6 +4,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/controllers"
 	. "LianFaPhone/lfp-marketing-api/controllers/area"
 	. "LianFaPhone/lfp-marketing-api/controllers/order"
+	"LianFaPhone/lfp-marketing-api/controllers/ydhk"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
 )
@@ -18,14 +19,14 @@ func (this *WebServer) routes() {
 		AllowCredentials: true,
 	})
 
-	resHeadHandle := func(ctx iris.Context) {
-		ctx.Header("Access-Control-Allow-Origin", "*")
-		ctx.Header("Access-Control-Allow-Headers", "*")
+	//resHeadHandle := func(ctx iris.Context) {
+	//	ctx.Header("Access-Control-Allow-Origin", "*")
+	//	ctx.Header("Access-Control-Allow-Headers", "*")
+	//
+	//	ctx.Next()
+	//}
 
-		ctx.Next()
-	}
-
-	app.Use(resHeadHandle)
+	//app.Use(resHeadHandle)
 	//app.Use(crs)
 
 	app.Any("/", func(ctx iris.Context) {
@@ -124,6 +125,19 @@ func (this *WebServer) routes() {
 			ac := new(controllers.UploadFile)
 
 			photoParty.Any("/upload", ac.PhotoUpload)
+		}
+
+		ydhkParty := v1.Party("/ydhk")
+		{
+			ac := new(ydhk.Ydhk)
+
+			ydhkParty.Any("/token-get", ac.GetToken)
+			ydhkParty.Any("/addr-gets", ac.GetsAddr)
+			ydhkParty.Any("/numberpool-list", ac.ListNumberPool)
+			ydhkParty.Any("/number-lock", ac.LockNumber)
+			ydhkParty.Any("/apply", ac.Apply)
+			ydhkParty.Any("/photo-upload", ac.UploadPhoto)
+
 		}
 
 	}

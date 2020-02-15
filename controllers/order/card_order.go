@@ -20,7 +20,7 @@ import (
 )
 
 type CardOrder struct {
-	IdGener
+	//IdGener
 	Controllers
 }
 //
@@ -167,7 +167,7 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 	param.IP = common.GetRealIp(ctx)
 
 	//这个以后再想
-	orderNo := fmt.Sprintf("D%s%d", time.Now().Format("060102030405000"), this.Gen())
+	orderNo := fmt.Sprintf("D%s%d", time.Now().Format("060102030405000"), GIdGener.Gen())
 	param.Status = new(int)
 	*param.Status = models.CONST_OrderStatus_New
 

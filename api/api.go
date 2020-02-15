@@ -105,3 +105,57 @@ type (
 
 
 )
+
+//ydhk
+type(
+	FtResYdhkToken struct{
+		Token  string ` json:"token,omitempty"`
+	}
+
+	FtYdhkNumberPoolList struct{
+		// "provCode":"551","province":"安徽","cityCode":"558","city":"阜阳市","selecttype":0,"searchkey":"","count":10
+		ProviceCode string   `json:"provice_code,omitempty"`
+		Provice string        `json:"provice,omitempty"`
+		CityCode string       `json:"city_code,omitempty"`
+		City string            `json:"city,omitempty"`
+		Searchkey  string             `json:"searchkey,omitempty"`
+		Page int                `json:"page,omitempty"`
+		Size int             `json:"size,omitempty"`
+	}
+
+	FtYdhkNumberPoolLock struct{
+		ProviceCode string   `json:"provice_code,omitempty"`
+		CityCode string       `json:"city_code,omitempty"`
+		Number  string             `json:"number,omitempty"`
+		Token  string             `json:"token,omitempty"`
+	}
+
+	FtYdhkApply struct{
+		Phone   string  `json:"phone"`
+		NewPhone      string  `json:"new_phone"`
+		LeagalName    string    `json:"true_name"`
+		CertificateNo    string    `json:"idcard"`
+
+		Province    string    `json:"province_code"`
+		City    string        `json:"city_code"`
+
+		SendProvince    string    `json:"express_province_code"`
+		SendCity    string    `json:"express_city_code"`
+		SendDistrict    string    `json:"express_district_code"`
+		Address    string     `json:"express_address"`
+
+		AccessToken     string   `json:"token"`
+
+		ClassBigTp   *int    `valid:"optional" json:"class_big_tp,omitempty"`
+		ClassTp      *int    `valid:"optional" json:"class_tp,omitempty"`
+		ClassName   *string `valid:"optional" json:"class_name,omitempty"`
+		ClassISP     *int    `valid:"optional" json:"class_isp,omitempty"`
+		IP           *string  `valid:"optional" json:"ip,omitempty"`
+		PhoneOSTp    *int    `valid:"optional" json:"class_isp,omitempty"`
+	}
+
+	FtResYdhkApply struct{
+		OrderId string   `json:"order_no"`
+		OaoModel  bool    `json:"oao_model"`
+	}
+)

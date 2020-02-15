@@ -88,6 +88,8 @@ func SecretPhone(phone string) string {
 	return Substr(phone, 0, 3) + "***" + Substr(phone, len(phone)-4, len(phone))
 }
 
+var GIdGener IdGener
+
 type IdGener struct {
 	id int
 	sync.Mutex
