@@ -84,7 +84,7 @@ func (this *ReCardSearch) Send(proCode, proName, cityCode, cityName, Searchkey s
 		return nil, fmt.Errorf("%v-%v", res.Ret, res.Msg)
 	}
 	if len(res.Numbers) == 0 {
-		return nil, fmt.Errorf("nil resp")
+		return nil, nil
 	}
 	return res.Numbers, nil
 }

@@ -12,21 +12,21 @@ import (
 func (this *WebServer) routes() {
 	app := this.mIris
 	crs := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
+		//AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"POST", "GET", "OPTIONS", "PUT", "DELETE"},
 		AllowedHeaders:   []string{"*" /*,"Access-Control-Allow-Origin","Authorization", "X-Requested-With", "X_Requested_With", "Content-Type", "Access-Token", "Accept-Language", "Api-Key", "Req-Real-Ip"*/},
 		//ExposedHeaders:   []string{"Access-Control-Allow-Origin"},
 		AllowCredentials: true,
 	})
 
-	//resHeadHandle := func(ctx iris.Context) {
-	//	ctx.Header("Access-Control-Allow-Origin", "*")
-	//	ctx.Header("Access-Control-Allow-Headers", "*")
-	//
-	//	ctx.Next()
-	//}
+	resHeadHandle := func(ctx iris.Context) {
+		ctx.Header("Access-Control-Allow-Origin", "*")
+		//ctx.Header("Access-Control-Allow-Headers", "*")
 
-	//app.Use(resHeadHandle)
+		ctx.Next()
+	}
+
+	app.Use(resHeadHandle)
 	//app.Use(crs)
 
 	app.Any("/", func(ctx iris.Context) {
