@@ -124,7 +124,7 @@ type(
 	}
 
 	FtYdhkNumberPoolLock struct{
-		ProviceCode string   `json:"provice_code,omitempty"`
+		ProviceCode string   `json:"province_code,omitempty"`
 		CityCode string       `json:"city_code,omitempty"`
 		Number  string             `json:"number,omitempty"`
 		Token  string             `json:"token,omitempty"`
