@@ -87,7 +87,7 @@ func (this *ReOrderSubmit) Send(token, inPhone, newPhone, LegalName,IdCard, addr
 		return "",false, err
 	}
 	if res.Ret != "0" {
-		return "",false, fmt.Errorf("%v-%v", res.Ret, res.Msg)
+		return "",false, fmt.Errorf("%s", res.Msg)
 	}
 
 	return res.OrderId,res.OaoModel, nil

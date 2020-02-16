@@ -26,7 +26,7 @@ func (this * Ydhk) GetToken(ctx iris.Context) {
 	token,err := new(ReToken).Send()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
-		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Desc())
+		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
 		return
 	}
 	this.Response(ctx, &api.FtResYdhkToken{token})
@@ -36,7 +36,7 @@ func (this * Ydhk) GetsAddr(ctx iris.Context) {
 	ll, err := new(ReAddr).Send()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
-		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Desc())
+		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
 		return
 	}
 	this.Response(ctx, ll)
@@ -56,7 +56,7 @@ func (this * Ydhk) ListNumberPool(ctx iris.Context) {
 	ll,err := new(ReCardSearch).Send(param.ProviceCode, param.Provice, param.CityCode, param.City, param.Searchkey, param.Page, param.Size)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
-		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Desc())
+		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
 		return
 	}
 	this.Response(ctx, ll)
@@ -73,11 +73,11 @@ func (this * Ydhk) LockNumber(ctx iris.Context) {
 	flag,err := new(ReCloseNumber).Send(param.ProviceCode, param.CityCode,  param.Number, param.Token)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
-		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Desc())
+		this.ExceptionSerive(ctx, apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.Code(), err.Error())
 		return
 	}
 	if !flag {
-		this.ExceptionSerive(ctx, apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.Code(), apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.Desc())
+		this.ExceptionSerive(ctx, apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.Code(), apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.OriginDesc())
 		return
 	}
 	this.Response(ctx, nil)
@@ -96,7 +96,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 	orderId,oaoFlag,err := new(ReOrderSubmit).Send(param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
-		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Desc())
+		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
 		return
 	}
 

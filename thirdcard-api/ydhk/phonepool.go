@@ -81,7 +81,7 @@ func (this *ReCardSearch) Send(proCode, proName, cityCode, cityName, Searchkey s
 		return nil, err
 	}
 	if res.Ret != "0" {
-		return nil, fmt.Errorf("%v-%v", res.Ret, res.Msg)
+		return nil, fmt.Errorf("%s", res.Msg)
 	}
 	if len(res.Numbers) == 0 {
 		return nil, nil
@@ -118,7 +118,7 @@ func (this *ReCloseNumber) Send(proCode, cityCode, number, token string) (bool, 
 		return false, err
 	}
 	if res.Ret != "0" {
-		return false, fmt.Errorf("%v-%v", res.Ret, res.Msg)
+		return false, fmt.Errorf("%s",  res.Msg)
 	}
 
 	return true, nil
