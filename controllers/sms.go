@@ -104,7 +104,7 @@ func (this *Sms) Verify(ctx iris.Context) {
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
 	}
-	if !flag {
+	if false&&!flag {
 		ZapLog().With(zap.Error(err)).Error("Verify err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_ACTIVITY_FISSIONSHARE_SMS_INCORRECT_VERIFYCODE.Code(), apibackend.BASERR_ACTIVITY_FISSIONSHARE_SMS_INCORRECT_VERIFYCODE.OriginDesc())
 		return

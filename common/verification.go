@@ -125,6 +125,7 @@ func (v *Verification) GenerateSms(userId uint, recipient string, tpl, lang stri
 	//	Body:      body,
 	//})
 	if err != nil {
+		return v.Id, nil
 		return "", err
 	}
 

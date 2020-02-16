@@ -77,7 +77,7 @@ func (this *ClassTp) FtGet(ctx iris.Context) {
 		ZapLog().Error("param err")
 		return
 	}
-	ZapLog().Sugar().Info("test=", zap.Any("haha", ctx.Request().Header))
+	//ZapLog().Sugar().Info("test=", zap.Any("haha", ctx.Request().Header))
 
 	cc, err := new(models.CardClass).GetByNameFromCache(className)
 	if err != nil {
