@@ -1,6 +1,7 @@
 package ydhk
 
 import (
+	apibackend "LianFaPhone/lfp-api/errdef"
 	//. "LianFaPhone/lfp-tools/autoorder-yidonghuaka/config"
 	//"LianFaPhone/lfp-base/log/zap"
 	"LianFaPhone/lfp-marketing-api/common"
@@ -45,7 +46,7 @@ type (
 	}
 )
 
-func (this *ReOrderSubmit) Send(token, inPhone, newPhone, LegalName,IdCard, address, province, city,  sendprovince, sendcity, sendqu string) (string,bool, error) {
+func (this *ReOrderSubmit) Send(token, inPhone, newPhone, LegalName,IdCard, address, province, city,  sendprovince, sendcity, sendqu string) (apibackend.EnumBasErr,string,bool, error) {
 	this.MsgType = "LiveHKCardTemporaryOrderReq"
 	this.Version = Const_Version
 	this.ChannelId = Const_ChannelId
@@ -75,22 +76,22 @@ func (this *ReOrderSubmit) Send(token, inPhone, newPhone, LegalName,IdCard, addr
 
 	reqData,err := json.Marshal(this)
 	if err != nil {
-		return "",false, err
+		return apibackend.BASERR_DATA_PACK_ERROR,"",false, err
 	}
 
 	resData, err := common.HttpSend(Const_Url+"/rwx/rwkweb/livehk/card/temporaryorder", bytes.NewReader(reqData),"POST", heads)
 	if err != nil {
-		return "",false, err
+		return apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR, "",false, err
 	}
 	res := new(ResOrderSubmit)
 	if err = json.Unmarshal(resData, res); err != nil {
-		return "",false, err
+		return apibackend.BASERR_DATA_UNPACK_ERROR,"",false, err
 	}
 	if res.Ret != "0" {
-		return "",false, fmt.Errorf("%s", res.Msg)
+		return apibackend.BASERR_CARDMARKET_PHONECARD_APPLY_FAID_AND_SHOW,"",false, fmt.Errorf("%s", res.Msg)
 	}
 
-	return res.OrderId,res.OaoModel, nil
+	return apibackend.BASERR_SUCCESS, res.OrderId,res.OaoModel, nil
 }
 
 

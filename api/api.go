@@ -52,6 +52,14 @@ type (
 		OrderNo   string   `valid:"required"  json:"order_no,omitempty"`    //订单号
 		//Status     *int    `valid:"optional"  json:"status,omitempty"` //订单状态
 		Log       *string    `valid:"optional"  json:"log,omitempty"`
+		SuccFlag  *int   `valid:"optional"  json:"succ_flag,omitempty"`
+	}
+
+	FtCardOrderConfirm struct {
+		OrderNo   string   `valid:"required"  json:"order_no,omitempty"`    //订单号
+		//Status     *int    `valid:"optional"  json:"status,omitempty"` //订单状态
+		Log       *string    `valid:"optional"  json:"log,omitempty"`
+		SuccFlag  *int   `valid:"optional"  json:"succ_flag,omitempty"`
 	}
 
 	ResChinaAddrCode struct {

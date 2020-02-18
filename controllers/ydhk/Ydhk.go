@@ -22,6 +22,17 @@ type Ydhk struct{
 	Controllers
 }
 
+func (this * Ydhk) GetProtocal(ctx iris.Context) {
+	pCode := ctx.FormValue("province_code")
+	token,err := new(ReProtocal).Send(pCode)
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("Retoken send err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
+		return
+	}
+	this.Response(ctx, token)
+}
+
 func (this * Ydhk) GetToken(ctx iris.Context) {
 	token,err := new(ReToken).Send()
 	if err != nil {
@@ -93,10 +104,10 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		return
 	}
 
-	orderId,oaoFlag,err := new(ReOrderSubmit).Send(param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
+	errCode, orderId,oaoFlag,err := new(ReOrderSubmit).Send(param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
-		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
+		this.ExceptionSerive(ctx, errCode.Code(), err.Error())
 		return
 	}
 
@@ -155,4 +166,31 @@ func (this * Ydhk) UploadPhoto(ctx iris.Context) {
 	//	return
 	//}
 	//this.Response(ctx, ll)
+}
+
+func (this *Ydhk) FtConfirm(ctx iris.Context) {
+	param := new(api.FtCardOrderConfirm)
+
+	err := Tools.ShouldBindJSON(ctx, param)
+	if err != nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		ZapLog().Error("param err", zap.Error(err))
+		return
+	}
+	if (param.SuccFlag != nil) && (*param.SuccFlag !=0) {
+		err = new(models.CardOrder).UpdateStatusByOrderNo(param.OrderNo, models.CONST_OrderStatus_New)
+		if err != nil {
+			ZapLog().With(zap.Error(err)).Error("database err")
+			this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+			return
+		}
+	}
+
+
+	if param.Log != nil && len(*param.Log) > 1 {
+		go func (){
+			new(models.CardOrderLog).FtParseAdd(nil, &param.OrderNo, param.Log).Add()
+		}()
+	}
+	this.Response(ctx, nil)
 }

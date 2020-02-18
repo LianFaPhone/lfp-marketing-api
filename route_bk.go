@@ -4,6 +4,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/controllers"
 	"LianFaPhone/lfp-marketing-api/controllers/black"
 	. "LianFaPhone/lfp-marketing-api/controllers/order"
+	"LianFaPhone/lfp-marketing-api/controllers/sheet"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
 )
@@ -84,17 +85,24 @@ func (this *WebServer) bkroutes() {
 			simPy.Post("/active-import", ac.BkOrderActiveInport)
 			simPy.Post("/new-import", ac.BkOrderNewInport)
 		}
-		datePy := v1bk.Party("/datesheet")
-		{
-			ac := new(CardDateSheet)
 
-			datePy.Post("/list", ac.BkList)
+		classsheetPy := v1bk.Party("/classsheet")
+		{
+			ac := new(sheet.CardClassSheet)
+
+			classsheetPy.Post("/list", ac.BkList)
 		}
-		areaPy := v1bk.Party("/areasheet")
+		areasheetPy := v1bk.Party("/areasheet")
 		{
-			ac := new(CardAreaSheet)
+			ac := new(sheet.CardAreaSheet)
 
-			areaPy.Post("/list", ac.BkList)
+			areasheetPy.Post("/list", ac.BkList)
+		}
+		datesheetPy := v1bk.Party("/datesheet")
+		{
+			ac := new(sheet.CardDateSheet)
+
+			datesheetPy.Post("/list", ac.BkList)
 		}
 		classPy := v1bk.Party("/cardclass")
 		{

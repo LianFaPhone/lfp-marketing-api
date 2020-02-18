@@ -72,7 +72,7 @@ func (this *Tasker) sheetWork() {
 	return
 }
 
-func (this *Tasker) StoreSheet(dateMap map[string]*models.CardDatesheet, AreaMap map[string]*models.CardAreasheet, maxId, idRecordId int64) bool {
+func (this *Tasker) StoreSheet(dateMap map[string]*models.CardClasssheet, AreaMap map[string]*models.CardAreasheet, maxId, idRecordId int64) bool {
 	tx := db.GDbMgr.Get().Begin()
 	if err := new(models.IdRecorder).TxUpdate(tx, idRecordId, maxId); err != nil {
 		tx.Rollback()
@@ -80,7 +80,7 @@ func (this *Tasker) StoreSheet(dateMap map[string]*models.CardDatesheet, AreaMap
 		return false
 	}
 	for _, v := range dateMap {
-		sheet, err := new(models.CardDatesheet).TxGetByDateAndTp(tx, *v.Date, v.ClassTp)
+		sheet, err := new(models.CardClasssheet).TxGetByDateAndTp(tx, *v.Date, v.ClassTp)
 		if err != nil {
 			ZapLog().Error("CardDatesheet GetByDate err", zap.Error(err))
 			tx.Rollback()
@@ -114,7 +114,7 @@ func (this *Tasker) StoreSheet(dateMap map[string]*models.CardDatesheet, AreaMap
 	}
 
 	for _, v := range AreaMap {
-		sheet, err := new(models.CardAreasheet).TxGetByConds(tx, *v.DateAt, v.Province, v.City, v.ClassTp, v.ClassISP)
+		sheet, err := new(models.CardAreasheet).TxGetByConds(tx, *v.DateAt, v.Province, v.City, new(int), new(int))
 		if err != nil {
 			ZapLog().Error("CardDatesheet GetByDate err", zap.Error(err))
 			tx.Rollback()
@@ -152,9 +152,9 @@ func (this *Tasker) StoreSheet(dateMap map[string]*models.CardDatesheet, AreaMap
 	return true
 }
 
-func (this *Tasker) genSheetMap(orders []*models.CardOrder) (map[string]*models.CardDatesheet, map[string]*models.CardAreasheet, int64) {
+func (this *Tasker) genSheetMap(orders []*models.CardOrder) (map[string]*models.CardClasssheet, map[string]*models.CardAreasheet, int64) {
 	maxId := int64(0)
-	dateMap := make(map[string]*models.CardDatesheet)
+	dateMap := make(map[string]*models.CardClasssheet)
 	AreaMap := make(map[string]*models.CardAreasheet)
 	for j := 0; j < len(orders); j++ {
 		if *orders[j].Id > maxId {
@@ -168,7 +168,7 @@ func (this *Tasker) genSheetMap(orders []*models.CardOrder) (map[string]*models.
 
 		datesheet, ok := dateMap[dateStr]
 		if !ok {
-			datesheet = &models.CardDatesheet{
+			datesheet = &models.CardClasssheet{
 				Date:       &dateStr,
 				OrderCount: new(int64),
 			}
@@ -184,7 +184,7 @@ func (this *Tasker) genSheetMap(orders []*models.CardOrder) (map[string]*models.
 		if orders[j].ClassTp != nil {
 			datesheet, ok = dateMap[fmt.Sprintf("%s_%d", dateStr, *orders[j].ClassTp)]
 			if !ok {
-				datesheet = &models.CardDatesheet{
+				datesheet = &models.CardClasssheet{
 					Date:       &dateStr,
 					ClassTp:    orders[j].ClassTp,
 					OrderCount: new(int64),
@@ -317,8 +317,8 @@ func (this *Tasker) genSheetMap(orders []*models.CardOrder) (map[string]*models.
 					DateAt:     &dateInt,
 					Province:   orders[j].Province,
 					City:       orders[j].City,
-					ClassTp:    orders[j].ClassTp,
-					ClassISP:   orders[j].ClassIsp,
+					//ClassTp:    orders[j].ClassTp,
+					//ClassISP:   orders[j].ClassIsp,
 					OrderCount: new(int64),
 				}
 				*areasheet.OrderCount = 0

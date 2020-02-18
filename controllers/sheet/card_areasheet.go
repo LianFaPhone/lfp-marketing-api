@@ -1,4 +1,4 @@
-package order
+package sheet
 
 import "go.uber.org/zap"
 
@@ -45,7 +45,7 @@ func (this *CardAreaSheet) BkList(ctx iris.Context) {
 	arr, ok := results.List.(*[]*models.CardAreasheet)
 	if ok {
 		for i := 0; i < len(*arr); i++ {
-			if (*arr)[i].ClassTp != nil {
+			/*if (*arr)[i].ClassTp != nil {
 				ss, ok := models.ClassTpMap[*(*arr)[i].ClassTp]
 				if ok {
 					(*arr)[i].ClassName = &ss.Name
@@ -61,7 +61,7 @@ func (this *CardAreaSheet) BkList(ctx iris.Context) {
 				case models.CONST_ISP_LiTong:
 					*(*arr)[i].ClassIspName = models.CONST_ISP_LiTong_Name
 				}
-			}
+			}*/
 		}
 	}
 	this.Response(ctx, results)

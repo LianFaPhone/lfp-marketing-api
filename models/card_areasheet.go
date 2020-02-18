@@ -14,12 +14,11 @@ type CardAreasheet struct {
 	ProvinceCode *string `json:"province_code,omitempty"     gorm:"column:province_code;type:varchar(20)"`
 	City         *string `json:"city,omitempty"     gorm:"column:city;type:varchar(20)"`
 	CityCode     *string `json:"city_code,omitempty"     gorm:"column:city_code;type:varchar(20)"`
-	ClassTp      *int    `json:"class_tp,omitempty"   gorm:"column:class_tp;type:int(10)"`
-	ClassISP     *int    `json:"class_isp,omitempty"    gorm:"column:class_isp;type:int(10)"`
-	ClassName    *string `json:"class_name,omitempty"     gorm:"-"`
-	ClassIspName *string `json:"class_isp_name,omitempty"     gorm:"-"` //运营商
 
 	OrderCount *int64 `json:"order_count,omitempty"     gorm:"column:order_count;type:bigint(20);"`
+
+	DateTp       *int `json:"date_tp,omitempty"     gorm:"column:date_tp;type:tinyint(3);"`
+
 	Table
 }
 
@@ -30,10 +29,17 @@ func (this *CardAreasheet) TableName() string {
 //
 func (this *CardAreasheet) ParseList(p *api.BkCardAreaSheetList) *CardAreasheet {
 	ss := &CardAreasheet{
-		ClassTp:  p.ClassTp,
-		ClassISP: p.ClassISP,
 		CityCode: p.CityCode,
+		//DateAt:
+		Province: p.Province,
+		ProvinceCode: p.ProvinceCode,
+		City: p.City,
+		//
+		//OrderCount *int64 `json:"order_count,omitempty"     gorm:"column:order_count;type:bigint(20);"`
+		DateTp: p.DateTp,
+
 	}
+	ss.Valid = p.Valid
 	return ss
 }
 
@@ -58,8 +64,6 @@ func (this *CardAreasheet) TxGetByConds(tx *gorm.DB, date int64, Province *strin
 		DateAt:   &date,
 		Province: Province,
 		City:     City,
-		ClassISP: ClassISP,
-		ClassTp:  class_tp,
 	}
 	var err error
 	err = tx.Model(this).Where(m).Last(m).Error

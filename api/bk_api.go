@@ -100,12 +100,12 @@ type (
 		Size  int64 `valid:"optional" json:"size,omitempty"`
 	}
 
-	BkCardDateSheetList struct {
-		Date       string `valid:"optional"  json:"date,omitempty" ` //订单号
-		OrderCount int64  `valid:"optional"  json:"order_count,omitempty" `
-		Tp         int    `valid:"optional"  json:"tp,omitempty"`
+	BkCardClassSheetList struct {
+		Date       *string `valid:"optional"  json:"date,omitempty" ` //订单号
+		Isp         *int    `valid:"optional"  json:"isp,omitempty"`
+		ClassBigTp *int    `valid:"optional"  json:"class_big_tp,omitempty"`
 		ClassTp    *int   `valid:"optional"  json:"class_tp,omitempty"`
-
+		DateTp     *int    `valid:"optional"  json:"date_tp,omitempty"`
 		StartCreatedAt *int64 `valid:"optional" json:"start_created_at,omitempty"`
 		EndCreatedAt   *int64 `valid:"optional" json:"end_created_at,omitempty"`
 		Valid          *int   `valid:"optional"  json:"valid,omitempty"`
@@ -114,11 +114,29 @@ type (
 	}
 
 	BkCardAreaSheetList struct {
-		ClassTp  *int    `valid:"optional" json:"class_tp,omitempty" `
-		ClassISP *int    `valid:"optional" json:"class_isp,omitempty"`
+		Province *string `valid:"optional" json:"province,omitempty" `
+		City *string `valid:"optional" json:"city,omitempty" `
+		ProvinceCode *string `valid:"optional" json:"province_code,omitempty" `
 		CityCode *string `valid:"optional" json:"city_code,omitempty" `
-		//StartCreatedAt  *int64    `valid:"optional" json:"start_created_at,omitempty"`
-		//EndCreatedAt    *int64    `valid:"optional" json:"start_created_at,omitempty"`
+		DateTp     *int    `valid:"optional"  json:"date_tp,omitempty"`
+		StartCreatedAt  *int64    `valid:"optional" json:"start_created_at,omitempty"`
+		EndCreatedAt    *int64    `valid:"optional" json:"start_created_at,omitempty"`
+		LikeStr *string `valid:"optional" json:"like_str,omitempty"`
+		Valid   *int    `valid:"optional"  json:"valid,omitempty"`
+		Page    int64   `valid:"optional" json:"page,omitempty"`
+		Size    int64   `valid:"optional" json:"size,omitempty"`
+	}
+
+	BkCardDateSheetList struct {
+		ClassBigTp  *int    `valid:"optional" json:"class_big_tp,omitempty" `
+		ClassTp  *int    `valid:"optional" json:"class_tp,omitempty" `
+		ClassISP *int    `valid:"optional" json:"isp,omitempty"`
+		Province *string `valid:"optional" json:"province,omitempty" `
+		City *string `valid:"optional" json:"city,omitempty" `
+		ProvinceCode *string `valid:"optional" json:"province_code,omitempty" `
+		CityCode *string `valid:"optional" json:"city_code,omitempty" `
+		StartCreatedAt  *int64    `valid:"optional" json:"start_created_at,omitempty"`
+		EndCreatedAt    *int64    `valid:"optional" json:"start_created_at,omitempty"`
 		LikeStr *string `valid:"optional" json:"like_str,omitempty"`
 		Valid   *int    `valid:"optional"  json:"valid,omitempty"`
 		Page    int64   `valid:"optional" json:"page,omitempty"`

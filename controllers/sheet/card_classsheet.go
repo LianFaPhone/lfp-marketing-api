@@ -1,4 +1,4 @@
-package order
+package sheet
 
 import "go.uber.org/zap"
 
@@ -11,12 +11,12 @@ import (
 	"github.com/kataras/iris"
 )
 
-type CardDateSheet struct {
+type CardClassSheet struct {
 	Controllers
 }
 
-func (this *CardDateSheet) BkList(ctx iris.Context) {
-	param := new(api.BkCardDateSheetList)
+func (this *CardClassSheet) BkList(ctx iris.Context) {
+	param := new(api.BkCardClassSheetList)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -25,14 +25,15 @@ func (this *CardDateSheet) BkList(ctx iris.Context) {
 		return
 	}
 
-	results, err := new(models.CardDatesheet).ListWithConds(param.Page, param.Size, nil, nil)
+	results, err := new(models.CardClasssheet).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("CardDatesheet ListWithConds err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
 	}
-	arr, ok := results.List.(*[]*models.CardDatesheet)
+	arr, ok := results.List.(*[]*models.CardClasssheet)
 	if ok {
+
 		for i := 0; i < len(*arr); i++ {
 			if (*arr)[i].ClassTp != nil {
 				ss, ok := models.ClassTpMap[*(*arr)[i].ClassTp]

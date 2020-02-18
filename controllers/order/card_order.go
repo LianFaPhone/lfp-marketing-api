@@ -236,13 +236,15 @@ func (this *CardOrder) FtConfirm(ctx iris.Context) {
 		ZapLog().Error("param err", zap.Error(err))
 		return
 	}
-
-	err = new(models.CardOrder).UpdateStatusByOrderNo(param.OrderNo, models.CONST_OrderStatus_New)
-	if err != nil {
-		ZapLog().With(zap.Error(err)).Error("database err")
-		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
-		return
+	if (param.SuccFlag != nil) && (*param.SuccFlag !=0) {
+		err = new(models.CardOrder).UpdateStatusByOrderNo(param.OrderNo, models.CONST_OrderStatus_New)
+		if err != nil {
+			ZapLog().With(zap.Error(err)).Error("database err")
+			this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+			return
+		}
 	}
+
 
 	if param.Log != nil && len(*param.Log) > 1 {
 		go func (){
