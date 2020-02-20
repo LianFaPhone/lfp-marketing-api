@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	smartisanData "github.com/princeyuaner/smartisan/Data"
+
+	//smartisanData "github.com/princeyuaner/smartisan/Data"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -99,13 +101,13 @@ func HttpFormSend(url string, formBody url.Values, method string, headers map[st
 		req.Header.Set(k, v)
 	}
 
-	smartisanData.CookieJar, _ = cookiejar.New(nil)
-	smartisanData.Tr = &http.Transport{
-		TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
-		DisableCompression: true,
-	}
-	http.DefaultClient.Jar = smartisanData.CookieJar
-	http.DefaultClient.Transport = smartisanData.Tr
+	//smartisanData.CookieJar, _ = cookiejar.New(nil)
+	//smartisanData.Tr = &http.Transport{
+	//	TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
+	//	DisableCompression: true,
+	//}
+	//http.DefaultClient.Jar = smartisanData.CookieJar
+	//http.DefaultClient.Transport = smartisanData.Tr
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
