@@ -1,16 +1,12 @@
 package common
 
 import (
-	"crypto/tls"
 	"errors"
 	"fmt"
-	smartisanData "github.com/princeyuaner/smartisan/Data"
-
 	//smartisanData "github.com/princeyuaner/smartisan/Data"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"net/http/cookiejar"
 	"net/url"
 	"strings"
 )
