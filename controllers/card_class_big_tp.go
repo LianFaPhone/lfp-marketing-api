@@ -11,13 +11,13 @@ import (
 	. "LianFaPhone/lfp-base/log/zap"
 )
 
-type ClassTp struct {
+type ClassBigTp struct {
 	Controllers
 }
 
-func (this *ClassTp) Gets(ctx iris.Context) {
+func (this *ClassBigTp) Gets(ctx iris.Context) {
 
-	ll, err := new(models.CardClass).Gets()
+	ll, err := new(models.CardClassBigTp).Gets()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -28,8 +28,8 @@ func (this *ClassTp) Gets(ctx iris.Context) {
 }
 
 
-func (this *ClassTp) Add(ctx iris.Context) {
-	param := new(api.BkCardClassAdd)
+func (this *ClassBigTp) Add(ctx iris.Context) {
+	param := new(api.BkCardClassBigTpAdd)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -38,7 +38,7 @@ func (this *ClassTp) Add(ctx iris.Context) {
 		return
 	}
 
-	ll, err := new(models.CardClass).ParseAdd(param).Add()
+	ll, err := new(models.CardClassBigTp).ParseAdd(param).Add()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -48,9 +48,9 @@ func (this *ClassTp) Add(ctx iris.Context) {
 
 }
 
-func (this *ClassTp) Get(ctx iris.Context) {
+func (this *ClassBigTp) Get(ctx iris.Context) {
 	//设置套餐，图片，上传文件
-	param := new(api.BkCardClass)
+	param := new(api.BkCardClassBigTp)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -59,7 +59,7 @@ func (this *ClassTp) Get(ctx iris.Context) {
 		return
 	}
 
-	ll, err := new(models.CardClass).Parse(param).Get()
+	ll, err := new(models.CardClassBigTp).Parse(param).Get()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -68,44 +68,9 @@ func (this *ClassTp) Get(ctx iris.Context) {
 	this.Response(ctx, ll)
 }
 
-
-func (this *ClassTp) FtGet(ctx iris.Context) {
+func (this *ClassBigTp) Update(ctx iris.Context) {
 	//设置套餐，图片，上传文件
-	className := ctx.FormValue("name")
-	if len(className) == 0 {
-		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
-		ZapLog().Error("param err")
-		return
-	}
-	//ZapLog().Sugar().Info("test=", zap.Any("haha", ctx.Request().Header))
-
-	cc, err := new(models.CardClass).GetByNameFromCache(className)
-	if err != nil {
-		ZapLog().With(zap.Error(err)).Error("Update err")
-		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
-		return
-	}
-	if cc == nil {
-		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_NOT_FOUND.Desc())
-		return
-	}
-
-	dd := &models.CardClass{
-		ISP: cc.ISP,
-		BigTp: cc.BigTp,
-		//Tp: cc.Tp,
-		Name: cc.Name,
-		ImgUrl: cc.ImgUrl,
-		SmsFlag: cc.SmsFlag,
-	}
-
-	this.Response(ctx, dd)
-}
-
-
-func (this *ClassTp) Update(ctx iris.Context) {
-	//设置套餐，图片，上传文件
-	param := new(api.BkCardClass)
+	param := new(api.BkCardClassBigTp)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -114,7 +79,7 @@ func (this *ClassTp) Update(ctx iris.Context) {
 		return
 	}
 
-	ll, err := new(models.CardClass).Parse(param).Update()
+	ll, err := new(models.CardClassBigTp).Parse(param).Update()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -123,9 +88,9 @@ func (this *ClassTp) Update(ctx iris.Context) {
 	this.Response(ctx, ll)
 }
 
-func (this *ClassTp) List(ctx iris.Context) {
+func (this *ClassBigTp) List(ctx iris.Context) {
 	//设置套餐，图片，上传文件
-	param := new(api.BkCardClassList)
+	param := new(api.BkCardClassBigTpList)
 
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -134,7 +99,7 @@ func (this *ClassTp) List(ctx iris.Context) {
 		return
 	}
 
-	ll, err := new(models.CardClass).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
+	ll, err := new(models.CardClassBigTp).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())

@@ -16,7 +16,7 @@ func InitDbTable() {
 		fmt.Println(config.GConfig.Db.Debug)
 		return
 	}
-	err := db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate(&CardOrder{}, &CardDatesheet{}, &CardAreasheet{}).Error
+	err := db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate(&CardOrder{}, &CardDatesheet{}, &CardAreasheet{}, &CardClassBigTp{}).Error
 	if err != nil {
 		log.ZapLog().Error("AutoMigrate err", zap.Error(err))
 	}

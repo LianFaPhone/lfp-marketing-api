@@ -339,8 +339,7 @@ type (
 
 	BkCardClassAdd struct{
 		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
-		BigTp    *int    `valid:"optional" json:"big_tp,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-		Tp    *int    `valid:"optional" json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		BigTp    *int    `valid:"optional" json:"big_tp_id,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
@@ -358,8 +357,8 @@ type (
 		Id    *int   `valid:"required"  json:"id,omitempty"   "` //加上type:int(11)后AUTO_INCREMENT无效
 		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
 
-		BigTp    *int    `valid:"optional" json:"big_tp,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-		Tp    *int    `valid:"optional" json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		BigTp    *int    `valid:"optional" json:"big_tp_id,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		//Tp    *int    `valid:"optional" json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
@@ -374,13 +373,41 @@ type (
 
 	BkCardClassList struct{
 		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
-		BigTp    *int    `valid:"optional" json:"big_tp,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-		Tp    *int    `valid:"optional" json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		BigTp    *int    `valid:"optional" json:"big_tp_id,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		//Tp    *int    `valid:"optional" json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
 		FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
 		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		Page         int64   `valid:"required" json:"page,omitempty"`
+		Size         int64   `valid:"optional" json:"size,omitempty"`
+	}
+	//
+
+	BkCardClassBigTpAdd struct{
+		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
+	//	BigTp    *int    `valid:"optional" json:"big_tp,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
+		Name *string `valid:"optional" json:"name,omitempty"     gorm:"column:detail;type:varchar(50)"`
+
+	}
+
+	BkCardClassBigTp struct{
+		Id    *int   `valid:"required"  json:"id,omitempty"   "` //加上type:int(11)后AUTO_INCREMENT无效
+		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
+		Name *string `valid:"optional" json:"name,omitempty"     gorm:"column:detail;type:varchar(50)"`
+		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
+
+		Valid    *int    `valid:"optional" json:"valid,omitempty"      ` //加上type:int(11)后AUTO_INCREMENT无效
+
+	}
+
+	BkCardClassBigTpList struct{
+		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
+
+		Name *string `valid:"optional" json:"name,omitempty"     gorm:"column:detail;type:varchar(50)"`
+		Valid    *int    `valid:"optional" json:"valid,omitempty"       gorm:"column:valid;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Page         int64   `valid:"required" json:"page,omitempty"`
 		Size         int64   `valid:"optional" json:"size,omitempty"`
 	}

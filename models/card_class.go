@@ -208,8 +208,8 @@ type CardClass struct{
 	Id    *int   `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"` //加上type:int(11)后AUTO_INCREMENT无效
 	ISP   *int    `json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
 
-	BigTp    *int    `json:"big_tp,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无
-	Tp    *int    `json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+	BigTp    *int    `json:"big_tp_id,omitempty"       gorm:"column:big_tp_id;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无
+	//Tp    *int    `json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 	MaxLimit    *int    `json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 	Name  *string `json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 	Detail *string `json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"` //拼音首字母缩写
@@ -229,7 +229,7 @@ func (this *CardClass) TableName() string {
 func (this * CardClass) ParseAdd(p *api.BkCardClassAdd) *CardClass {
 	cc := &CardClass{
 		ISP: p.ISP,
-		Tp:  p.Tp,
+		//Tp:  p.Tp,
 		Name: p.Name,
 		MaxLimit: p.MaxLimit,
 		Detail: p.Detail,
@@ -251,7 +251,7 @@ func (this * CardClass) Parse(p *api.BkCardClass) *CardClass {
 	return &CardClass{
 		Id: p.Id,
 		ISP: p.ISP,
-		Tp:  p.Tp,
+		//Tp:  p.Tp,
 		Name: p.Name,
 		Detail: p.Detail,
 		ImgUrl: p.ImgUrl,
@@ -269,7 +269,7 @@ func (this * CardClass) Parse(p *api.BkCardClass) *CardClass {
 func (this * CardClass) ParseList(p *api.BkCardClassList) *CardClass {
 	return &CardClass{
 		ISP: p.ISP,
-		Tp:  p.Tp,
+		//Tp:  p.Tp,
 		Name: p.Name,
 
 		Detail: p.Detail,

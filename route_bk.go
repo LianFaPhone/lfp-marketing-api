@@ -104,7 +104,17 @@ func (this *WebServer) bkroutes() {
 
 			datesheetPy.Post("/list", ac.BkList)
 		}
-		classPy := v1bk.Party("/cardclass")
+		classBigTpPy := v1bk.Party("/cardclassbigtp")
+		{
+			ac := new(controllers.ClassBigTp)
+
+			classBigTpPy.Any("/gets", ac.Gets)
+			classBigTpPy.Post("/add", ac.Add)
+			classBigTpPy.Any("/get", ac.Get)
+			classBigTpPy.Post("/update", ac.Update)
+			classBigTpPy.Post("/list", ac.List)
+		}
+		classPy := v1bk.Party("/cardclasstp")
 		{
 			ac := new(controllers.ClassTp)
 
