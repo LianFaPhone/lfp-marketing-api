@@ -38,7 +38,19 @@ func (this *ClassTp) Add(ctx iris.Context) {
 		return
 	}
 
-	ll, err := new(models.CardClass).ParseAdd(param).Add()
+	modelParam := new(models.CardClass).ParseAdd(param)
+	flag,err := modelParam.Unique()
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("db err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		return
+	}
+	if !flag {
+		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_EXISTS.Code(), apibackend.BASERR_OBJECT_EXISTS.Desc())
+		return
+	}
+
+	ll, err := modelParam.Add()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())

@@ -82,6 +82,14 @@ func (this *CardClassBigTp) Gets() ([]*CardClassBigTp, error) {
 	return arr,nil
 }
 
+func (this *CardClassBigTp) Unique() (bool, error) {
+	var count int
+	err := db.GDbMgr.Get().Model(this).Where("name = ? ", this.Name).Count(&count).Error
+	if err != nil {
+		return false,err
+	}
+	return count <= 0,nil
+}
 
 
 //批量导入

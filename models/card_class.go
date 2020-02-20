@@ -313,8 +313,8 @@ func (this *CardClass) GetByName(name string) (*CardClass, error) {
 	return this,nil
 }
 
-func (this *CardClass) GetByTp(tp int) (*CardClass, error) {
-	err := db.GDbMgr.Get().Model(this).Where("tp = ? ", tp).Last(this).Error
+func (this *CardClass) GetById(tp int) (*CardClass, error) {
+	err := db.GDbMgr.Get().Model(this).Where("id = ? ", tp).Last(this).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil,nil
 	}
@@ -322,6 +322,15 @@ func (this *CardClass) GetByTp(tp int) (*CardClass, error) {
 		return nil,err
 	}
 	return this,nil
+}
+
+func (this *CardClass) Unique() (bool, error) {
+	var count int
+	err := db.GDbMgr.Get().Model(this).Where("name = ? ", this.Name).Count(&count).Error
+	if err != nil {
+		return false,err
+	}
+	return count <= 0,nil
 }
 
 //批量导入
@@ -396,6 +405,43 @@ func (this *CardClass) InnerGetByName(input interface{}) (interface{}, *time.Dur
 		return nil,nil, errors.New("type err")
 	}
 	acty,err := new(CardClass).GetByName(userKey)
+	if err != nil {
+		return nil, nil, errors.Annotate(err, "Activity GetByIdAndFields")
+	}
+	if acty == nil {
+		return nil, nil, gorm.ErrRecordNotFound  // nil,nil,nil可能将是永远不超时
+	}
+	return  acty, &expire, nil
+}
+
+//
+func (this *CardClass) GetByIdFromCache(id int) (*CardClass, error) {
+	data,err := db.GCache.GetCardClassById(id)
+	if err == gorm.ErrRecordNotFound {
+		return nil,nil
+	}
+	if err != nil {
+		return nil,err
+	}
+	if data == nil {
+		return nil, nil
+	}
+
+	acty, ok := data.(*CardClass)
+	if !ok {
+		return nil, errors.Annotate(err, "type err")
+	}
+	return acty,nil
+}
+
+func (this *CardClass) InnerGetById(input interface{}) (interface{}, *time.Duration, error) {
+	expire := time.Second * time.Duration(config.GConfig.Cache.CardClassByNameTimeout+rand.Intn(600))
+	id,ok := input.(int)
+	if !ok {
+
+		return nil,nil, errors.New("type err")
+	}
+	acty,err := new(CardClass).GetById(id)
 	if err != nil {
 		return nil, nil, errors.Annotate(err, "Activity GetByIdAndFields")
 	}

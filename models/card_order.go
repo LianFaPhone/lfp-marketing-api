@@ -16,7 +16,8 @@ type CardOrder struct {
 	ClassBigTp    *int    `json:"class_big_tp,omitempty"     gorm:"column:class_big_tp;type:int(11);"`                 //手机卡套餐类型
 
 	ClassTp    *int    `json:"class_tp,omitempty"     gorm:"column:class_tp;type:int(11);"`                 //手机卡套餐类型
-	ClassName  *string `json:"class_name,omitempty"     gorm:"-"`
+	//ClassName  *string `json:"class_name,omitempty"     gorm:"-"`
+	ClassDetail  *string `json:"class_detail,omitempty"     gorm:"-"`
 	Status     *int    `json:"status,omitempty"     gorm:"column:status;type:int(11);"` //订单状态
 	StatusName *string `json:"status_name,omitempty"     gorm:"-"`
 	TrueName   *string `json:"true_name,omitempty"     gorm:"column:true_name;type:varchar(10)"` //姓名

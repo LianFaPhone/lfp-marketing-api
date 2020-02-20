@@ -305,11 +305,11 @@ func (this *CardOrder) BkList(ctx iris.Context) {
 	if param.EndDeliverAt != nil {
 		condPair = append(condPair, &models.SqlPairCondition{"deliver_at <= ?", param.EndDeliverAt})
 	}
-	extend := ctx.Values().GetString("extend")
-	if len(extend) > 0 {
-		arr := strings.Split(extend, ",")
-		condPair = append(condPair, &models.SqlPairCondition{"class_tp in (?)", arr})
-	}
+	//extend := ctx.Values().GetString("extend")
+	//if len(extend) > 0 {
+	//	arr := strings.Split(extend, ",")
+	//	condPair = append(condPair, &models.SqlPairCondition{"class_tp in (?)", arr})
+	//}
 	if param.UploadFlag != nil {
 		if *param.UploadFlag == 0 {
 			condPair = append(condPair, &models.SqlPairCondition{"dataurl1 == ?", "null"})
@@ -330,9 +330,9 @@ func (this *CardOrder) BkList(ctx iris.Context) {
 	for i := 0; i < len(*coArr); i++ {
 		temp := (*coArr)[i]
 		if temp.ClassTp != nil {
-			m, _ := models.ClassTpMap[*temp.ClassTp]
-			if m != nil {
-				temp.ClassName = &m.Name
+			cc,err := new(models.CardClass).GetByIdFromCache(*temp.ClassTp)
+			if err == nil {
+				temp.ClassDetail = cc.Detail
 			}
 		}
 		if temp.PhoneOSTp != nil {

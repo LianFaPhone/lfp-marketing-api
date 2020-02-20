@@ -63,7 +63,7 @@ func (this *Tasker) newUnFinishSmsWork5hour() {
 				startId = *orderArr[i].Id
 			}
 
-			cc,err := new(models.CardClass).GetByTp(*orderArr[i].ClassTp)
+			cc,err := new(models.CardClass).GetById(*orderArr[i].ClassTp)
 			if err != nil {
 				ZapLog().Error("Nofind CardClass ", zap.Error(err), zap.Int("classTp", *orderArr[i].ClassTp))
 				continue
@@ -147,7 +147,7 @@ func (this *Tasker) newUnFinishSmsWork5min() {
 				startId = *orderArr[i].Id
 			}
 
-			cc,err := new(models.CardClass).GetByTp(*orderArr[i].ClassTp)
+			cc,err := new(models.CardClass).GetById(*orderArr[i].ClassTp)
 			if err != nil {
 				ZapLog().Error("Nofind CardClass ", zap.Error(err), zap.Int("classTp", *orderArr[i].ClassTp))
 				continue

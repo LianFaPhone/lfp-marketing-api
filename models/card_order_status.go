@@ -7,7 +7,7 @@ type OrderStatus struct {
 
 const (
 	CONST_OrderStatus_New  = 1     //新订单
-	CONST_OrderStatus_Name = "新订单" //
+	CONST_OrderStatus_Name = "新订单已完成" //
 
 
 	CONST_OrderStatus_New_UnFinish  = 10     //新订单
@@ -38,7 +38,7 @@ const (
 var PathToOrderStatus = map[string] int {
 	"all": -1,
 	"new": 1 ,
-	"new_unfinish":10,
+	"new-unfinish":10,
 	"export": 2 ,
 	"deliver": 3 ,
 	"waitdone": 5 ,

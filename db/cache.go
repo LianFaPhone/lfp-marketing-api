@@ -56,7 +56,7 @@ func (this *Cache) GetCardClassByName(code string) (interface{}, error) {
 }
 
 func (this *Cache) SetCardClassByName(f func(key interface{}) (interface{}, *time.Duration, error)) {
-	this.CardClassByNameCache = gcache.New(config.GConfig.Cache.SponsorMaxKey).LRU().LoaderExpireFunc(f).Build()
+	this.CardClassByNameCache = gcache.New(config.GConfig.Cache.CardClassByNameMaxKey).LRU().LoaderExpireFunc(f).Build()
 }
 
 func (this *Cache) RemoveCardClassByName(tp string) {
@@ -65,3 +65,28 @@ func (this *Cache) RemoveCardClassByName(tp string) {
 	}
 	this.CardClassByNameCache.Remove(tp)
 }
+
+//**************************************************/
+func (this *Cache) GetCardClassById(id int) (interface{}, error) {
+	if this.CardClassByTpCache == nil {
+		return nil, errors.New("not init")
+	}
+	value, err := this.CardClassByTpCache.Get(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return value, nil
+}
+
+func (this *Cache) SetCardClassById(f func(key interface{}) (interface{}, *time.Duration, error)) {
+	this.CardClassByTpCache = gcache.New(config.GConfig.Cache.CardClassByNameMaxKey).LRU().LoaderExpireFunc(f).Build()
+}
+
+func (this *Cache) RemoveCardClassById(id int) {
+	if this.CardClassByTpCache == nil {
+		return
+	}
+	this.CardClassByTpCache.Remove(id)
+}
+
