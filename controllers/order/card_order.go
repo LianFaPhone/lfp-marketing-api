@@ -332,7 +332,7 @@ func (this *CardOrder) BkList(ctx iris.Context) {
 		if temp.ClassTp != nil {
 			cc,err := new(models.CardClass).GetByIdFromCache(*temp.ClassTp)
 			if err == nil {
-				temp.ClassDetail = cc.Detail
+				temp.ClassName = cc.Detail
 			}
 		}
 		if temp.PhoneOSTp != nil {

@@ -141,6 +141,7 @@ func (this *WebServer) routes() {
 			ydhkParty.Any("/photo-upload", ac.UploadPhoto)
 			ydhkParty.Get("/protocal-get", ac.GetProtocal)
 			ydhkParty.Post("/order-confirm", ac.FtConfirm)
+			ydhkParty.Post("/idcheckurl-get", ac.FtIdCheckUrlGet)
 		}
 
 	}

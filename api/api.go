@@ -147,6 +147,10 @@ type(
 		Province    string    `json:"province_code"`
 		City    string        `json:"city_code"`
 
+		SendProvinceName    string    `json:"express_province"`
+		SendCityName    string    `json:"express_city"`
+		SendDistrictName    string    `json:"express_district"`
+
 		SendProvince    string    `json:"express_province_code"`
 		SendCity    string    `json:"express_city_code"`
 		SendDistrict    string    `json:"express_district_code"`
@@ -158,12 +162,19 @@ type(
 		ClassTp      *int    `valid:"optional" json:"class_tp,omitempty"`
 		ClassName   *string `valid:"optional" json:"class_name,omitempty"`
 		ClassISP     *int    `valid:"optional" json:"class_isp,omitempty"`
-		IP           *string  `valid:"optional" json:"ip,omitempty"`
-		PhoneOSTp    *int    `valid:"optional" json:"class_isp,omitempty"`
+		IP           *string  `valid:"optional" json:"ip,omitempty"` //从header
+		PhoneOSTp    *int    `valid:"optional" json:"device_os_tp,omitempty"` //从header
+
 	}
 
 	FtResYdhkApply struct{
-		OrderId string   `json:"order_no"`
+		OrderId string   `json:"third_order_no"`
 		OaoModel  bool    `json:"oao_model"`
+	}
+
+	FtIdCheckUrlGet struct {
+		OrderNo   string   `valid:"required"  json:"third_order_no,omitempty"`    //订单号
+		NewPhone       string    `valid:"optional"  json:"new_phone,omitempty"`
+		Token  string    `valid:"optional"  json:"token,omitempty"`
 	}
 )

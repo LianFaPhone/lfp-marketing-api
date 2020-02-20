@@ -117,20 +117,22 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			OrderNo:  &orderNo,
 			TrueName: &param.LeagalName,
 			IdCard:   &param.CertificateNo,
+			ClassIsp: param.ClassISP,
+			ClassBigTp: param.ClassBigTp,
 			ClassTp:  param.ClassTp,
 			//		CountryCode: p.CountryCode,
 			Phone:        &param.Phone,
-			//Province:     &param.Province,
+			Province:     &param.SendProvinceName,
 			ProvinceCode: &param.Province,
-			//City:         p.City,
+			City:         &param.SendCityName,
 			CityCode:     &param.City,
-			//Area:         &param.Area,
+			Area:         &param.SendDistrictName,
 			AreaCode:     &param.SendDistrict,
 			//Town:         p.Town,
 			Address:      &param.Address,
 			IP:           param.IP,
 			PhoneOSTp:    param.PhoneOSTp,
-			ClassIsp: param.ClassISP,
+
 			NewPhone: &param.NewPhone,
 			ThirdOrderNo: &orderId,
 		}
@@ -193,4 +195,25 @@ func (this *Ydhk) FtConfirm(ctx iris.Context) {
 		}()
 	}
 	this.Response(ctx, nil)
+}
+
+func (this *Ydhk) FtIdCheckUrlGet(ctx iris.Context) {
+	param := new(api.FtIdCheckUrlGet)
+
+	err := Tools.ShouldBindJSON(ctx, param)
+	if err != nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		ZapLog().Error("param err", zap.Error(err))
+		return
+	}
+
+	url,err := new(ReIdCheckUrl).Send(param.OrderNo, param.NewPhone, param.Token)
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("Retoken send err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
+		return
+	}
+
+
+	this.Response(ctx, url)
 }
