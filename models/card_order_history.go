@@ -34,25 +34,28 @@ type CardOrderHistory struct {
 	ICCID         *string `json:"ICCID,omitempty"     gorm:"column:ICCID;type:varchar(20)"`                 //手机卡唯一识别码
 	NewPhone      *string `json:"new_phone,omitempty"     gorm:"column:new_phone;type:varchar(20)"`         //新手机号
 	Guishudi      *string `json:"guishudi,omitempty"     gorm:"column:guishudi;type:varchar(30)"`           //归属于哪个门店
-	Dataurl1      *string `json:"dataurl1,omitempty"     gorm:"column:dataurl1;type:varchar(50)"`           //身份证照片地址
-	Dataurl2      *string `json:"dataurl2,omitempty"     gorm:"column:dataurl2;type:varchar(50)"`           //身份证照片地址
-	Dataurl3      *string `json:"dataurl3,omitempty"     gorm:"column:dataurl3;type:varchar(50)"`           //免冠照地址
+//	Dataurl1      *string `json:"dataurl1,omitempty"     gorm:"column:dataurl1;type:varchar(50)"`           //身份证照片地址
+//	Dataurl2      *string `json:"dataurl2,omitempty"     gorm:"column:dataurl2;type:varchar(50)"`           //身份证照片地址
+//	Dataurl3      *string `json:"dataurl3,omitempty"     gorm:"column:dataurl3;type:varchar(50)"`           //免冠照地址
 	IP            *string `json:"ip,omitempty"     gorm:"column:ip;type:varchar(40)"`                       //ip地址
-	Ips           *int    `json:"ips,omitempty"     gorm:"column:ips;type:int(10)"`                         //同一个ip下单次数
+	Ips           *int    `json:"min_ips,omitempty"     gorm:"column:min_ips;type:int(10)"`                         //同一个ip下单次数
 	PhoneOSTp     *int    `json:"device_os_tp,omitempty"     gorm:"column:device_os_tp;type:int(11)"`       //设备类型
 	PhoneOSName   *string `json:"device_os_name,omitempty"     gorm:"-"`
 	IdCardAudit   *int    `json:"idcard_audit,omitempty"     gorm:"column:idcard_audit;type:tinyint(2)"` //身份证是否审核通过
 
-	BspExpress   *string `json:"bsp_express,omitempty"     gorm:"column:bsp_express;type:varchar(20)"`       //快递名称
-	BspExpressNo *string `json:"bsp_express_no,omitempty"     gorm:"column:bsp_express_no;type:varchar(30)"` //快递单号
+	//BspExpress   *string `json:"bsp_express,omitempty"     gorm:"column:bsp_express;type:varchar(20)"`       //快递名称
+	//BspExpressNo *string `json:"bsp_express_no,omitempty"     gorm:"column:bsp_express_no;type:varchar(30)"` //快递单号
 	//	BspExpressRemark   *string    `json:"bsp_express_remark,omitempty"     gorm:"column:bsp_express_remark;type:varchar(50)"`
-	BspStatus     *int    `json:"bsp_status,omitempty"     gorm:"column:bsp_status;type:int(11);"` //订单状态
-	BspStatusName *string `json:"bsp_status_name,omitempty"     gorm:"-"`
-	Message       *string `json:"message,omitempty"     gorm:"column:message;type:varchar(30)"`  //湖南反馈信息
-	BspRsp        *string `json:"bsp_rsp,omitempty"     gorm:"column:bsp_rsp;type:varchar(200)"` //湖南反馈信息
-	NbMsg         *string `json:"nb_msg,omitempty"     gorm:"column:nb_msg;type:varchar(20)"`    //宁波反馈信息
+	//BspStatus     *int    `json:"bsp_status,omitempty"     gorm:"column:bsp_status;type:int(11);"` //订单状态
+	//BspStatusName *string `json:"bsp_status_name,omitempty"     gorm:"-"`
+	//Message       *string `json:"message,omitempty"     gorm:"column:message;type:varchar(30)"`  //湖南反馈信息
+	//BspRsp        *string `json:"bsp_rsp,omitempty"     gorm:"column:bsp_rsp;type:varchar(200)"` //湖南反馈信息
+	//NbMsg         *string `json:"nb_msg,omitempty"     gorm:"column:nb_msg;type:varchar(20)"`    //宁波反馈信息
 
 	IsBacklist *int `json:"is_blacklist,omitempty"     gorm:"-"`
+	ThirdOrderNo    *string `json:"third_order_no,omitempty"     gorm:"column:third_order_no;type:varchar(30);"` //订单号
+	ThirdResp    *string `json:"third_resp,omitempty"     gorm:"column:third_resp;type:varchar(30);"` //订单号
+
 	Table
 }
 
@@ -151,20 +154,20 @@ func (this *CardOrderHistory) BkParseAdd(p *CardOrder) *CardOrderHistory {
 		ICCID:         p.ICCID,
 		NewPhone:      p.NewPhone,
 		Guishudi:      p.Guishudi,
-		Dataurl1:      p.Dataurl1,
-		Dataurl2:      p.Dataurl2,
-		Dataurl3:      p.Dataurl3,
+		//Dataurl1:      p.Dataurl1,
+		//Dataurl2:      p.Dataurl2,
+		//Dataurl3:      p.Dataurl3,
 		IP:            p.IP,
 		Ips:           p.Ips,
 		PhoneOSTp:     p.PhoneOSTp,
 		IdCardAudit:   p.IdCardAudit,
-		BspExpress:    p.BspExpress,
-		BspExpressNo:  p.BspExpressNo,
-		//	BspExpressRemark  : p.BspExpressRemark,
-		BspStatus: p.BspStatus,
-		BspRsp:    p.BspRsp,
-		NbMsg:     p.NbMsg,
-		Message:   p.Message,
+		//BspExpress:    p.BspExpress,
+		//BspExpressNo:  p.BspExpressNo,
+		////	BspExpressRemark  : p.BspExpressRemark,
+		//BspStatus: p.BspStatus,
+		//BspRsp:    p.BspRsp,
+		//NbMsg:     p.NbMsg,
+		//Message:   p.Message,
 	}
 	acty.Valid = p.Valid
 	acty.CreatedAt = p.CreatedAt

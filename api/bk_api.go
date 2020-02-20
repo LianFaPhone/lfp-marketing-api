@@ -43,12 +43,12 @@ type (
 		Area          *string `valid:"optional" json:"area,omitempty"`
 		Town          *string `valid:"optional" json:"town,omitempty" `
 		Address       *string `valid:"optional" json:"address,omitempty" `
-		PhoneOSTp     *int    `valid:"optional" json:"phone_os_tp,omitempty" `
+		PhoneOSTp     *int    `valid:"optional" json:"device_os_tp,omitempty" `
 		IP            *string `valid:"optional" json:"ip,omitempty" `
 		Valid         *int    `valid:"optional"  json:"valid,omitempty"`
 		Express       *string `valid:"optional" json:"express,omitempty"  `    //快递名称
 		ExpressNo     *string `valid:"optional" json:"express_no,omitempty"  ` //快递单号
-		ExpressRemark *string `valid:"optional" json:"remark,omitempty"  `     //备注
+		ExpressRemark *string `valid:"optional" json:"express_remark,omitempty"  `     //备注
 
 	}
 

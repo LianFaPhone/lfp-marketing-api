@@ -345,10 +345,10 @@ func (this *CardOrder) BkList(ctx iris.Context) {
 			m := models.OrderStatusMap[*temp.Status]
 			temp.StatusName = &m
 		}
-		if temp.BspStatus != nil {
-			m := models.OrderStatusMap[*temp.BspStatus]
-			temp.BspStatusName = &m
-		}
+		//if temp.BspStatus != nil {
+		//	m := models.OrderStatusMap[*temp.BspStatus]
+		//	temp.BspStatusName = &m
+		//}
 
 		if param.BlackSwitch == nil || *param.BlackSwitch == 0 {
 			continue
