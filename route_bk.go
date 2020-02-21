@@ -98,7 +98,7 @@ func (this *WebServer) bkroutes() {
 
 			areasheetPy.Post("/list", ac.BkList)
 		}
-		datesheetPy := v1bk.Party("/datesheet")
+		datesheetPy := v1bk.Party("/monthsheet")
 		{
 			ac := new(sheet.CardDateSheet)
 
@@ -141,6 +141,7 @@ func (this *WebServer) bkroutes() {
 			ac := new(controllers.UploadFile)
 
 			ossmarketPy.Any("/upload", ac.UpSso)
+			ossmarketPy.Any("/cardclasspic/upload", ac.UpSso)
 		}
 		blacklistPhonePy := v1bk.Party("/blacklist/phone")
 		{

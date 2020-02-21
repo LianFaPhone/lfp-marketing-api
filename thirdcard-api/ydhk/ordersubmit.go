@@ -47,6 +47,7 @@ type (
 )
 
 func (this *ReOrderSubmit) Send(token, inPhone, newPhone, LegalName,IdCard, address, province, city,  sendprovince, sendcity, sendqu string) (apibackend.EnumBasErr,string,bool, error) {
+	return apibackend.BASERR_SUCCESS, "TestOrder112",true, nil
 	this.MsgType = "LiveHKCardTemporaryOrderReq"
 	this.Version = Const_Version
 	this.ChannelId = Const_ChannelId

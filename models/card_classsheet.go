@@ -35,10 +35,10 @@ func (this *CardClasssheet) TableName() string {
 //}
 
 func (this *CardClasssheet) ParseList(p *api.BkCardClassSheetList) *CardClasssheet {
-	this.Date  = p.Date
-	this.ClassBigTp  = p.ClassBigTp
-	this.ClassTp  = p.ClassTp
-	this.ClassISP = p.Isp
+	//this.Date  = p.Date
+	//this.ClassBigTp  = p.ClassBigTp
+	//this.ClassTp  = p.ClassTp
+	//this.ClassISP = p.Isp
 	//this.ClassName
 	this.DateTp = p.DateTp
 
@@ -130,7 +130,7 @@ func (this *CardClasssheet) TxGetByDateAndTp(tx *gorm.DB, date string, class_tp 
 	return m, err
 }
 
-func (this *CardClasssheet) ListWithConds(page, size int64, needFields []string, condPair []*SqlPairCondition) (*common.Result, error) {
+func (this *CardClasssheet) ListWithConds(page, size int64, needFields []string, condPair []*SqlPairCondition, groupStr string) (*common.Result, error) {
 	var list []*CardClasssheet
 	query := db.GDbMgr.Get().Where(this)
 
@@ -145,6 +145,9 @@ func (this *CardClasssheet) ListWithConds(page, size int64, needFields []string,
 
 	if len(needFields) > 0 {
 		query = query.Select(needFields)
+	}
+	if len(groupStr) > 0 {
+		query = query.Group(groupStr)
 	}
 
 	return new(common.Result).PageQuery(query, &CardClasssheet{}, &list, page, size, nil, "")

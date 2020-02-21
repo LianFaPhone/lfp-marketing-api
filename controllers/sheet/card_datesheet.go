@@ -35,9 +35,9 @@ func (this *CardDateSheet) BkList(ctx iris.Context) {
 	if ok {
 		for i := 0; i < len(*arr); i++ {
 			if (*arr)[i].ClassTp != nil {
-				ss, ok := models.ClassTpMap[*(*arr)[i].ClassTp]
-				if ok {
-					(*arr)[i].ClassName = &ss.Name
+				ss, err :=new(models.CardClass).GetByIdFromCache(*(*arr)[i].ClassTp)
+				if ss != nil && err == nil {
+					(*arr)[i].ClassName = ss.Name
 				}
 			}
 		}

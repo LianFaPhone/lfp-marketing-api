@@ -2,6 +2,7 @@ package tasker
 
 import (
 	. "LianFaPhone/lfp-base/log/zap"
+	"LianFaPhone/lfp-marketing-api/config"
 	"LianFaPhone/lfp-marketing-api/models"
 	"go.uber.org/zap"
 	"time"
@@ -32,9 +33,14 @@ func (this *Tasker) run() {
 	activeCodeTicker := time.NewTicker(time.Hour * 10)
 	activeCodeTicker.Stop()
 
-	cardOrderSheetTicker := time.NewTicker(time.Minute * 10)
-	cardOrderSheetTicker.Stop()
-	cardOrderIpsTicker := time.NewTicker(time.Minute * 6)
+	cardOrderSheetTicker := time.NewTicker(time.Second *  time.Duration(config.GConfig.Task.SheetTicker))
+	if !config.GConfig.Task.SheetFlag {
+		cardOrderSheetTicker.Stop()
+	}
+	cardOrderIpsTicker := time.NewTicker(time.Second * time.Duration(config.GConfig.Task.IpsTicker))
+	if !config.GConfig.Task.IpsFlag {
+		cardOrderIpsTicker.Stop()
+	}
 
 	cardOrderHistoryTicker := time.NewTicker(time.Hour * 6)
 	cardOrderHistoryTicker.Stop()
@@ -44,16 +50,19 @@ func (this *Tasker) run() {
 	cardOrderUnFinishSms1HourTicker := time.NewTicker(time.Minute * 60)
 	cardOrderUnFinishSms1HourTicker.Stop()
 
+	ydhkUnFinishCheckTicker := time.NewTicker(time.Minute * 3)
+
+
 	go func() {
 		defer models.PanicPrint()
 		for {
 			select {
 			case <-cardOrderSheetTicker.C:
-				this.sheetWork()
+				//this.sheetWork()
 			case <-activeCodeTicker.C:
-				this.activeCodeWork()
+				//this.activeCodeWork()
 			case <-cardOrderHistoryTicker.C:
-				go this.orderHistory()
+				//go this.orderHistory()
 
 			}
 		}
@@ -64,9 +73,9 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-cardOrderUnFinishSms5MinTicker.C:
-				this.newUnFinishSmsWork5min()
+				//this.newUnFinishSmsWork5min()
 			case <-cardOrderUnFinishSms1HourTicker.C:
-				this.newUnFinishSmsWork5hour()
+				//this.newUnFinishSmsWork5hour()
 			}
 		}
 	}()
@@ -77,6 +86,16 @@ func (this *Tasker) run() {
 			select {
 			case <-cardOrderIpsTicker.C:
 				this.ipsWork()
+			}
+		}
+	}()
+
+	go func() {
+		defer models.PanicPrint()
+		for {
+			select {
+			case <-ydhkUnFinishCheckTicker.C:
+				//this.ydhkWork()
 			}
 		}
 	}()

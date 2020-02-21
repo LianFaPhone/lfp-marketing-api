@@ -29,11 +29,11 @@ func (this *CardAreasheet) TableName() string {
 //
 func (this *CardAreasheet) ParseList(p *api.BkCardAreaSheetList) *CardAreasheet {
 	ss := &CardAreasheet{
-		CityCode: p.CityCode,
-		//DateAt:
-		Province: p.Province,
-		ProvinceCode: p.ProvinceCode,
-		City: p.City,
+		//CityCode: p.CityCode,
+		////DateAt:
+		//Province: p.Province,
+		//ProvinceCode: p.ProvinceCode,
+		//City: p.City,
 		//
 		//OrderCount *int64 `json:"order_count,omitempty"     gorm:"column:order_count;type:bigint(20);"`
 		DateTp: p.DateTp,
@@ -74,7 +74,7 @@ func (this *CardAreasheet) TxGetByConds(tx *gorm.DB, date int64, Province *strin
 	return m, err
 }
 
-func (this *CardAreasheet) ListWithConds(page, size int64, needFields []string, condPair []*SqlPairCondition) (*common.Result, error) {
+func (this *CardAreasheet) ListWithConds(page, size int64, needFields []string, condPair []*SqlPairCondition, groupStr string) (*common.Result, error) {
 	var list []*CardAreasheet
 	query := db.GDbMgr.Get().Model(this).Where(this)
 
@@ -88,6 +88,10 @@ func (this *CardAreasheet) ListWithConds(page, size int64, needFields []string, 
 	query = query.Order("valid desc").Order("created_at desc")
 	if len(needFields) > 0 {
 		query = query.Select(needFields)
+	}
+
+	if len(groupStr) > 0 {
+		query = query.Group(groupStr)
 	}
 
 	return new(common.Result).PageQuery(query, &CardAreasheet{}, &list, page, size, nil, "")

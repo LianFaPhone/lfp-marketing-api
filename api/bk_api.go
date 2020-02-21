@@ -102,9 +102,9 @@ type (
 
 	BkCardClassSheetList struct {
 		Date       *string `valid:"optional"  json:"date,omitempty" ` //订单号
-		Isp         *int    `valid:"optional"  json:"isp,omitempty"`
-		ClassBigTp *int    `valid:"optional"  json:"class_big_tp,omitempty"`
-		ClassTp    *int   `valid:"optional"  json:"class_tp,omitempty"`
+		GroupIspFlag  *int    `valid:"optional"  json:"group_isp_flag,omitempty"`
+		GroupClassBigTpFlag *int    `valid:"optional"  json:"group_class_big_tp_flag,omitempty"`
+		GroupClassTpFlag    *int   `valid:"optional"  json:"group_class_tp_flag,omitempty"`
 		DateTp     *int    `valid:"optional"  json:"date_tp,omitempty"`
 		StartCreatedAt *int64 `valid:"optional" json:"start_created_at,omitempty"`
 		EndCreatedAt   *int64 `valid:"optional" json:"end_created_at,omitempty"`
@@ -114,10 +114,10 @@ type (
 	}
 
 	BkCardAreaSheetList struct {
-		Province *string `valid:"optional" json:"province,omitempty" `
-		City *string `valid:"optional" json:"city,omitempty" `
-		ProvinceCode *string `valid:"optional" json:"province_code,omitempty" `
-		CityCode *string `valid:"optional" json:"city_code,omitempty" `
+		GroupProvinceFlag *int `valid:"optional" json:"group_province_flag,omitempty" `
+		GroupCityFlag *int `valid:"optional" json:"group_city_flag,omitempty" `
+		//ProvinceCode *string `valid:"optional" json:"province_code,omitempty" `
+		//CityCode *string `valid:"optional" json:"city_code,omitempty" `
 		DateTp     *int    `valid:"optional"  json:"date_tp,omitempty"`
 		StartCreatedAt  *int64    `valid:"optional" json:"start_created_at,omitempty"`
 		EndCreatedAt    *int64    `valid:"optional" json:"start_created_at,omitempty"`
@@ -133,8 +133,11 @@ type (
 		ClassISP *int    `valid:"optional" json:"isp,omitempty"`
 		Province *string `valid:"optional" json:"province,omitempty" `
 		City *string `valid:"optional" json:"city,omitempty" `
-		ProvinceCode *string `valid:"optional" json:"province_code,omitempty" `
-		CityCode *string `valid:"optional" json:"city_code,omitempty" `
+		GroupClassBigTpFlag  *int    `valid:"optional" json:"group_class_big_tp_flag,omitempty" `
+		GroupClassTpFlag  *int    `valid:"optional" json:"group_class_tp_flag,omitempty" `
+		GroupClassISPFlag *int    `valid:"optional" json:"group_isp_flag,omitempty"`
+		GroupProvinceFlag *int `valid:"optional" json:"group_province_flag,omitempty" `
+		GroupCityFlag *int `valid:"optional" json:"group_city_flag,omitempty" `
 		StartCreatedAt  *int64    `valid:"optional" json:"start_created_at,omitempty"`
 		EndCreatedAt    *int64    `valid:"optional" json:"start_created_at,omitempty"`
 		LikeStr *string `valid:"optional" json:"like_str,omitempty"`

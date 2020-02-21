@@ -4,7 +4,6 @@ import (
 	. "LianFaPhone/lfp-base/log/zap"
 	"LianFaPhone/lfp-marketing-api/models"
 	"LianFaPhone/lfp-marketing-api/thirdcard-api/ydhk"
-	"fmt"
 	"go.uber.org/zap"
 	"time"
 )
@@ -53,6 +52,9 @@ func (this *Tasker) ydhkWork() {
 			if orderArr[i] == nil {
 				continue
 			}
+			if orderArr[i].Status != nil && (*orderArr[i].Status != models.CONST_OrderStatus_New_UnFinish) {
+				continue
+			}
 			if *orderArr[i].Id > startId {
 				startId = *orderArr[i].Id
 			}
@@ -66,7 +68,7 @@ func (this *Tasker) ydhkWork() {
 
 			yidongArr,err := new(ydhk.ReOrderSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard)
 			if err != nil {
-				
+				continue
 			}
 
 			oaoFlag := false
@@ -80,13 +82,19 @@ func (this *Tasker) ydhkWork() {
 				}
 			}
 
-			fmt.Println(oaoFlag)
+			if !oaoFlag {
+				continue
+			}
+
+
+			mp.Status = new(int)
+			*mp.Status = models.CONST_OrderStatus_New
+
 
 			if err = mp.Update(); err != nil {
 				ZapLog().Error("CardOrder Update err", zap.Error(err))
 				return
 			}
-
 			time.Sleep(time.Second * 1)
 		}
 
@@ -99,6 +107,7 @@ func (this *Tasker) ydhkWork() {
 		if len(orderArr) < 10 {
 			break
 		}
+		time.Sleep(time.Second * 1)
 	}
 
 }

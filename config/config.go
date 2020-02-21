@@ -159,7 +159,8 @@ type Aliyun struct {
 	AccessKeySecret string `yaml:"accessKeySecret"`
 	OssEndpoint     string `yaml:"oss_endpoint"`
 	BucketName     string `yaml:"bucket_name"`
-
+	UpfilePath    string  `yaml:"upfile_path"`
+	CardclasspicPath    string  `yaml:"cardclasspic_path"`
 }
 
 type BussinessLimits struct {
@@ -211,4 +212,6 @@ type Task struct{
 
 	ActiveFlag bool  `yaml:"active_flag"`
 	ActiveTicker int64  `yaml:"active_ticker"`
+	YdhkUnfinishFlag bool  `yaml:"ydhk_unfinish_flag"`
+	YdhkUnfinishTicker int64  `yaml:"ydhk_unfinish_ticker"`
 }

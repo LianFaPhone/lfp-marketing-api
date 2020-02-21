@@ -31,9 +31,9 @@ func (this *CardDatesheet) TableName() string {
 //
 func (this *CardDatesheet) ParseList(p *api.BkCardDateSheetList) *CardDatesheet {
 	ss := &CardDatesheet{
-		CityCode: p.CityCode,
+		//CityCode: p.CityCode,
 		Province:p.Province,
-		ProvinceCode:p.ProvinceCode ,
+		//ProvinceCode:p.ProvinceCode ,
 		City  :p.City,
 
 		ClassBigTp : p.ClassBigTp,

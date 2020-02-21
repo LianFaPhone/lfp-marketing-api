@@ -77,6 +77,7 @@ func (this *Tasker) ipsWork() {
 		if len(orderArr) < 10 {
 			break
 		}
+		time.Sleep(time.Second * 1)
 	}
 
 }

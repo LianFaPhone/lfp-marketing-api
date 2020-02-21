@@ -25,9 +25,28 @@ func (this *CardAreaSheet) BkList(ctx iris.Context) {
 		return
 	}
 
-	cond := make([]*models.SqlPairCondition, 0)
+	conds := make([]*models.SqlPairCondition, 0, 3)
 	if param.LikeStr != nil {
-		cond = append(cond, &models.SqlPairCondition{"city like ?", "%" + *param.LikeStr + "%"})
+		conds = append(conds, &models.SqlPairCondition{"city like ?", "%" + *param.LikeStr + "%"})
+	}
+
+	if param.StartCreatedAt != nil {
+		conds = append(conds, &models.SqlPairCondition{"start_created_at >= ?", param.StartCreatedAt})
+	}
+	if param.EndCreatedAt != nil {
+		conds = append(conds, &models.SqlPairCondition{"end_created_at <= ?", param.EndCreatedAt})
+	}
+	selectFileds := []string{"date, sum(order_count)"}
+
+	groupStr := "date"
+
+	if (param.GroupProvinceFlag != nil) && (*param.GroupProvinceFlag == 1){
+		selectFileds = append(selectFileds, "province")
+		groupStr += ",province"
+	}
+	if (param.GroupCityFlag != nil) && (*param.GroupCityFlag == 1) {
+		selectFileds = append(selectFileds, "city")
+		groupStr += ",city"
 	}
 
 	//results, err := new(models.CardOrder).BkParseList(param).ListAreaCountWithConds(param.Page, param.Size, cond )
@@ -36,7 +55,7 @@ func (this *CardAreaSheet) BkList(ctx iris.Context) {
 	//	this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 	//	return
 	//}
-	results, err := new(models.CardAreasheet).ParseList(param).ListWithConds(param.Page, param.Size, nil, cond)
+	results, err := new(models.CardAreasheet).ParseList(param).ListWithConds(param.Page, param.Size, selectFileds, conds, groupStr)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Verify err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())

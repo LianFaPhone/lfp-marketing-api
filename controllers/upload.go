@@ -158,7 +158,66 @@ func (this *UploadFile) UpSso(ctx iris.Context) {
 		}
 		defer file.Close()
 
-		err = s3Sdk.PutObject(buket, filename, file)
+		path := ""
+		if len(config.GConfig.Aliyun.UpfilePath) > 0 {
+			path = config.GConfig.Aliyun.UpfilePath + "/"
+		}
+		err = s3Sdk.PutObject(buket, path+filename, file)
+		if err != nil {
+			ZapLog().Error( "S3 UpLoad  err", zap.Error(err))
+			this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), "S3_UpLoad_ERRORS")
+			return
+		}
+		addr := strings.TrimPrefix(config.GConfig.Aliyun.OssEndpoint, "http://")
+		addr = strings.TrimPrefix(config.GConfig.Aliyun.OssEndpoint, "https://")
+		addr = "https://"+config.GConfig.Aliyun.BucketName+"."+addr+"/"+url.PathEscape(filename)
+		//注意oss开启https
+		results = append(results, LogoFileAddr{filename, addr})
+	}
+
+	this.Response(ctx, results)
+}
+
+func (this *UploadFile) UpSsoCardClassPic(ctx iris.Context) {
+	files,err := ParseFiles(ctx)
+	if err != nil {
+		ZapLog().Error( "ParseFiles err", zap.Error(err), zap.Any("headers", ctx.Request().Header))
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), "ParseMultipartForm_ERRORS")
+		return
+	}
+
+	s3Sdk,err := sdk.NewSsoSdk(config.GConfig.Aliyun.OssEndpoint, config.GConfig.Aliyun.AccessKeyId, config.GConfig.Aliyun.AccessKeySecret)
+	if err != nil {
+		ZapLog().Error( "NewS3Sdk  err", zap.Error(err))
+		this.ExceptionSerive(ctx, apibackend.BASERR_SYSTEM_INTERNAL_ERROR.Code(), "NewS3Sdk_ERRORS")
+		return
+	}
+	defer s3Sdk.Close()
+
+	buket,err := s3Sdk.GetOrInitBucket(config.GConfig.Aliyun.BucketName)
+	if err != nil {
+		ZapLog().Error( "GetOrInitBucket  err", zap.Error(err))
+		this.ExceptionSerive(ctx, apibackend.BASERR_SYSTEM_INTERNAL_ERROR.Code(), "NewS3Sdk_ERRORS")
+		return
+	}
+
+	results := make([]LogoFileAddr, 0)
+	for i := 0; i < len(files); i++ {
+		filename := files[i].Filename
+
+		file, err := files[i].Open()
+		if err != nil {
+			ZapLog().Error( "FileOpen  err", zap.Error(err))
+			this.ExceptionSerive(ctx, apibackend.BASERR_SYSTEM_INTERNAL_ERROR.Code(), "FileOpen_ERRORS")
+			return
+		}
+		defer file.Close()
+		path := ""
+		if len(config.GConfig.Aliyun.CardclasspicPath) > 0 {
+			path = config.GConfig.Aliyun.CardclasspicPath + "/"
+		}
+
+		err = s3Sdk.PutObject(buket, path+filename, file)
 		if err != nil {
 			ZapLog().Error( "S3 UpLoad  err", zap.Error(err))
 			this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), "S3_UpLoad_ERRORS")
