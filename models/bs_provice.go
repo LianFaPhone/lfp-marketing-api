@@ -29,6 +29,15 @@ func (this *BsProvice) Gets() ([]*BsProvice, error) {
 	return arr, err
 }
 
+func (this *BsProvice) Gets2() ([]*BsProvice, error) {
+	var arr []*BsProvice
+	err := db.GDbMgr.Get().Model(this).Where("valid = 1").Find(&arr).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return arr, err
+}
+
 func (this *BsProvice) GetByName(name string) (*BsProvice, error) {
 	p := new(BsProvice)
 	err := db.GDbMgr.Get().Model(this).Where("name = ? or short_name = ?", name, name).Last(p).Error
@@ -46,3 +55,39 @@ func (this *BsProvice) GetByCode(code string) (*BsProvice, error) {
 	}
 	return p, err
 }
+
+//func (this *BsProvice) GetByNameFromCache(id int) (*BsProvice, error) {
+//	data,err := db.GCache.GetProviceByName("0")
+//	if err == gorm.ErrRecordNotFound {
+//		return nil,nil
+//	}
+//	if err != nil {
+//		return nil,err
+//	}
+//	if data == nil {
+//		return nil, nil
+//	}
+//
+//	acty, ok := data.(*CardClass)
+//	if !ok {
+//		return nil, errors.Annotate(err, "type err")
+//	}
+//	return acty,nil
+//}
+//
+//func (this *BsProvice) InnerGets(input interface{}) (interface{}, *time.Duration, error) {
+//	expire := time.Second * time.Duration(config.GConfig.Cache.CardClassByNameTimeout+rand.Intn(600))
+//	//id,ok := input.(int)
+//	//if !ok {
+//	//	return nil,nil, errors.New("type err")
+//	//}
+//	acty,err := new(BsProvice).Gets2()
+//	if err != nil {
+//		return nil, nil, errors.Annotate(err, "Activity GetByIdAndFields")
+//	}
+//	if acty == nil {
+//		return nil, nil, gorm.ErrRecordNotFound  // nil,nil,nil可能将是永远不超时
+//	}
+//	m:= make(map[acty])
+//	return  acty, &expire, nil
+//}

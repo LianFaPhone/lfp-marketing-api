@@ -330,8 +330,10 @@ func (this *CardOrder) BkList(ctx iris.Context) {
 	for i := 0; i < len(*coArr); i++ {
 		temp := (*coArr)[i]
 		if temp.ClassTp != nil {
+			//ZapLog().Info("cardclass 1")
 			cc,err := new(models.CardClass).GetByIdFromCache(*temp.ClassTp)
-			if err == nil {
+			//ZapLog().Info("cardclass 2", zap.Error(err), zap.Any("cc",cc))
+			if err == nil && cc != nil{
 				temp.ClassName = cc.Detail
 			}
 		}

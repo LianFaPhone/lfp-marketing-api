@@ -33,6 +33,8 @@ func Loader() error {
 	db.GCache.Init()
 	db.GCache.SetBlacklistArea(new(models.BlacklistArea).InnerGetBy)
 	db.GCache.SetCardClassByName(new(models.CardClass).InnerGetByName)
+	db.GCache.SetCardClassById(new(models.CardClass).InnerGetById)
+	//db.GCache.SetProvinceByName(new(models.CardClass).InnerGetById)
 	//db.GCache.SetShareInfoFunc(new(models.ShareInfo).InnerGetByAcId)
 	//db.GCache.SetPageFunc(new(models.Page).InnerGetByAcId)
 	//db.GCache.SetRobberFunc(new(models.Robber).InnerGetRedIdAndPhone)

@@ -13,6 +13,9 @@ type Cache struct {
 	BlacklistAreaCache gcache.Cache
 	CardClassByNameCache gcache.Cache
 	CardClassByTpCache gcache.Cache
+	BsProvinceByNameCache gcache.Cache
+	BsCityByNameCache gcache.Cache
+	BsAreaByNameCache gcache.Cache
 }
 
 func (this *Cache) Init() {
@@ -88,5 +91,77 @@ func (this *Cache) RemoveCardClassById(id int) {
 		return
 	}
 	this.CardClassByTpCache.Remove(id)
+}
+
+///////////////provice
+func (this *Cache) GetProviceByName(name string) (interface{}, error) {
+	if this.BsProvinceByNameCache == nil {
+		return nil, errors.New("not init")
+	}
+	value, err := this.BsProvinceByNameCache.Get(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return value, nil
+}
+
+func (this *Cache) SetProvinceByName(f func(key interface{}) (interface{}, *time.Duration, error)) {
+	this.BsProvinceByNameCache = gcache.New(10).LRU().LoaderExpireFunc(f).Build()
+}
+
+func (this *Cache) RemoveProvinceByName(name string) {
+	if this.BsProvinceByNameCache == nil {
+		return
+	}
+	this.BsProvinceByNameCache.Remove(name)
+}
+
+//////////city
+func (this *Cache) GetCityByName(name string) (interface{}, error) {
+	if this.BsCityByNameCache == nil {
+		return nil, errors.New("not init")
+	}
+	value, err := this.BsCityByNameCache.Get(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return value, nil
+}
+
+func (this *Cache) SetCityByName(f func(key interface{}) (interface{}, *time.Duration, error)) {
+	this.BsCityByNameCache = gcache.New(10).LRU().LoaderExpireFunc(f).Build()
+}
+
+func (this *Cache) RemoveCityByName(id string) {
+	if this.BsCityByNameCache == nil {
+		return
+	}
+	this.BsCityByNameCache.Remove(id)
+}
+
+/////////////area
+func (this *Cache) GetAreaByName(name string) (interface{}, error) {
+	if this.BsAreaByNameCache == nil {
+		return nil, errors.New("not init")
+	}
+	value, err := this.BsAreaByNameCache.Get(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return value, nil
+}
+
+func (this *Cache) SetAreaByName(f func(key interface{}) (interface{}, *time.Duration, error)) {
+	this.BsAreaByNameCache = gcache.New(10).LRU().LoaderExpireFunc(f).Build()
+}
+
+func (this *Cache) RemoveAreaByName(id string) {
+	if this.BsAreaByNameCache == nil {
+		return
+	}
+	this.BsAreaByNameCache.Remove(id)
 }
 

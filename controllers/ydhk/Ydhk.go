@@ -2,10 +2,12 @@ package ydhk
 
 import (
 	"LianFaPhone/lfp-marketing-api/api"
+	"LianFaPhone/lfp-marketing-api/common"
 	"LianFaPhone/lfp-marketing-api/models"
 	. "LianFaPhone/lfp-marketing-api/thirdcard-api/ydhk"
 	"fmt"
 	"go.uber.org/zap"
+	"strings"
 	"time"
 )
 
@@ -146,6 +148,59 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		}else{
 			*modelParam.Status =	models.CONST_OrderStatus_New_UnFinish
 		}
+
+		if modelParam.ClassBigTp == nil || modelParam.ClassIsp == nil {
+			if modelParam.ClassTp != nil {
+				cc,err := new(models.CardClass).GetByIdFromCache(*modelParam.ClassTp)
+				if err ==nil && cc != nil {
+					modelParam.ClassIsp = cc.ISP
+					modelParam.ClassBigTp = cc.BigTp
+				}
+			}else if param.ClassName != nil {
+				cc,err := new(models.CardClass).GetByNameFromCache(*param.ClassName)
+				if err ==nil && cc != nil {
+					modelParam.ClassIsp = cc.ISP
+					modelParam.ClassBigTp = cc.BigTp
+				}
+			}
+		}
+
+		if modelParam.IP == nil {
+			IP := common.GetRealIp(ctx)
+			modelParam.IP = &IP
+		}
+
+		if modelParam.PhoneOSTp == nil {
+			device := ctx.GetHeader("User-Agent")
+			if strings.Contains(device, "Android") {
+				modelParam.PhoneOSTp = new(int)
+				*modelParam.PhoneOSTp =  models.CONST_PHONEOS_Android
+			}else if  strings.Contains(device, "iPhone")  {
+				modelParam.PhoneOSTp = new(int)
+				*modelParam.PhoneOSTp =  models.CONST_PHONEOS_Iphone
+			}else if  strings.Contains(device, "iPad")  {
+				modelParam.PhoneOSTp = new(int)
+				*modelParam.PhoneOSTp =  models.CONST_PHONEOS_Ipad
+			} else {
+				modelParam.PhoneOSTp = new(int)
+				*modelParam.PhoneOSTp =  models.CONST_PHONEOS_Other
+			}
+		}
+
+		if modelParam.City != nil {
+			pp,err := new(models.BsCity).GetByName(*modelParam.City)
+			if err ==nil && pp != nil {
+				modelParam.CityCode = pp.Code
+			}
+		}
+
+		if modelParam.Area != nil {
+			pp,err := new(models.BsArea).GetByName(*modelParam.Area)
+			if err ==nil && pp != nil {
+				modelParam.AreaCode = pp.Code
+			}
+		}
+
 
 		if err := modelParam.Add(); err != nil {
 			//		tx.Rollback()
