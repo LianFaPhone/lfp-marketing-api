@@ -107,6 +107,7 @@ type System struct {
 	LogPath string `yaml:"log_path"`
 	Monitor string `yaml:"monitor"`
 	BkPort  string `yaml:"bk_port"`
+	DevId  string `yaml:"dev_id"`
 }
 
 type Cache struct {
@@ -197,6 +198,7 @@ type Baidu struct {
 }
 
 type Task struct{
+	Task_flag  bool  `yaml:"task_flag"`
 	SheetFlag bool  `yaml:"sheet_flag"`
 	SheetTicker int64  `yaml:"sheet_ticker"`
 	IpsFlag bool  `yaml:"ips_flag"`

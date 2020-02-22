@@ -5,6 +5,7 @@ import (
 	. "LianFaPhone/lfp-base/log/zap"
 	"LianFaPhone/lfp-marketing-api/api"
 	"LianFaPhone/lfp-marketing-api/common"
+	"LianFaPhone/lfp-marketing-api/config"
 
 	. "LianFaPhone/lfp-marketing-api/controllers"
 	"LianFaPhone/lfp-marketing-api/db"
@@ -167,7 +168,7 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 	param.IP = common.GetRealIp(ctx)
 
 	//这个以后再想
-	orderNo := fmt.Sprintf("D%s%d", time.Now().Format("060102030405000"), GIdGener.Gen())
+	orderNo := fmt.Sprintf("D%s%s%d", config.GConfig.Server.DevId, time.Now().Format("060102030405000"), GIdGener.Gen())
 	param.Status = new(int)
 	*param.Status = models.CONST_OrderStatus_New
 
@@ -288,6 +289,147 @@ func (this *CardOrder) BkList(ctx iris.Context) {
 	}
 
 	param.Status = this.pathToOrderStatus(ctx)
+
+	condPair := make([]*models.SqlPairCondition, 0, 5)
+	if param.LikeStr != nil && len(*param.LikeStr) > 0 {
+		condPair = append(condPair, &models.SqlPairCondition{"true_name like ?", "%" + *param.LikeStr + "%"})
+	}
+	if param.StartCreatedAt != nil {
+		condPair = append(condPair, &models.SqlPairCondition{"created_at >= ?", param.StartCreatedAt})
+	}
+	if param.EndCreatedAt != nil {
+		condPair = append(condPair, &models.SqlPairCondition{"created_at <= ?", param.EndCreatedAt})
+	}
+	if param.StartDeliverAt != nil {
+		condPair = append(condPair, &models.SqlPairCondition{"deliver_at >= ?", param.StartDeliverAt})
+	}
+	if param.EndDeliverAt != nil {
+		condPair = append(condPair, &models.SqlPairCondition{"deliver_at <= ?", param.EndDeliverAt})
+	}
+	//extend := ctx.Values().GetString("extend")
+	//if len(extend) > 0 {
+	//	arr := strings.Split(extend, ",")
+	//	condPair = append(condPair, &models.SqlPairCondition{"class_tp in (?)", arr})
+	//}
+	if param.UploadFlag != nil {
+		if *param.UploadFlag == 0 {
+			condPair = append(condPair, &models.SqlPairCondition{"dataurl1 == ?", "null"})
+		} else if *param.UploadFlag == 1 {
+			condPair = append(condPair, &models.SqlPairCondition{"dataurl1 != ?", "null"})
+		}
+	}
+
+	results, err := new(models.CardOrder).BkParseList(param).ListWithConds(param.Page, param.Size, nil, condPair)
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("Verify err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		return
+	}
+	coArr := results.List.(*[]*models.CardOrder)
+	var areaBlack *models.BlacklistAreaCacheStt
+	areaBlackFlag := false
+	for i := 0; i < len(*coArr); i++ {
+		temp := (*coArr)[i]
+		if temp.ClassTp != nil {
+			//ZapLog().Info("cardclass 1")
+			cc,err := new(models.CardClass).GetByIdFromCache(*temp.ClassTp)
+			//ZapLog().Info("cardclass 2", zap.Error(err), zap.Any("cc",cc))
+			if err == nil && cc != nil{
+				temp.ClassName = cc.Detail
+			}
+		}
+		if temp.PhoneOSTp != nil {
+			m, _ := models.PhoneOsMap[*temp.PhoneOSTp]
+			if m != nil {
+				temp.PhoneOSName = &m.Name
+			}
+		}
+		if temp.Status != nil {
+			m := models.OrderStatusMap[*temp.Status]
+			temp.StatusName = &m
+		}
+		//if temp.BspStatus != nil {
+		//	m := models.OrderStatusMap[*temp.BspStatus]
+		//	temp.BspStatusName = &m
+		//}
+
+		if param.BlackSwitch == nil || *param.BlackSwitch == 0 {
+			continue
+		}
+
+		if temp.IsBacklist == nil && temp.Phone != nil {
+			flag, err := new(models.BlacklistPhone).ExistByPhone(*temp.Phone)
+			if err == nil {
+
+			}
+			if flag {
+				temp.IsBacklist = new(int)
+				*temp.IsBacklist = 1
+				continue
+			}
+		}
+		if temp.IsBacklist == nil && temp.IdCard != nil {
+			flag, err := new(models.BlacklistIdcard).ExistByIdCard(*temp.IdCard)
+			if err == nil {
+
+			}
+			if flag {
+				temp.IsBacklist = new(int)
+				*temp.IsBacklist = 1
+				continue
+			}
+		}
+		if !areaBlackFlag {
+			areaBlackFlag = true
+			areaBlack, err = new(models.BlacklistArea).GetFromCache("")
+			if err != nil {
+
+			}
+		}
+
+		if areaBlack == nil {
+			continue
+		}
+		if temp.ProvinceCode != nil {
+			_, ok := areaBlack.ProviceM[*temp.ProvinceCode]
+			if ok {
+				temp.IsBacklist = new(int)
+				*temp.IsBacklist = 1
+				continue
+			}
+		}
+		if temp.CityCode != nil {
+			_, ok := areaBlack.CityM[*temp.CityCode]
+			if ok {
+				temp.IsBacklist = new(int)
+				*temp.IsBacklist = 1
+				continue
+			}
+		}
+		if temp.AreaCode != nil {
+			_, ok := areaBlack.AreaM[*temp.AreaCode]
+			if ok {
+				temp.IsBacklist = new(int)
+				*temp.IsBacklist = 1
+				continue
+			}
+		}
+
+	}
+	this.Response(ctx, results)
+}
+
+func (this *CardOrder) BkExport(ctx iris.Context) {
+	param := new(api.BkCardOrderList)
+
+	err := Tools.ShouldBindJSON(ctx, param)
+	if err != nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		ZapLog().Error("param err", zap.Error(err))
+		return
+	}
+
+	//param.Status = this.pathToOrderStatus(ctx)
 
 	condPair := make([]*models.SqlPairCondition, 0, 5)
 	if param.LikeStr != nil && len(*param.LikeStr) > 0 {

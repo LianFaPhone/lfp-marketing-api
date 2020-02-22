@@ -72,6 +72,7 @@ func (this *WebServer) bkroutes() {
 			simPy.Post("/list-new", ac.BkList)
 			simPy.Post("/list-new-unfinish", ac.BkList)
 			simPy.Post("/list-export", ac.BkList)
+			simPy.Post("/export", ac.BkExport)
 			simPy.Post("/list-deliver", ac.BkList)
 			simPy.Post("/list-waitdone", ac.BkList)
 			simPy.Post("/list-alreadydone", ac.BkList)

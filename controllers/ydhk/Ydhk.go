@@ -3,6 +3,7 @@ package ydhk
 import (
 	"LianFaPhone/lfp-marketing-api/api"
 	"LianFaPhone/lfp-marketing-api/common"
+	"LianFaPhone/lfp-marketing-api/config"
 	"LianFaPhone/lfp-marketing-api/models"
 	. "LianFaPhone/lfp-marketing-api/thirdcard-api/ydhk"
 	"fmt"
@@ -114,7 +115,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 	}
 
 	go func(){
-		orderNo := fmt.Sprintf("D%s%d", time.Now().Format("060102030405000"), GIdGener.Gen())
+		orderNo := fmt.Sprintf("D%s%s%d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
 		modelParam := &models.CardOrder{
 			OrderNo:  &orderNo,
 			TrueName: &param.LeagalName,

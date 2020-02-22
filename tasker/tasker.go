@@ -24,6 +24,9 @@ func (this *Tasker) Init() error {
 }
 
 func (this *Tasker) Start() {
+	if !config.GConfig.Task.Task_flag {
+		return
+	}
 	go this.run()
 }
 
