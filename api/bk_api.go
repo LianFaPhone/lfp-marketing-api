@@ -445,4 +445,7 @@ type (
 		Page         int64   `valid:"required" json:"page,omitempty"`
 		Size         int64   `valid:"optional" json:"size,omitempty"`
 	}
+	BkCardOrderIdcardPicGet struct{
+		OrderNo    *string  `valid:"required" json:"order_no,omitempty"   gorm:"column:order_no;type:varchar(30);index"` //订单号
+	}
 )

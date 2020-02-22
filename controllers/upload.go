@@ -170,7 +170,7 @@ func (this *UploadFile) UpSso(ctx iris.Context) {
 		}
 		addr := strings.TrimPrefix(config.GConfig.Aliyun.OssEndpoint, "http://")
 		addr = strings.TrimPrefix(config.GConfig.Aliyun.OssEndpoint, "https://")
-		addr = "https://"+config.GConfig.Aliyun.BucketName+"."+addr+"/"+url.PathEscape(filename)
+		addr = "https://"+config.GConfig.Aliyun.BucketName+"."+addr+"/"+path+url.PathEscape(filename)
 		//注意oss开启https
 		results = append(results, LogoFileAddr{filename, addr})
 	}
@@ -225,7 +225,7 @@ func (this *UploadFile) UpSsoCardClassPic(ctx iris.Context) {
 		}
 		addr := strings.TrimPrefix(config.GConfig.Aliyun.OssEndpoint, "http://")
 		addr = strings.TrimPrefix(config.GConfig.Aliyun.OssEndpoint, "https://")
-		addr = "https://"+config.GConfig.Aliyun.BucketName+"."+addr+"/"+url.PathEscape(filename)
+		addr = "https://"+config.GConfig.Aliyun.BucketName+"."+addr+"/"+path+url.PathEscape(filename)
 		//注意oss开启https
 		results = append(results, LogoFileAddr{filename, addr})
 	}
