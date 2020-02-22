@@ -287,8 +287,9 @@ func (this *CardOrder) BkList(ctx iris.Context) {
 		ZapLog().Error("param err", zap.Error(err))
 		return
 	}
-
-	param.Status = this.pathToOrderStatus(ctx)
+	if param.Status == nil {
+		param.Status = this.pathToOrderStatus(ctx)
+	}
 
 	condPair := make([]*models.SqlPairCondition, 0, 5)
 	if param.LikeStr != nil && len(*param.LikeStr) > 0 {

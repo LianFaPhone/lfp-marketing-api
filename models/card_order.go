@@ -50,7 +50,7 @@ type CardOrder struct {
 	PhoneOSTp     *int    `json:"device_os_tp,omitempty"     gorm:"column:device_os_tp;type:int(11)"`       //设备类型
 	PhoneOSName   *string `json:"device_os_name,omitempty"     gorm:"-"`
 	IdCardAudit   *int    `json:"idcard_audit,omitempty"     gorm:"column:idcard_audit;type:tinyint(2)"`      //身份证是否审核通过
-
+	IdCardPicFlag   *int    `json:"idcard_pic_flag,omitempty"     gorm:"column:idcard_pic_flag;type:tinyint(2);default 0;"`      //身份证是否审核通过
 	//这个要废弃吧
 //	BspExpress    *string `json:"bsp_express,omitempty"     gorm:"column:bsp_express;type:varchar(20)"`       //快递名称
 //	BspExpressNo  *string `json:"bsp_express_no,omitempty"     gorm:"column:bsp_express_no;type:varchar(30)"` //快递单号
@@ -237,6 +237,7 @@ func (this *CardOrder) BkParseList(p *api.BkCardOrderList) *CardOrder {
 		Address:   p.Address,
 		PhoneOSTp: p.PhoneOSTp,
 		IP:        p.IP,
+		IdCardPicFlag: p.IdCardPicFlag,
 	}
 	acty.Valid = p.Valid
 	return acty

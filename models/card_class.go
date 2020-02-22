@@ -214,6 +214,8 @@ type CardClass struct{
 	Name  *string `json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 	Detail *string `json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"` //拼音首字母缩写
 	SmsFlag *int    `json:"sms_flag,omitempty"      gorm:"column:sms_flag;type:tinyint(4)"`
+
+	IdcardDispplay *int    `json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3);default 0"`
 	ShortChain *string `json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
 	ImgUrl *string `json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
 	FileUrl *string `json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
@@ -240,7 +242,7 @@ func (this * CardClass) ParseAdd(p *api.BkCardClassAdd) *CardClass {
 		ShortChain: p.ShortChain,
 		LongChain : p.LongChain,
 		ThirdLongChain :p.ThirdLongChain,
-
+		IdcardDispplay: p.IdcardDispplay,
 	}
 	cc.Valid = new(int)
 	*cc.Valid = 1
@@ -262,6 +264,7 @@ func (this * CardClass) Parse(p *api.BkCardClass) *CardClass {
 		LongChain : p.LongChain,
 		ThirdLongChain :p.ThirdLongChain,
 		MaxLimit: p.MaxLimit,
+		IdcardDispplay: p.IdcardDispplay,
 
 	}
 }
@@ -277,7 +280,7 @@ func (this * CardClass) ParseList(p *api.BkCardClassList) *CardClass {
 		FileUrl: p.FileUrl,
 		SmsFlag: p.SmsFlag,
 		BigTp: p.BigTp,
-
+		IdcardDispplay: p.IdcardDispplay,
 	}
 }
 

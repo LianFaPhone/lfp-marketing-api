@@ -92,7 +92,7 @@ type (
 		StartDeliverAt *int64  `valid:"optional" json:"start_deliver_at,omitempty"`
 		EndDeliverAt   *int64  `valid:"optional" json:"end_deliver_at,omitempty"`
 		LikeStr        *string `valid:"optional" json:"like_str,omitempty"`
-
+		IdCardPicFlag   *int    `valid:"optional" json:"idcard_pic_flag,omitempty"`
 		BlackSwitch *int `valid:"optional" json:"black_switch,omitempty"`
 
 		Valid *int  `valid:"optional"  json:"valid,omitempty"`
@@ -352,8 +352,7 @@ type (
 		LongChain *string `valid:"optional" json:"long_chain,omitempty"     gorm:"column:long_chain;type:varchar(250)"`
 		ThirdLongChain *string `valid:"optional" json:"third_long_chain,omitempty"     gorm:"column:third_long_chain;type:varchar(250)"`
 		MaxLimit    *int    `valid:"optional" json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-
-
+		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
 	}
 
 	BkCardClass struct{
@@ -367,6 +366,8 @@ type (
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
 		FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
 		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
+
 		ShortChain *string `valid:"optional" json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
 		LongChain *string `valid:"optional" json:"long_chain,omitempty"     gorm:"column:long_chain;type:varchar(250)"`
 		ThirdLongChain *string `valid:"optional" json:"third_long_chain,omitempty"     gorm:"column:third_long_chain;type:varchar(250)"`
@@ -383,6 +384,8 @@ type (
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
 		FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
 		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
+
 		Page         int64   `valid:"required" json:"page,omitempty"`
 		Size         int64   `valid:"optional" json:"size,omitempty"`
 	}
