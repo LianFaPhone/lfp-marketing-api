@@ -3,7 +3,9 @@ package main
 import (
 	"LianFaPhone/lfp-marketing-api/controllers"
 	"LianFaPhone/lfp-marketing-api/controllers/black"
+	"LianFaPhone/lfp-marketing-api/controllers/class"
 	. "LianFaPhone/lfp-marketing-api/controllers/order"
+	"LianFaPhone/lfp-marketing-api/controllers/phonepool"
 	"LianFaPhone/lfp-marketing-api/controllers/sheet"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
@@ -30,7 +32,7 @@ func (this *WebServer) bkroutes() {
 	{
 		phoneNumberPy := v1bk.Party("/numberpool")
 		{
-			ac := new(controllers.PhoneNumberPool)
+			ac := new(phonepool.PhoneNumberPool)
 
 			phoneNumberPy.Post("/adds", ac.Adds)
 			phoneNumberPy.Post("/update", ac.Update)
@@ -45,7 +47,7 @@ func (this *WebServer) bkroutes() {
 		}
 		phoneNumberLvPy := v1bk.Party("/numberpool_level")
 		{
-			ac := new(controllers.PhoneNumberLevel)
+			ac := new(phonepool.PhoneNumberLevel)
 
 			phoneNumberLvPy.Post("/add", ac.Add)
 			phoneNumberLvPy.Post("/update", ac.Update)
@@ -75,17 +77,19 @@ func (this *WebServer) bkroutes() {
 			ac := new(CardOrder)
 
 			simPy.Post("/list", ac.BkList)
-			simPy.Post("/list-all", ac.BkList)
-			simPy.Post("/list-new", ac.BkList)
-			simPy.Post("/list-new-unfinish", ac.BkList)
-			simPy.Post("/list-export", ac.BkList)
+			simPy.Post("/list-all", ac.BkListAll)
+			simPy.Post("/list-new", ac.BkListNew)
+			simPy.Post("/list-new-unfinish", ac.BkListNewunfinish)
+			simPy.Post("/list-export", ac.BkListExport)
 			simPy.Post("/export", ac.BkExport)
-			simPy.Post("/list-deliver", ac.BkList)
-			simPy.Post("/list-waitdone", ac.BkList)
-			simPy.Post("/list-alreadydone", ac.BkList)
-			simPy.Post("/list-recyclebin", ac.BkList)
-			simPy.Post("/list-unmatch", ac.BkList)
-			simPy.Post("/list-activated", ac.BkList)
+			simPy.Post("/file/create", ac.BkFileCreate)
+			simPy.Post("/file/get", ac.BkFileCreate)
+			simPy.Post("/list-deliver", ac.BkListDeliver)
+			simPy.Post("/list-waitdone", ac.BkListWaitdone)
+			simPy.Post("/list-alreadydone", ac.BkListAlreadydone)
+			simPy.Post("/list-recyclebin", ac.BkListRecyclebin)
+			simPy.Post("/list-unmatch", ac.BkListUnmatch)
+			simPy.Post("/list-activated", ac.BkListActivated)
 			simPy.Post("/update", ac.BkUpdate)
 			simPy.Post("/status-sets", ac.BkUpdatesStatus)
 			simPy.Post("/express-import", ac.BkOrderExtraInport)
@@ -114,7 +118,7 @@ func (this *WebServer) bkroutes() {
 		}
 		classBigTpPy := v1bk.Party("/cardclassbigtp")
 		{
-			ac := new(controllers.ClassBigTp)
+			ac := new(class.ClassBigTp)
 
 			classBigTpPy.Any("/gets", ac.Gets)
 			classBigTpPy.Post("/add", ac.Add)
@@ -124,7 +128,7 @@ func (this *WebServer) bkroutes() {
 		}
 		classPy := v1bk.Party("/cardclasstp")
 		{
-			ac := new(controllers.ClassTp)
+			ac := new(class.ClassTp)
 
 			classPy.Any("/gets", ac.Gets)
 			classPy.Post("/add", ac.Add)

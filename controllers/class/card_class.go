@@ -1,10 +1,11 @@
-package controllers
+package class
 
 import (
+	"LianFaPhone/lfp-marketing-api/api"
+	"LianFaPhone/lfp-marketing-api/controllers"
 	"LianFaPhone/lfp-marketing-api/models"
 	"github.com/kataras/iris"
 	"go.uber.org/zap"
-	"LianFaPhone/lfp-marketing-api/api"
 )
 import (
 	apibackend "LianFaPhone/lfp-api/errdef"
@@ -12,7 +13,7 @@ import (
 )
 
 type ClassTp struct {
-	Controllers
+	controllers.Controllers
 }
 
 func (this *ClassTp) Gets(ctx iris.Context) {
@@ -31,7 +32,7 @@ func (this *ClassTp) Gets(ctx iris.Context) {
 func (this *ClassTp) Add(ctx iris.Context) {
 	param := new(api.BkCardClassAdd)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -64,7 +65,7 @@ func (this *ClassTp) Get(ctx iris.Context) {
 	//设置套餐，图片，上传文件
 	param := new(api.BkCardClass)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -119,7 +120,7 @@ func (this *ClassTp) Update(ctx iris.Context) {
 	//设置套餐，图片，上传文件
 	param := new(api.BkCardClass)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -139,7 +140,7 @@ func (this *ClassTp) List(ctx iris.Context) {
 	//设置套餐，图片，上传文件
 	param := new(api.BkCardClassList)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))

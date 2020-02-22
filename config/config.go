@@ -108,6 +108,7 @@ type System struct {
 	Monitor string `yaml:"monitor"`
 	BkPort  string `yaml:"bk_port"`
 	DevId  string `yaml:"dev_id"`
+	FilePath string `yaml:"file_path"`
 }
 
 type Cache struct {

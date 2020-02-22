@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (this *Tasker) ipsWork() {
+func (this *Tasker) ipsWork(busyFlag bool) {
 	defer models.PanicPrint()
 
 	recoder, err := new(models.IdRecorder).GetByName("card_order_ips")
@@ -34,7 +34,7 @@ func (this *Tasker) ipsWork() {
 			&models.SqlPairCondition{"id > ?", startId},
 		}
 
-		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds)
+		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds, nil)
 		if err != nil {
 			ZapLog().Error("CardOrder GetLimitByCond err", zap.Error(err))
 			return
@@ -65,7 +65,11 @@ func (this *Tasker) ipsWork() {
 				return
 			}
 
-			time.Sleep(time.Second * 1)
+			if busyFlag {
+				time.Sleep(time.Second * 5)
+			}else{
+				time.Sleep(time.Second * 1)
+			}
 		}
 
 		err = recoder.Update(startId)
@@ -77,7 +81,7 @@ func (this *Tasker) ipsWork() {
 		if len(orderArr) < 10 {
 			break
 		}
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Second * 2)
 	}
 
 }

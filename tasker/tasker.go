@@ -54,14 +54,22 @@ func (this *Tasker) run() {
 	cardOrderUnFinishSms1HourTicker.Stop()
 
 	ydhkUnFinishCheckTicker := time.NewTicker(time.Minute * 3)
-
+	if !config.GConfig.Task.YdhkUnfinishFlag {
+		ydhkUnFinishCheckTicker.Stop()
+	}
 
 	go func() {
 		defer models.PanicPrint()
+		return
 		for {
+			busyflag:= true
+			hour := time.Now().Hour()
+			if hour >=1 && hour <= 5 {
+				busyflag = false
+			}
 			select {
 			case <-cardOrderSheetTicker.C:
-				//this.sheetWork()
+				this.sheetWork(busyflag)
 			case <-activeCodeTicker.C:
 				//this.activeCodeWork()
 			case <-cardOrderHistoryTicker.C:
@@ -86,9 +94,15 @@ func (this *Tasker) run() {
 	go func() {
 		defer models.PanicPrint()
 		for {
+			return
 			select {
 			case <-cardOrderIpsTicker.C:
-				this.ipsWork()
+				busyflag:= true
+				hour := time.Now().Hour()
+				if hour >=1 && hour <= 5 {
+					busyflag = false
+				}
+				this.ipsWork(busyflag)
 			}
 		}
 	}()
@@ -100,6 +114,18 @@ func (this *Tasker) run() {
 			case <-ydhkUnFinishCheckTicker.C:
 				//this.ydhkWork()
 			}
+		}
+	}()
+
+	go func() {
+		defer models.PanicPrint()
+		for {
+			return
+			hour := time.Now().Hour()
+			if hour >=2 && hour <= 5 {
+				this.clearWork()
+			}
+			time.Sleep(time.Hour)
 		}
 	}()
 }

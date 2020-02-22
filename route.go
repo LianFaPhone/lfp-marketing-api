@@ -3,7 +3,9 @@ package main
 import (
 	"LianFaPhone/lfp-marketing-api/controllers"
 	. "LianFaPhone/lfp-marketing-api/controllers/area"
+	"LianFaPhone/lfp-marketing-api/controllers/class"
 	. "LianFaPhone/lfp-marketing-api/controllers/order"
+	"LianFaPhone/lfp-marketing-api/controllers/phonepool"
 	"LianFaPhone/lfp-marketing-api/controllers/ydhk"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
@@ -62,7 +64,7 @@ func (this *WebServer) routes() {
 		//活动，添加，list，更新，警用 全是后端的
 		cardClassParty := v1.Party("/cardclass")
 		{
-			cc := new(controllers.ClassTp)
+			cc := new(class.ClassTp)
 			{
 				cardClassParty.Get("/get", cc.FtGet)
 			}
@@ -78,13 +80,13 @@ func (this *WebServer) routes() {
 				cardParty.Post("/apply-fulfil", ac.Apply)
 				cardParty.Any("/verify", ac.FtUpdatePhotoUrls)
 			}
-			pp := new(controllers.PhoneNumberPool)
+			pp := new(phonepool.PhoneNumberPool)
 			{
 				cardParty.Post("/numberpool/get", pp.Get)
 				cardParty.Post("/numberpool/number-check", pp.NumberCheck)
 				cardParty.Post("/numberpool/list", pp.FtList)
 			}
-			pl := new(controllers.PhoneNumberLevel)
+			pl := new(phonepool.PhoneNumberLevel)
 			{
 				cardParty.Post("/numberpool_level/gets", pl.FtGets)
 			}
@@ -92,7 +94,7 @@ func (this *WebServer) routes() {
 		}
 		poolParty := v1.Party("/numberpool")
 		{
-			pp := new(controllers.PhoneNumberPool)
+			pp := new(phonepool.PhoneNumberPool)
 			{
 				poolParty.Post("/get", pp.Get)
 				poolParty.Post("/number-check", pp.NumberCheck)
@@ -100,7 +102,7 @@ func (this *WebServer) routes() {
 				poolParty.Post("/lock", pp.FtLock)
 				poolParty.Post("/unlock", pp.FtUnLock)
 			}
-			pl := new(controllers.PhoneNumberLevel)
+			pl := new(phonepool.PhoneNumberLevel)
 			{
 				cardParty.Post("/level/gets", pl.FtGets)
 			}

@@ -225,6 +225,9 @@ func (this *CardOrder) BkParseExtraImport(p *api.BkCardOrderExtraImprot) *CardOr
 func (this *CardOrder) BkParseList(p *api.BkCardOrderList) *CardOrder {
 	acty := &CardOrder{
 		Id:        p.Id,
+		OrderNo:   p.OrderNo,
+		ClassIsp: p.ClassISP,
+		ClassBigTp: p.ClassBigTp,
 		ClassTp:   p.ClassTp,
 		Status:    p.Status,
 		TrueName:  p.TrueName,
@@ -318,6 +321,32 @@ func (this *CardOrder) ListWithConds(page, size int64, needFields []string, cond
 	query = query.Order("valid desc").Order("created_at desc")
 
 	return new(common.Result).PageQuery(query, &CardOrder{}, &list, page, size, nil, "")
+}
+
+func (this *CardOrder) GetsWithConds(limit int64, needFields []string, condPair []*SqlPairCondition, condStr string) ([]*CardOrder, error) {
+	var list []*CardOrder
+	query := db.GDbMgr.Get().Where(this)
+
+	for i := 0; i < len(condPair); i++ {
+		if condPair[i] == nil {
+			continue
+		}
+		query = query.Where(condPair[i].Key, condPair[i].Value)
+	}
+	if len(condStr) > 0 {
+		query = query.Where(condStr)
+	}
+	if len(needFields) > 0 {
+		query = query.Select(needFields)
+	}
+
+	query = query.Order("id desc")
+
+	err := query.Find(&list).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil,nil
+	}
+	return list,err
 }
 
 func (this *CardOrder) ListAreaCountWithConds(page, size int64, condPair []*SqlPairCondition) (*common.Result, error) {
@@ -464,7 +493,7 @@ func (this *CardOrder) GetByIp(ip string, condPair []*SqlPairCondition) (*CardOr
 	return acty, err
 }
 
-func (this *CardOrder) GetLimitByCond(limit int, condPair []*SqlPairCondition) ([]*CardOrder, error) {
+func (this *CardOrder) GetLimitByCond(limit int, condPair []*SqlPairCondition, needFields []string) ([]*CardOrder, error) {
 	var arr []*CardOrder
 	query := db.GDbMgr.Get().Where(this)
 
@@ -473,6 +502,9 @@ func (this *CardOrder) GetLimitByCond(limit int, condPair []*SqlPairCondition) (
 			continue
 		}
 		query = query.Where(condPair[i].Key, condPair[i].Value)
+	}
+	if len(needFields) > 0 {
+		query = query.Select(needFields)
 	}
 
 	err := query.Order("id DESC").Find(&arr).Error

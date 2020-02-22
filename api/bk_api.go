@@ -69,6 +69,7 @@ type (
 
 	BkCardOrderList struct {
 		Id       *int64  `valid:"optional" json:"id,omitempty"`
+		OrderNo   *string `valid:"optional" json:"order_no,omitempty" ` //订单号
 		ClassISP *int    `valid:"optional" json:"class_isp,omitempty"`
 		ClassBigTp  *int    `valid:"optional" json:"class_big_tp,omitempty" `
 		ClassTp  *int    `valid:"optional" json:"class_tp,omitempty" `

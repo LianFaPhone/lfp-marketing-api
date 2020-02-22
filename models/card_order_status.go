@@ -37,15 +37,15 @@ const (
 
 var PathToOrderStatus = map[string] int {
 	"all": -1,
-	"new": 1 ,
-	"new-unfinish":10,
-	"export": 2 ,
-	"deliver": 3 ,
-	"waitdone": 5 ,
-	"alreadydone": 6 ,
-	"recyclebin": 4 ,
-	"unmatch": 7 ,
-	"activated": 8 ,
+	"new": CONST_OrderStatus_New ,
+	"new-unfinish":CONST_OrderStatus_New_UnFinish,
+	"export": CONST_OrderStatus_Already_Export ,
+	"deliver": CONST_OrderStatus_Already_Delivered ,
+	"waitdone": CONST_OrderStatus_Wait_Done ,
+	"alreadydone": CONST_OrderStatus_Already_Done ,
+	"recyclebin": CONST_OrderStatus_Recyclebin ,
+	"unmatch": CONST_OrderStatus_UnMatch ,
+	"activated": CONST_OrderStatus_Already_Activated ,
 }
 
 var OrderStatusMap = map[int]string{

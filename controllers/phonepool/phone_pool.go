@@ -1,9 +1,10 @@
-package controllers
+package phonepool
 
 import (
 	apibackend "LianFaPhone/lfp-api/errdef"
 	. "LianFaPhone/lfp-base/log/zap"
 	"LianFaPhone/lfp-marketing-api/api"
+	"LianFaPhone/lfp-marketing-api/controllers"
 	"LianFaPhone/lfp-marketing-api/models"
 	"github.com/kataras/iris"
 	"go.uber.org/zap"
@@ -13,13 +14,13 @@ import (
 )
 
 type PhoneNumberPool struct {
-	Controllers
+	controllers.Controllers
 }
 
 func (this *PhoneNumberPool) FtList(ctx iris.Context) {
 	param := new(api.FtPhoneNumberList)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -59,7 +60,7 @@ func (this *PhoneNumberPool) FtList(ctx iris.Context) {
 
 func (this *PhoneNumberPool) BkUse(ctx iris.Context) {
 	param := new(api.BkPhoneNumberUse)
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -83,7 +84,7 @@ func (this *PhoneNumberPool) BkUse(ctx iris.Context) {
 
 func (this *PhoneNumberPool) BkUnUse(ctx iris.Context) {
 	param := new(api.BkPhoneNumberUnUse)
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -107,7 +108,7 @@ func (this *PhoneNumberPool) BkUnUse(ctx iris.Context) {
 
 func (this *PhoneNumberPool) BkLock(ctx iris.Context) {
 	param := new(api.BkPhoneNumberLock)
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -130,7 +131,7 @@ func (this *PhoneNumberPool) BkLock(ctx iris.Context) {
 
 func (this *PhoneNumberPool) BkUnLock(ctx iris.Context) {
 	param := new(api.BkPhoneNumberUnLock)
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -154,7 +155,7 @@ func (this *PhoneNumberPool) BkUnLock(ctx iris.Context) {
 
 func (this *PhoneNumberPool) FtLock(ctx iris.Context) {
 	param := new(api.FtPhoneNumberLock)
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -176,7 +177,7 @@ func (this *PhoneNumberPool) FtLock(ctx iris.Context) {
 
 func (this *PhoneNumberPool) FtUnLock(ctx iris.Context) {
 	param := new(api.FtPhoneNumberUnLock)
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -201,7 +202,7 @@ func (this *PhoneNumberPool) FtUnLock(ctx iris.Context) {
 func (this *PhoneNumberPool) BkList(ctx iris.Context) {
 	param := new(api.BkPhoneNumberList)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -228,7 +229,7 @@ func (this *PhoneNumberPool) BkList(ctx iris.Context) {
 func (this *PhoneNumberPool) Get(ctx iris.Context) {
 	param := new(api.BkPhoneNumberGet)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -253,7 +254,7 @@ func (this *PhoneNumberPool) Get(ctx iris.Context) {
 func (this *PhoneNumberPool) NumberCheck(ctx iris.Context) {
 	param := new(api.FtPhoneNumberCheck)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -281,7 +282,7 @@ func (this *PhoneNumberPool) NumberCheck(ctx iris.Context) {
 func (this *PhoneNumberPool) Update(ctx iris.Context) {
 	param := new(api.BkPhoneNumber)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))

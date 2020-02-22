@@ -13,7 +13,7 @@ import (
 )
 
 //多节点的时候考虑并发问题，或者加个开关，只让一个服务计算
-func (this *Tasker) sheetWork() {
+func (this *Tasker) sheetWork(busyFlag bool) {
 	defer models.PanicPrint()
 
 	ZapLog().Info("start to sheetWork")
@@ -38,12 +38,13 @@ func (this *Tasker) sheetWork() {
 	//lastUt := time.Unix(todayUt.Unix() -14*3600, 0)
 	//lastDateStr := lastUt.In(time.FixedZone("UTC", 8*3600)).Format("2006/01/02")
 
+	needFileds := []string{"id", "order_no", "class_isp", "class_big_tp", "class_tp", "province", "city", "created_at"}
 	for true {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 		}
 
-		orders, err := new(models.CardOrder).GetLimitByCond(10, conds)
+		orders, err := new(models.CardOrder).GetLimitByCond(10, conds, needFileds)
 		if err != nil {
 			ZapLog().Error("CardOrder GetLimitByCond err", zap.Error(err))
 			return
@@ -65,8 +66,12 @@ func (this *Tasker) sheetWork() {
 		if len(orders) < 10 {
 			break
 		}
+		if busyFlag {
+			time.Sleep(time.Second * 10)
+		}else{
+			time.Sleep(time.Second * 5)
+		}
 
-		time.Sleep(time.Second * 5)
 	}
 
 	return
@@ -154,7 +159,7 @@ func (this *Tasker) StoreSheet(dateMap map[string]*models.CardClasssheet, AreaMa
 
 func (this *Tasker) genSheetMap(orders []*models.CardOrder) (map[string]*models.CardClasssheet, map[string]*models.CardAreasheet, int64) {
 	maxId := int64(0)
-	dateMap := make(map[string]*models.CardClasssheet)
+	classMap := make(map[string]*models.CardClasssheet)
 	AreaMap := make(map[string]*models.CardAreasheet)
 	for j := 0; j < len(orders); j++ {
 		if *orders[j].Id > maxId {
@@ -165,41 +170,42 @@ func (this *Tasker) genSheetMap(orders []*models.CardOrder) (map[string]*models.
 		}
 		dateStr := time.Unix(*orders[j].CreatedAt, 0).In(time.FixedZone("UTC", 8*3600)).Format("2006/01/02")
 		dateInt := GenDay2(*orders[j].CreatedAt)
+		//dateInt := GenDay2(*orders[j].CreatedAt)
 
-		datesheet, ok := dateMap[dateStr]
+		classsheet, ok := classMap[dateStr]
 		if !ok {
-			datesheet = &models.CardClasssheet{
+			classsheet = &models.CardClasssheet{
 				Date:       &dateStr,
 				OrderCount: new(int64),
 			}
-			*datesheet.OrderCount = 0
-			dateMap[dateStr] = datesheet
+			*classsheet.OrderCount = 0
+			classMap[dateStr] = classsheet
 		}
-		if datesheet.OrderCount == nil {
-			datesheet.OrderCount = new(int64)
-			*datesheet.OrderCount = 0
+		if classsheet.OrderCount == nil {
+			classsheet.OrderCount = new(int64)
+			*classsheet.OrderCount = 0
 		}
-		*datesheet.OrderCount = *datesheet.OrderCount + 1
+		*classsheet.OrderCount = *classsheet.OrderCount + 1
 
 		if orders[j].ClassTp != nil {
-			datesheet, ok = dateMap[fmt.Sprintf("%s_%d", dateStr, *orders[j].ClassTp)]
+			classsheet, ok = classMap[fmt.Sprintf("%s_%d", dateStr, *orders[j].ClassTp)]
 			if !ok {
-				datesheet = &models.CardClasssheet{
+				classsheet = &models.CardClasssheet{
 					Date:       &dateStr,
 					ClassTp:    orders[j].ClassTp,
 					OrderCount: new(int64),
 				}
-				*datesheet.OrderCount = 0
-				dateMap[fmt.Sprintf("%s_%d", dateStr, *orders[j].ClassTp)] = datesheet
+				*classsheet.OrderCount = 0
+				classMap[fmt.Sprintf("%s_%d", dateStr, *orders[j].ClassTp)] = classsheet
 			}
-			if datesheet.OrderCount == nil {
-				datesheet.OrderCount = new(int64)
-				*datesheet.OrderCount = 0
+			if classsheet.OrderCount == nil {
+				classsheet.OrderCount = new(int64)
+				*classsheet.OrderCount = 0
 			}
-			*datesheet.OrderCount = *datesheet.OrderCount + 1
+			*classsheet.OrderCount = *classsheet.OrderCount + 1
 			tps, ok := models.ClassTpMap[*orders[j].ClassTp]
 			if ok {
-				datesheet.ClassISP = &tps.ISP
+				classsheet.ClassISP = &tps.ISP
 			}
 		}
 
@@ -332,7 +338,7 @@ func (this *Tasker) genSheetMap(orders []*models.CardOrder) (map[string]*models.
 		}
 	}
 
-	return dateMap, AreaMap, maxId
+	return classMap, AreaMap, maxId
 }
 
 

@@ -1,22 +1,23 @@
-package controllers
+package phonepool
 
 import (
 	apibackend "LianFaPhone/lfp-api/errdef"
 	. "LianFaPhone/lfp-base/log/zap"
 	"LianFaPhone/lfp-marketing-api/api"
+	"LianFaPhone/lfp-marketing-api/controllers"
 	"LianFaPhone/lfp-marketing-api/models"
 	"github.com/kataras/iris"
 	"go.uber.org/zap"
 )
 
 type PhoneNumberLevel struct {
-	Controllers
+	controllers.Controllers
 }
 
 func (this *PhoneNumberLevel) FtGets(ctx iris.Context) {
 	param := new(api.BkPhoneNumberLevelGets)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -40,7 +41,7 @@ func (this *PhoneNumberLevel) FtGets(ctx iris.Context) {
 func (this *PhoneNumberLevel) Update(ctx iris.Context) {
 	param := new(api.BkPhoneNumberLevelUpdate)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -59,7 +60,7 @@ func (this *PhoneNumberLevel) Update(ctx iris.Context) {
 func (this *PhoneNumberLevel) Add(ctx iris.Context) {
 	param := new(api.BkPhoneNumberLevelAdd)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
@@ -89,7 +90,7 @@ func (this *PhoneNumberLevel) Add(ctx iris.Context) {
 func (this *PhoneNumberLevel) List(ctx iris.Context) {
 	param := new(api.BkPhoneNumberLevelList)
 
-	err := Tools.ShouldBindJSON(ctx, param)
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))

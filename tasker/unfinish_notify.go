@@ -44,7 +44,7 @@ func (this *Tasker) newUnFinishSmsWork5hour() {
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New_UnFinish},
 		}
 
-		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds)
+		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds, nil)
 		if err != nil {
 			ZapLog().Error("CardOrder GetLimitByCond err", zap.Error(err))
 			return
@@ -128,7 +128,7 @@ func (this *Tasker) newUnFinishSmsWork5min() {
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New_UnFinish},
 		}
 
-		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds)
+		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds, nil)
 		if err != nil {
 			ZapLog().Error("CardOrder GetLimitByCond err", zap.Error(err))
 			return

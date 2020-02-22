@@ -32,12 +32,12 @@ func (this *Tasker) ydhkWork() {
 	for true {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
-			&models.SqlPairCondition{"class_big_tp = ?", 5},
+			//&models.SqlPairCondition{"class_big_tp = ?", 5},
 			&models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 15*60},
 			//条件还得处理下
 		}
 
-		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds)
+		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds, nil)
 		if err != nil {
 			ZapLog().Error("CardOrder GetLimitByCond err", zap.Error(err))
 			return
@@ -49,16 +49,18 @@ func (this *Tasker) ydhkWork() {
 
 		//记录id, 倒叙
 		for i := len(orderArr) - 1; i >= 0; i-- {
-			if orderArr[i] == nil {
-				continue
-			}
-			if orderArr[i].Status != nil && (*orderArr[i].Status != models.CONST_OrderStatus_New_UnFinish) {
-				continue
-			}
 			if *orderArr[i].Id > startId {
 				startId = *orderArr[i].Id
 			}
+			if orderArr[i] == nil || orderArr[i].Status == nil{
+				continue
+			}
+			if  *orderArr[i].Status != models.CONST_OrderStatus_New_UnFinish {
+				continue
+			}
 			if orderArr[i].Phone == nil || orderArr[i].NewPhone == nil || orderArr[i].IdCard == nil {
+				log:= "信息不全"
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 
@@ -68,6 +70,8 @@ func (this *Tasker) ydhkWork() {
 
 			yidongArr,err := new(ydhk.ReOrderSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard)
 			if err != nil {
+				log:= err.Error()
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 
@@ -83,6 +87,8 @@ func (this *Tasker) ydhkWork() {
 			}
 
 			if !oaoFlag {
+				log:= "oao未发现"
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 
@@ -107,7 +113,7 @@ func (this *Tasker) ydhkWork() {
 		if len(orderArr) < 10 {
 			break
 		}
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Second * 5)
 	}
 
 }

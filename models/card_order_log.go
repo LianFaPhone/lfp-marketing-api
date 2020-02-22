@@ -41,6 +41,20 @@ func (this * CardOrderLog) Add() error {
 	return nil
 }
 
+func (this * CardOrderLog) DelWithConds(condPair []*SqlPairCondition, limit int) (int64,error) {
+	query := db.GDbMgr.Get()
+
+	for i := 0; i < len(condPair); i++ {
+		if condPair[i] == nil {
+			continue
+		}
+		query = query.Where(condPair[i].Key, condPair[i].Value)
+	}
+	query = query.Limit(limit)
+	query = query.Delete(this)
+	return query.RowsAffected, query.Error
+}
+
 func (this *CardOrderLog) ListWithConds(page, size int64, needFields []string, condPair []*SqlPairCondition) (*common.Result, error) {
 	var list []*CardOrderLog
 
