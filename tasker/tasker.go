@@ -5,6 +5,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/config"
 	"LianFaPhone/lfp-marketing-api/models"
 	"go.uber.org/zap"
+	"os/exec"
 	"time"
 )
 
@@ -120,10 +121,14 @@ func (this *Tasker) run() {
 	go func() {
 		defer models.PanicPrint()
 		for {
-			return
+			//return
 			hour := time.Now().Hour()
 			if hour >=2 && hour <= 5 {
 				this.clearWork()
+			}
+			if hour == 5 {
+				cmd := exec.Command("rm", "-f", config.GConfig.Server.FilePath +"/*.xlsx")
+				cmd.Run()
 			}
 			time.Sleep(time.Hour)
 		}

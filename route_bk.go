@@ -92,7 +92,7 @@ func (this *WebServer) bkroutes() {
 			simPy.Post("/list-activated", ac.BkListActivated)
 			simPy.Post("/update", ac.BkUpdate)
 			simPy.Post("/status-sets", ac.BkUpdatesStatus)
-			simPy.Post("/express-import", ac.BkOrderExtraInport)
+			simPy.Post("/express-import", ac.BkOrderExpressInport)
 			simPy.Post("/idcard-check", ac.BkIdCardCheck)
 			simPy.Post("/active-import", ac.BkOrderActiveInport)
 			simPy.Post("/new-import", ac.BkOrderNewInport)
