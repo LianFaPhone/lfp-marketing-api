@@ -4,9 +4,10 @@ import (
 	"LianFaPhone/lfp-marketing-api/controllers"
 	. "LianFaPhone/lfp-marketing-api/controllers/area"
 	"LianFaPhone/lfp-marketing-api/controllers/class"
+	"LianFaPhone/lfp-marketing-api/controllers/jthk19"
 	. "LianFaPhone/lfp-marketing-api/controllers/order"
 	"LianFaPhone/lfp-marketing-api/controllers/phonepool"
-	"LianFaPhone/lfp-marketing-api/controllers/ydhk"
+	//"LianFaPhone/lfp-marketing-api/controllers/jthk19"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
 )
@@ -133,7 +134,7 @@ func (this *WebServer) routes() {
 
 		ydhkParty := v1.Party("/ydhk")
 		{
-			ac := new(ydhk.Ydhk)
+			ac := new(jthk19.Ydhk)
 
 			ydhkParty.Any("/token-get", ac.GetToken)
 			ydhkParty.Any("/addr-gets", ac.GetsAddr)

@@ -1,8 +1,11 @@
 package common
 
 import (
+	"fmt"
 	"github.com/tealeg/xlsx"
+	"mime/multipart"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -116,4 +119,54 @@ func convertToFormatDay(excelDaysString string)string{
 	baseOriginSecond := 1136185445
 	resultTime := time.Unix(int64(baseOriginSecond + realDiffSecond), 0).Format("2006-01-02")
 	return resultTime
+}
+
+func ReadFromFile(excelFileName , sheetName string) ([]string, *xlsx.Sheet, error) {
+	xlFile, err := xlsx.OpenFile(excelFileName)
+	if err != nil {
+		return nil, nil, err
+	}
+	if len(sheetName) <= 0 {
+		sheetName = "Sheet1"
+	}
+	sheet, ok := xlFile.Sheet[sheetName]
+	if !ok {
+		return nil, nil, fmt.Errorf("nofind Sheet1")
+	}
+
+	rowNames := make([]string, 0)
+	for _, cell := range sheet.Rows[0].Cells {
+		text := cell.String()
+		text = strings.Replace(text, " ", "", -1)
+		rowNames = append(rowNames, text)
+	}
+	if len(rowNames) <= 1 {
+		return nil, nil, fmt.Errorf("in.xlsx format err")
+	}
+	return rowNames, sheet, nil
+}
+
+func ReadFromReader(r multipart.File ,size int64,  sheetName string) ([]string, *xlsx.Sheet, error) {
+	xlFile, err := xlsx.OpenReaderAt(r, size)
+	if err != nil {
+		return nil, nil, err
+	}
+	if len(sheetName) <= 0 {
+		sheetName = "Sheet1"
+	}
+	sheet, ok := xlFile.Sheet[sheetName]
+	if !ok {
+		return nil, nil, fmt.Errorf("nofind Sheet1")
+	}
+
+	rowNames := make([]string, 0)
+	for _, cell := range sheet.Rows[0].Cells {
+		text := cell.String()
+		text = strings.Replace(text, " ", "", -1)
+		rowNames = append(rowNames, text)
+	}
+	if len(rowNames) <= 1 {
+		return nil, nil, fmt.Errorf("in.xlsx format err")
+	}
+	return rowNames, sheet, nil
 }
