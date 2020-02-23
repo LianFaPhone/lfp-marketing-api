@@ -156,6 +156,10 @@ func (this *CardOrder) BkOrderExpressInport(ctx iris.Context) {
 		}
 		defer file.Close()
 
+		if files[i].Size <= 0 {
+			this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), "nil data")
+			return
+		}
 		heads,sheet,err := common.ReadFromReader(file, files[i].Size, "")
 		if err != nil {
 			ZapLog().Error( "ReadFromReader err", zap.Error(err))
@@ -192,7 +196,7 @@ func (this *CardOrder) BkOrderExpressInport(ctx iris.Context) {
 			row := sheet.Rows[i]
 			param := new(api.BkCardOrderExtraImprot)
 
-			if orderIndex >= 0 {
+			if orderIndex >= 0 &&(len(row.Cells) -1 >= orderIndex){
 				str := row.Cells[orderIndex].String()
 				str = strings.Replace(str, " ", "", -1)
 				if len(str) < 5 {
@@ -201,40 +205,44 @@ func (this *CardOrder) BkOrderExpressInport(ctx iris.Context) {
 				}
 				param.OrderNo = &str
 			}
-			if expressIndex >= 0 {
+			if expressIndex >= 0  &&(len(row.Cells) -1 >= expressIndex){
 				str := row.Cells[expressIndex].String()
 				str = strings.Replace(str, " ", "", -1)
 				if len(str) > 1 {
 					param.Express = &str
 				}
 			}
-			if expressNoIndex >= 0 {
+			if expressNoIndex >= 0 &&(len(row.Cells) -1 >= expressNoIndex) {
 				str := row.Cells[expressNoIndex].String()
 				str = strings.Replace(str, " ", "", -1)
 				if len(str) > 2 {
 					param.ExpressNo = &str
 				}
 			}
-			if guishudiIndex >= 0 {
+			if guishudiIndex >= 0  &&(len(row.Cells) -1 >= guishudiIndex){
 				str := row.Cells[guishudiIndex].String()
 				str = strings.Replace(str, " ", "", -1)
 				if len(str) > 1 {
 					param.Guishudi = &str
 				}
 			}
-			if iccidIndex >= 0 {
+			if iccidIndex >= 0  &&(len(row.Cells) -1 >= iccidIndex){
 				str := row.Cells[iccidIndex].String()
 				str = strings.Replace(str, " ", "", -1)
 				if len(str) > 2 {
 					param.ICCID = &str
 				}
 			}
-			if newPhoneIndex >= 0 {
+			if newPhoneIndex >= 0  &&(len(row.Cells) -1 >= newPhoneIndex){
 				str := row.Cells[newPhoneIndex].String()
 				str = strings.Replace(str, " ", "", -1)
 				if len(str) > 2 {
 					param.NewPhone = &str
 				}
+			}
+			if param.OrderNo == nil {
+				res.FailCount +=1
+				continue
 			}
 			aff, err := new(models.CardOrder).BkParseExtraImport(param).UpdatesByOrderNo()
 			if err != nil {
