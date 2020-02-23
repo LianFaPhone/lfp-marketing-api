@@ -7,7 +7,7 @@ import (
 
 type ActiveCode struct {
 	Id      *int64  `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"` //加上type:int(11)后AUTO_INCREMENT无效
-	Code    *string `json:"code,omitempty"      gorm:"column:code;type:varchar(30);index"`
+	Code    *string `json:"code,omitempty"      gorm:"column:code;type:varchar(30);"`
 	OrderNo *string `json:"order_no,omitempty"     gorm:"column:order_no;type:varchar(30)"`
 	Phone   *string `json:"phone,omitempty"     gorm:"column:phone;type:varchar(20)"`
 	Count   *int    `json:"count,omitempty"     gorm:"column:count;type:int(11);default 0"`

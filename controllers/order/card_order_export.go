@@ -80,7 +80,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 			return
 		}
 		total := param.Size
-		newSize := int64(10)
+		newSize := int64(1000)
 		AllPage := total/newSize
 		condStr := ""
 		modelParam := new(models.CardOrder).BkParseList(param)

@@ -7,6 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+//暂时不用
 type CardOrderHistory struct {
 	Id         *int64  `json:"id,omitempty"        gorm:"column:id;primary_key;not null"`                   //加上type:int(11)后AUTO_INCREMENT无效
 	OrderNo    *string `json:"order_no,omitempty"     gorm:"column:order_no;type:varchar(30);unique;index"` //订单号

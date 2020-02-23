@@ -127,7 +127,7 @@ func (this *Tasker) run() {
 				this.clearWork()
 			}
 			if hour == 5 {
-				cmd := exec.Command("rm", "-f", config.GConfig.Server.FilePath +"/*.xlsx")
+				cmd := exec.Command("rm", "-f", config.GConfig.Server.FilePath +"/2*.xlsx")
 				cmd.Run()
 			}
 			time.Sleep(time.Hour)

@@ -22,7 +22,7 @@ type CardOrder struct {
 	TrueName   *string `json:"true_name,omitempty"     gorm:"column:true_name;type:varchar(10)"` //姓名
 	IdCard     *string `json:"idcard,omitempty"     gorm:"column:idcard;type:varchar(25)"`       //身份证
 	//	CountryCode     *string    `json:"country_code,omitempty"     gorm:"column:country_code;type:varchar(4)"` //国家码
-	Phone         *string `json:"phone,omitempty"     gorm:"column:phone;type:varchar(20)"`                 //手机号
+	Phone         *string `json:"phone,omitempty"     gorm:"column:phone;type:varchar(20);index"`                 //手机号
 	Province      *string `json:"province,omitempty"     gorm:"column:province;type:varchar(15)"`           //省份
 	ProvinceCode  *string `json:"province_code,omitempty"     gorm:"column:province_code;type:varchar(15)"` //省份
 	City          *string `json:"city,omitempty"     gorm:"column:city;type:varchar(15)"`                   //城市

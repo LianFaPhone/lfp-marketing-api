@@ -10,7 +10,7 @@ import (
 type (
 	PhoneNumberPool struct {
 		Id      *int64  `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"` //加上type:int(11)后AUTO_INCREMENT无效
-		Number  *string `json:"number,omitempty"     gorm:"column:number;type:varchar(20);unique;index"`    //订单号
+		Number  *string `json:"number,omitempty"     gorm:"column:number;type:varchar(20);index"`    //订单号
 		UseFlag *int    `json:"use_flag,omitempty"     gorm:"column:use_flag;type:tinyint(2);index"`
 
 		LockExpireAt *int64 `json:"lock_expire_at,omitempty"     gorm:"column:lock_expire_at;type:bigint(20);"`

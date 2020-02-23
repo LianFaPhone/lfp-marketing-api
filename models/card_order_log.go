@@ -9,7 +9,7 @@ import (
 type CardOrderLog struct{
 	Id         *int64  `json:"id,omitempty"       gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"`  //加上type:int(11)后AUTO_INCREMENT无效
 	OrderId    *int64 `json:"order_id,omitempty"  gorm:"column:order_id;type:bigint(20);"` //订单号
-	OrderNo    *string `json:"order_no,omitempty"   gorm:"column:order_no;type:varchar(30);index"` //订单号
+	OrderNo    *string `json:"order_no,omitempty"   gorm:"column:order_no;type:varchar(30);"` //订单号
 	Log        *string `json:"log,omitempty"   gorm:"column:log;type:varchar(100);"`
 	Table
 }

@@ -13,7 +13,7 @@ const (
 type CardOrderNotify struct {
 	Id *int64 `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"` //加上type:int(11)后AUTO_INCREMENT无效
 
-	OrderNo  *string `json:"order_no,omitempty"     gorm:"column:order_no;type:varchar(30);index"` //订单号
+	OrderNo  *string `json:"order_no,omitempty"     gorm:"column:order_no;type:varchar(30);"` //订单号
 	OrderId  *int64  `json:"order_id,omitempty"      gorm:"column:order_id;type:bigint(20);"`
 	Tp       *int    `json:"tp,omitempty"           gorm:"column:tp;type:int(10)"` // 1快递短信，
 	PushFlag *int    `json:"push_flag,omitempty"    gorm:"column:push_flag;type:tinyint(2)"`
