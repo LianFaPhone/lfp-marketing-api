@@ -1073,7 +1073,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 			return
 		}
 		total := param.Size
-		newSize := int64(100)
+		newSize := int64(10)
 		AllPage := total/newSize
 		condStr := ""
 		for page:= int64(0); page < AllPage ;page ++ {
@@ -1197,7 +1197,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 			}
 			condStr = fmt.Sprintf("id < %d", minId)
 		}
-		url := "https://bk.lfcxwifi.com" + config.GConfig.Server.FilePath + "/" + fileName
+		url := "http://file.lfcxwifi.com" + "/" + fileName
 		_,err := db.GRedis.GetConn().Set("filecreate_"+fileName, url, time.Duration(time.Second*1800)).Result()
 		if err != nil {
 			ZapLog().With(zap.Error(err)).Error("redis set err")
