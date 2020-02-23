@@ -1076,13 +1076,28 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 		newSize := int64(10)
 		AllPage := total/newSize
 		condStr := ""
+		modelParam := new(models.CardOrder).BkParseList(param)
 		for page:= int64(0); page < AllPage ;page ++ {
-			results, err := new(models.CardOrder).BkParseList(param).GetsWithConds(newSize, nil, condPair, condStr)
-			if err != nil {
-				ZapLog().With(zap.Error(err)).Error("Verify err")
-				this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
-				return
+			var results []*models.CardOrder
+			if page == 0 {
+				results, err = modelParam.GetsWithConds(param.Page, newSize, nil, condPair, condStr)
+				if err != nil {
+					ZapLog().With(zap.Error(err)).Error("Verify err")
+					this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+					return
+				}
+			}else{
+				results, err = modelParam.GetsWithConds(1, newSize, nil, condPair, condStr)
+				if err != nil {
+					ZapLog().With(zap.Error(err)).Error("Verify err")
+					this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+					return
+				}
 			}
+			if len(results) == 0 {
+				break
+			}
+
 
 			coArr := &results
 			minId := int64(0)
@@ -1191,11 +1206,18 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 					}
 				}
 			}
+			if len(results) < int(newSize) {
+				break
+			}
 			if err:= excel.Sync(); err != nil {
 				ZapLog().With(zap.Error(err)).Error("excel.Sync err")
 				return
 			}
 			condStr = fmt.Sprintf("id < %d", minId)
+		}
+		if err:= excel.Sync(); err != nil {
+			ZapLog().With(zap.Error(err)).Error("excel.Sync err")
+			return
 		}
 		url := "http://file.lfcxwifi.com" + "/" + fileName
 		_,err := db.GRedis.GetConn().Set("filecreate_"+fileName, url, time.Duration(time.Second*1800)).Result()

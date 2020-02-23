@@ -323,7 +323,7 @@ func (this *CardOrder) ListWithConds(page, size int64, needFields []string, cond
 	return new(common.Result).PageQuery(query, &CardOrder{}, &list, page, size, nil, "")
 }
 
-func (this *CardOrder) GetsWithConds(limit int64, needFields []string, condPair []*SqlPairCondition, condStr string) ([]*CardOrder, error) {
+func (this *CardOrder) GetsWithConds(page, size int64, needFields []string, condPair []*SqlPairCondition, condStr string) ([]*CardOrder, error) {
 	var list []*CardOrder
 	query := db.GDbMgr.Get().Where(this)
 
@@ -339,8 +339,13 @@ func (this *CardOrder) GetsWithConds(limit int64, needFields []string, condPair 
 	if len(needFields) > 0 {
 		query = query.Select(needFields)
 	}
+	if size <= 0 {
+		size = 100
+	}
 
-	query = query.Order("id desc")
+	offset := (page - 1) * size
+
+	query = query.Order("id desc").Offset(offset).Limit(size)
 
 	err := query.Find(&list).Error
 	if err == gorm.ErrRecordNotFound {
