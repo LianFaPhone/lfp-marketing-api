@@ -203,10 +203,10 @@ func (this *Tasker) genSheetMap(orders []*models.CardOrder) (map[string]*models.
 				*classsheet.OrderCount = 0
 			}
 			*classsheet.OrderCount = *classsheet.OrderCount + 1
-			tps, ok := models.ClassTpMap[*orders[j].ClassTp]
-			if ok {
-				classsheet.ClassISP = &tps.ISP
-			}
+			//tps, ok := models.ClassTpMap[*orders[j].ClassTp]
+			//if ok {
+			//	classsheet.ClassISP = &tps.ISP
+			//}
 		}
 
 		///////////////////////
