@@ -5,7 +5,6 @@ import (
 	"LianFaPhone/lfp-marketing-api/common"
 	"LianFaPhone/lfp-marketing-api/db"
 	"github.com/jinzhu/gorm"
-	"time"
 )
 
 type CardOrder struct {
@@ -215,9 +214,9 @@ func (this *CardOrder) BkParseExtraImport(p *api.BkCardOrderExtraImprot) *CardOr
 		ICCID:     p.ICCID,
 		Guishudi:  p.Guishudi,
 		Status:    new(int),
-		DeliverAt: new(int64),
+		DeliverAt: p.DeliverAt,
 	}
-	*acty.DeliverAt = time.Now().Unix()
+	//*acty.DeliverAt = time.Now().Unix()
 	*acty.Status = CONST_OrderStatus_Already_Delivered
 	return acty
 }

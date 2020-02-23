@@ -115,7 +115,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 	}
 
 	go func(){
-		orderNo := fmt.Sprintf("D%s%s%d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
+		orderNo := fmt.Sprintf("D%s%s%03d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
 		modelParam := &models.CardOrder{
 			OrderNo:  &orderNo,
 			TrueName: &param.LeagalName,
@@ -162,6 +162,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 				if err ==nil && cc != nil {
 					modelParam.ClassIsp = cc.ISP
 					modelParam.ClassBigTp = cc.BigTp
+					modelParam.ClassTp = cc.Id
 				}
 			}
 		}

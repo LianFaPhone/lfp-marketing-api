@@ -324,6 +324,7 @@ type (
 		ICCID     *string `valid:"optional" json:"ICCID,omitempty"`        //手机唯一识别码
 		NewPhone  *string `valid:"optional" json:"new_phone,omitempty"`
 		Guishudi  *string `valid:"optional"    json:"guishudi,omitempty" `
+		DeliverAt  *int64 `valid:"-"    json:"-" `
 	}
 
 	BkCardOrderActiveImprot struct {

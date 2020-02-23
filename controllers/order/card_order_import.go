@@ -8,6 +8,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/models"
 	. "LianFaPhone/lfp-marketing-api/controllers"
 	"strings"
+	"time"
 
 	//"LianFaPhone/lfp-marketing-api/sdk"
 	"LianFaPhone/lfp-marketing-api/tasker"
@@ -189,6 +190,7 @@ func (this *CardOrder) BkOrderExpressInport(ctx iris.Context) {
 			}
 		}
 
+		deliverAt := time.Now().Unix()
 		for i:=0; i < len(sheet.Rows); i++ {
 			if i == 0 {
 				continue
@@ -244,6 +246,7 @@ func (this *CardOrder) BkOrderExpressInport(ctx iris.Context) {
 				res.FailCount +=1
 				continue
 			}
+			param.DeliverAt = &deliverAt
 			aff, err := new(models.CardOrder).BkParseExtraImport(param).UpdatesByOrderNo()
 			if err != nil {
 				ZapLog().With(zap.Error(err)).Error("Update err")

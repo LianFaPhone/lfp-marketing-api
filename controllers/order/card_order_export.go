@@ -48,6 +48,12 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 	this.Response(ctx, fileName)
 
 	go func() {
+		if param.Page <= 0 {
+			param.Page = 1
+		}
+		if param.Size <= 0 {
+			param.Size = 20000
+		}
 		condPair := make([]*models.SqlPairCondition, 0, 5)
 		if param.LikeStr != nil && len(*param.LikeStr) > 0 {
 			condPair = append(condPair, &models.SqlPairCondition{"true_name like ?", "%" + *param.LikeStr + "%"})

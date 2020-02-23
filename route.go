@@ -147,6 +147,21 @@ func (this *WebServer) routes() {
 			ydhkParty.Post("/idcheckurl-get", ac.FtIdCheckUrlGet)
 		}
 
+		jthk19Party := v1.Party("/jthk19")
+		{
+			ac := new(jthk19.Ydhk)
+
+			jthk19Party.Any("/token-get", ac.GetToken)
+			jthk19Party.Any("/addr-gets", ac.GetsAddr)
+			jthk19Party.Any("/numberpool-list", ac.ListNumberPool)
+			jthk19Party.Any("/number-lock", ac.LockNumber)
+			jthk19Party.Any("/apply", ac.Apply)
+			jthk19Party.Any("/photo-upload", ac.UploadPhoto)
+			jthk19Party.Get("/protocal-get", ac.GetProtocal)
+			jthk19Party.Post("/order-confirm", ac.FtConfirm)
+			jthk19Party.Post("/idcheckurl-get", ac.FtIdCheckUrlGet)
+		}
+
 	}
 
 }
