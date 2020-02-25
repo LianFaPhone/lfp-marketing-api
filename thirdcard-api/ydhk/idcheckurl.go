@@ -2,6 +2,7 @@ package ydhk
 
 import (
 	"LianFaPhone/lfp-marketing-api/common"
+	"LianFaPhone/lfp-marketing-api/config"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -37,10 +38,10 @@ type(
 
 )
 
-func (this *ReIdCheckUrl) Send(orderId, newPhone, token string) (string, error) {
+func (this *ReIdCheckUrl) Send(isOao bool,channelId string, orderId, newPhone, token string) (string, error) {
 	this.MsgType = "OnlineCertPageParamReq"
 	this.Version = Const_Version
-	this.ChannelId = Const_ChannelId
+	this.ChannelId = channelId
 	this.ModuleName = "LIVEHK"
 	this.OrderId = orderId
 	this.NewPhone = newPhone
@@ -48,9 +49,15 @@ func (this *ReIdCheckUrl) Send(orderId, newPhone, token string) (string, error) 
 
 	heads := map[string]string{
 		"Accept": "application/json, text/plain, */*",
-		"Host": Const_Host,
-		"Origin": Const_Url,
-		"Referer": Const_Url+"/rwx/rwkvue/young/",
+		"Host": config.GConfig.Jthk.Host,
+		"Origin": config.GConfig.Jthk.Url,
+		//"Referer": Const_Url+"/rwx/rwkvue/young/",
+	}
+
+	if isOao {
+		heads["Referer"] = config.GConfig.Jthk.Url + config.GConfig.Jthk.Referer_path_oao
+	}else{
+		heads["Referer"] = config.GConfig.Jthk.Url + config.GConfig.Jthk.Referer_path
 	}
 
 	reqData,err := json.Marshal(this)
@@ -58,7 +65,7 @@ func (this *ReIdCheckUrl) Send(orderId, newPhone, token string) (string, error) 
 		return "", err
 	}
 
-	resData, err := common.HttpSend(Const_Url+"/rwx/rwkweb/rwkCommon/queryIdCheckUrl", bytes.NewReader(reqData),"POST", heads)
+	resData, err := common.HttpSend(config.GConfig.Jthk.Url+"/rwx/rwkweb/rwkCommon/queryIdCheckUrl", bytes.NewReader(reqData),"POST", heads)
 	if err != nil {
 		return "", err
 	}

@@ -2,6 +2,8 @@ package ydhk
 
 import (
 	"LianFaPhone/lfp-marketing-api/common"
+	"LianFaPhone/lfp-marketing-api/config"
+
 	//. "LianFaPhone/lfp-tools/autoorder-search-yidonghuaka/config"
 	"encoding/json"
 	"fmt"
@@ -52,14 +54,14 @@ func (this *ReOrderSerach) Send(phone, idcard string) ([]*OrderInfo, error) {
 	heads := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
 		"Accept": "*/*",
-		"Host": Const_Host,
-		"Origin": Const_Url,
-		"Referer": Const_Url+"/rwkgzh/views/youthCard/order/orderList.jsp?mobilephone="+phone+"&certificateNo="+idcard,
+		"Host": config.GConfig.Jthk.Host,
+		"Origin": config.GConfig.Jthk.Url,
+		"Referer": config.GConfig.Jthk.Url+"/rwkgzh/views/youthCard/order/orderList.jsp?mobilephone="+phone+"&certificateNo="+idcard,
 	}
 
 
 
-	resData, err := common.HttpFormSend(Const_Url+"/rwkgzh/youth/youthCard/query.tv", formBody,"POST", heads)
+	resData, err := common.HttpFormSend(config.GConfig.Jthk.Url+"/rwkgzh/youth/youthCard/query.tv", formBody,"POST", heads)
 	if err != nil {
 		return nil, err
 	}
@@ -83,15 +85,15 @@ func (this *ReOrderDetailSerach) Send(phone, idcard, tid string) (*OrderInfo, er
 	heads := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
 		"Accept": "*/*",
-		"Host": Const_Host,
-		"Origin": Const_Url,
+		"Host": config.GConfig.Jthk.Host,
+		"Origin": config.GConfig.Jthk.Url,
 		// http://rwx.mmarket.com/rwkgzh/views/youthCard/order/detailNew.jsp?mobilephone=16637207824&certificateNo=220174&tid=SC19280T19121700402909&shipmentCompanyCode=40&shipmentNo=JDVB02166598201
 		//"Referer": GConfig.Server.Url+"/rwkgzh/views/youthCard/order/orderList.jsp?mobilephone="+phone+"&certificateNo="+idcard,
 	}
 
 
 
-	resData, err := common.HttpFormSend(Const_Url+"/rwkgzh/youth/youthCard/detail.tv", formBody,"POST", heads)
+	resData, err := common.HttpFormSend(config.GConfig.Jthk.Url+"/rwkgzh/youth/youthCard/detail.tv", formBody,"POST", heads)
 	if err != nil {
 		return nil, err
 	}

@@ -2,6 +2,7 @@ package ydhk
 
 import (
 	"LianFaPhone/lfp-marketing-api/common"
+	"LianFaPhone/lfp-marketing-api/config"
 
 	//. "LianFaPhone/lfp-tools/autoorder-yidonghuaka/config"
 	"bytes"
@@ -49,7 +50,7 @@ type (
 	}
 )
 
-func (this *ReCardSearch) Send(proCode, proName, cityCode, cityName, Searchkey string,page,size int) ([]string, error) {
+func (this *ReCardSearch) Send(isOao bool, proCode, proName, cityCode, cityName, Searchkey string,page,size int) ([]string, error) {
 	this.MsgType = "LiveHKSelectNumberReq"
 	this.Version = Const_Version
 	this.Selecttype = page
@@ -62,9 +63,15 @@ func (this *ReCardSearch) Send(proCode, proName, cityCode, cityName, Searchkey s
 
 	heads := map[string]string{
 		"Accept": "application/json, text/plain, */*",
-		"Host": Const_Host,
-		"Origin": Const_Url,
-		"Referer": Const_Url+"/rwx/rwkvue/young/",
+		"Host": config.GConfig.Jthk.Host,
+		"Origin": config.GConfig.Jthk.Url,
+		//"Referer": Const_Url+"/rwx/rwkvue/young/",
+	}
+
+	if isOao {
+		heads["Referer"] = config.GConfig.Jthk.Url + config.GConfig.Jthk.Referer_path_oao
+	}else{
+		heads["Referer"] = config.GConfig.Jthk.Url + config.GConfig.Jthk.Referer_path
 	}
 
 	reqData,err := json.Marshal(this)
@@ -72,7 +79,7 @@ func (this *ReCardSearch) Send(proCode, proName, cityCode, cityName, Searchkey s
 		return nil, err
 	}
 
-	resData, err := common.HttpSend(Const_Url+"/rwx/rwkweb/livehk/livehkMobile/selectNumber", bytes.NewReader(reqData),"POST", heads)
+	resData, err := common.HttpSend(config.GConfig.Jthk.Url+"/rwx/rwkweb/livehk/livehkMobile/selectNumber", bytes.NewReader(reqData),"POST", heads)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +96,7 @@ func (this *ReCardSearch) Send(proCode, proName, cityCode, cityName, Searchkey s
 	return res.Numbers, nil
 }
 
-func (this *ReCloseNumber) Send(proCode, cityCode, number, token string) (bool, error) {
+func (this *ReCloseNumber) Send(isOao bool, proCode, cityCode, number, token string) (bool, error) {
 	this.MsgType = "LiveHKLockNumberReq"
 	this.Version = Const_Version
 	this.ProvCode = proCode
@@ -99,9 +106,15 @@ func (this *ReCloseNumber) Send(proCode, cityCode, number, token string) (bool, 
 
 	heads := map[string]string{
 		"Accept": "application/json, text/plain, */*",
-		"Host": Const_Host,
-		"Origin": Const_Url,
-		"Referer": Const_Url+"/rwx/rwkvue/young/",
+		"Host": config.GConfig.Jthk.Host,
+		"Origin": config.GConfig.Jthk.Url,
+		//"Referer": Const_Url+"/rwx/rwkvue/young/",
+	}
+
+	if isOao {
+		heads["Referer"] = config.GConfig.Jthk.Url + config.GConfig.Jthk.Referer_path_oao
+	}else{
+		heads["Referer"] = config.GConfig.Jthk.Url + config.GConfig.Jthk.Referer_path
 	}
 
 	reqData,err := json.Marshal(this)
@@ -109,7 +122,7 @@ func (this *ReCloseNumber) Send(proCode, cityCode, number, token string) (bool, 
 		return false, err
 	}
 
-	resData, err := common.HttpSend(Const_Url+"/rwx/rwkweb/livehk/livehkMobile/lockNumber", bytes.NewReader(reqData),"POST", heads)
+	resData, err := common.HttpSend(config.GConfig.Jthk.Url+"/rwx/rwkweb/livehk/livehkMobile/lockNumber", bytes.NewReader(reqData),"POST", heads)
 	if err != nil {
 		return false, err
 	}

@@ -2,6 +2,7 @@ package ydhk
 
 import (
 	"LianFaPhone/lfp-marketing-api/common"
+	"LianFaPhone/lfp-marketing-api/config"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -41,16 +42,22 @@ AreaId   string       `json:"areaId"`
 }
 )
 
-func (this *ReAddr) Send() ([]Provice, error) {
+func (this *ReAddr) Send(isOao bool) ([]Provice, error) {
 	this.MsgType = "GetProvCityInfoReq"
 	this.Version = Const_Version
 	this.CardProductId = ""
 
 	heads := map[string]string{
 		"Accept": "application/json, text/plain, */*",
-		"Host": Const_Host,
-		"Origin": Const_Url,
-		"Referer": Const_Url+"/rwx/rwkvue/young/",
+		"Host": config.GConfig.Jthk.Host,
+		"Origin": config.GConfig.Jthk.Url,
+		//"Referer": Const_Url+"/rwx/rwkvue/young/",
+	}
+
+	if isOao {
+		heads["Referer"] = config.GConfig.Jthk.Url + config.GConfig.Jthk.Referer_path_oao
+	}else{
+		heads["Referer"] = config.GConfig.Jthk.Url + config.GConfig.Jthk.Referer_path
 	}
 
 	reqData,err := json.Marshal(this)
@@ -58,7 +65,7 @@ func (this *ReAddr) Send() ([]Provice, error) {
 		return nil, err
 	}
 
-	resData, err := common.HttpSend(Const_Url+"/rwx/rwkweb/rwkCommon/getAllProvInfoTotal", bytes.NewReader(reqData),"POST", heads)
+	resData, err := common.HttpSend(config.GConfig.Jthk.Url+"/rwx/rwkweb/rwkCommon/getAllProvInfoTotal", bytes.NewReader(reqData),"POST", heads)
 	if err != nil {
 		return nil, err
 	}

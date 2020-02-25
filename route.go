@@ -4,7 +4,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/controllers"
 	. "LianFaPhone/lfp-marketing-api/controllers/area"
 	"LianFaPhone/lfp-marketing-api/controllers/class"
-	"LianFaPhone/lfp-marketing-api/controllers/jthk19"
+	"LianFaPhone/lfp-marketing-api/controllers/jthk"
 	. "LianFaPhone/lfp-marketing-api/controllers/order"
 	"LianFaPhone/lfp-marketing-api/controllers/phonepool"
 	//"LianFaPhone/lfp-marketing-api/controllers/jthk19"
@@ -65,7 +65,7 @@ func (this *WebServer) routes() {
 		//活动，添加，list，更新，警用 全是后端的
 		cardClassParty := v1.Party("/cardclass")
 		{
-			cc := new(class.ClassTp)
+			cc := new(class.PdPartnerGoods)
 			{
 				cardClassParty.Get("/get", cc.FtGet)
 			}
@@ -134,7 +134,7 @@ func (this *WebServer) routes() {
 
 		ydhkParty := v1.Party("/ydhk")
 		{
-			ac := new(jthk19.Ydhk)
+			ac := new(jthk.Ydhk)
 
 			ydhkParty.Any("/token-get", ac.GetToken)
 			ydhkParty.Any("/addr-gets", ac.GetsAddr)
@@ -147,19 +147,19 @@ func (this *WebServer) routes() {
 			ydhkParty.Post("/idcheckurl-get", ac.FtIdCheckUrlGet)
 		}
 
-		jthk19Party := v1.Party("/jthk19")
+		jthkParty := v1.Party("/jthk")
 		{
-			ac := new(jthk19.Ydhk)
+			ac := new(jthk.Ydhk)
 
-			jthk19Party.Any("/token-get", ac.GetToken)
-			jthk19Party.Any("/addr-gets", ac.GetsAddr)
-			jthk19Party.Any("/numberpool-list", ac.ListNumberPool)
-			jthk19Party.Any("/number-lock", ac.LockNumber)
-			jthk19Party.Any("/apply", ac.Apply)
-			jthk19Party.Any("/photo-upload", ac.UploadPhoto)
-			jthk19Party.Get("/protocal-get", ac.GetProtocal)
-			jthk19Party.Post("/order-confirm", ac.FtConfirm)
-			jthk19Party.Post("/idcheckurl-get", ac.FtIdCheckUrlGet)
+			jthkParty.Any("/token-get", ac.GetToken)
+			jthkParty.Any("/addr-gets", ac.GetsAddr)
+			jthkParty.Any("/numberpool-list", ac.ListNumberPool)
+			jthkParty.Any("/number-lock", ac.LockNumber)
+			jthkParty.Any("/apply", ac.Apply)
+			jthkParty.Any("/photo-upload", ac.UploadPhoto)
+			jthkParty.Get("/protocal-get", ac.GetProtocal)
+			jthkParty.Post("/order-confirm", ac.FtConfirm)
+			jthkParty.Post("/idcheckurl-get", ac.FtIdCheckUrlGet)
 		}
 
 	}

@@ -12,13 +12,13 @@ import (
 	. "LianFaPhone/lfp-base/log/zap"
 )
 
-type ClassBigTp struct {
+type PdPartner struct {
 	controllers.Controllers
 }
 
-func (this *ClassBigTp) Gets(ctx iris.Context) {
+func (this *PdPartner) Gets(ctx iris.Context) {
 
-	ll, err := new(models.CardClassBigTp).Gets()
+	ll, err := new(models.PdPartner).Gets()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -29,7 +29,7 @@ func (this *ClassBigTp) Gets(ctx iris.Context) {
 }
 
 
-func (this *ClassBigTp) Add(ctx iris.Context) {
+func (this *PdPartner) Add(ctx iris.Context) {
 	param := new(api.BkCardClassBigTpAdd)
 
 	err := controllers.Tools.ShouldBindJSON(ctx, param)
@@ -39,7 +39,7 @@ func (this *ClassBigTp) Add(ctx iris.Context) {
 		return
 	}
 
-	modelParam := new(models.CardClassBigTp).ParseAdd(param)
+	modelParam := new(models.PdPartner).ParseAdd(param)
 	flag,err := modelParam.Unique()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("db err")
@@ -61,7 +61,7 @@ func (this *ClassBigTp) Add(ctx iris.Context) {
 
 }
 
-func (this *ClassBigTp) Get(ctx iris.Context) {
+func (this *PdPartner) Get(ctx iris.Context) {
 	//设置套餐，图片，上传文件
 	param := new(api.BkCardClassBigTp)
 
@@ -72,7 +72,7 @@ func (this *ClassBigTp) Get(ctx iris.Context) {
 		return
 	}
 
-	ll, err := new(models.CardClassBigTp).Parse(param).Get()
+	ll, err := new(models.PdPartner).Parse(param).Get()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -81,7 +81,7 @@ func (this *ClassBigTp) Get(ctx iris.Context) {
 	this.Response(ctx, ll)
 }
 
-func (this *ClassBigTp) Update(ctx iris.Context) {
+func (this *PdPartner) Update(ctx iris.Context) {
 	//设置套餐，图片，上传文件
 	param := new(api.BkCardClassBigTp)
 
@@ -92,7 +92,7 @@ func (this *ClassBigTp) Update(ctx iris.Context) {
 		return
 	}
 
-	ll, err := new(models.CardClassBigTp).Parse(param).Update()
+	ll, err := new(models.PdPartner).Parse(param).Update()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -101,7 +101,7 @@ func (this *ClassBigTp) Update(ctx iris.Context) {
 	this.Response(ctx, ll)
 }
 
-func (this *ClassBigTp) List(ctx iris.Context) {
+func (this *PdPartner) List(ctx iris.Context) {
 	//设置套餐，图片，上传文件
 	param := new(api.BkCardClassBigTpList)
 
@@ -112,7 +112,7 @@ func (this *ClassBigTp) List(ctx iris.Context) {
 		return
 	}
 
-	ll, err := new(models.CardClassBigTp).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
+	ll, err := new(models.PdPartner).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())

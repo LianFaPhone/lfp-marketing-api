@@ -28,8 +28,8 @@ type (
 		TownCode     *string `valid:"optional" json:"town_code,omitempty"`     //东明路街道
 		Address      *string `valid:"optional" json:"address,omitempty"`       //小区及门牌号
 
-		ClassBigTp   *int    `valid:"optional" json:"class_big_tp,omitempty"`
-		ClassTp      *int    `valid:"optional" json:"class_tp,omitempty"`
+		ClassBigTp   *int64    `valid:"optional" json:"class_big_tp,omitempty"`
+		ClassTp      *int64    `valid:"optional" json:"class_tp,omitempty"`
 		ClassName   *string `valid:"optional" json:"class_name,omitempty"`
 		ClassISP     *int    `valid:"optional" json:"class_isp,omitempty"`
 		IP           string  `valid:"optional" json:"ip,omitempty"`
@@ -158,8 +158,8 @@ type(
 
 		AccessToken     string   `json:"token"`
 
-		ClassBigTp   *int    `valid:"optional" json:"class_big_tp,omitempty"`
-		ClassTp      *int    `valid:"optional" json:"class_tp,omitempty"`
+		ClassBigTp   *int64    `valid:"optional" json:"class_big_tp,omitempty"`
+		ClassTp      *int64    `valid:"optional" json:"class_tp,omitempty"`
 		ClassName   *string `valid:"optional" json:"class_name,omitempty"`
 		ClassISP     *int    `valid:"optional" json:"class_isp,omitempty"`
 		IP           *string  `valid:"optional" json:"ip,omitempty"` //从header

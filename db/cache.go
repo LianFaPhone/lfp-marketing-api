@@ -11,8 +11,8 @@ var GCache Cache
 
 type Cache struct {
 	BlacklistAreaCache gcache.Cache
-	CardClassByNameCache gcache.Cache
-	CardClassByTpCache gcache.Cache
+	PdPartnerGoodsByCodeCache gcache.Cache
+	PdPartnerGoodsByTpCache gcache.Cache
 	BsProvinceByNameCache gcache.Cache
 	BsCityByNameCache gcache.Cache
 	BsAreaByNameCache gcache.Cache
@@ -46,11 +46,11 @@ func (this *Cache) RemoveBlacklistArea(tp string) {
 }
 
 //**************************************************/
-func (this *Cache) GetCardClassByName(code string) (interface{}, error) {
-	if this.CardClassByNameCache == nil {
+func (this *Cache) GetPdPartnerGoodsByCode(code string) (interface{}, error) {
+	if this.PdPartnerGoodsByCodeCache == nil {
 		return nil, errors.New("not init")
 	}
-	value, err := this.CardClassByNameCache.Get(code)
+	value, err := this.PdPartnerGoodsByCodeCache.Get(code)
 	if err != nil {
 		return nil, err
 	}
@@ -58,23 +58,23 @@ func (this *Cache) GetCardClassByName(code string) (interface{}, error) {
 	return value, nil
 }
 
-func (this *Cache) SetCardClassByName(f func(key interface{}) (interface{}, *time.Duration, error)) {
-	this.CardClassByNameCache = gcache.New(config.GConfig.Cache.CardClassByNameMaxKey).LRU().LoaderExpireFunc(f).Build()
+func (this *Cache) SetPdPartnerGoodsByCode(f func(key interface{}) (interface{}, *time.Duration, error)) {
+	this.PdPartnerGoodsByCodeCache = gcache.New(config.GConfig.Cache.CardClassByNameMaxKey).LRU().LoaderExpireFunc(f).Build()
 }
 
-func (this *Cache) RemoveCardClassByName(tp string) {
-	if this.CardClassByNameCache == nil {
+func (this *Cache) RemovePdPartnerGoodsByCode(tp string) {
+	if this.PdPartnerGoodsByCodeCache == nil {
 		return
 	}
-	this.CardClassByNameCache.Remove(tp)
+	this.PdPartnerGoodsByCodeCache.Remove(tp)
 }
 
 //**************************************************/
-func (this *Cache) GetCardClassById(id int) (interface{}, error) {
-	if this.CardClassByTpCache == nil {
+func (this *Cache) GetPdPartnerGoodsById(id int64) (interface{}, error) {
+	if this.PdPartnerGoodsByTpCache == nil {
 		return nil, errors.New("not init")
 	}
-	value, err := this.CardClassByTpCache.Get(id)
+	value, err := this.PdPartnerGoodsByTpCache.Get(id)
 	if err != nil {
 		return nil, err
 	}
@@ -82,15 +82,15 @@ func (this *Cache) GetCardClassById(id int) (interface{}, error) {
 	return value, nil
 }
 
-func (this *Cache) SetCardClassById(f func(key interface{}) (interface{}, *time.Duration, error)) {
-	this.CardClassByTpCache = gcache.New(config.GConfig.Cache.CardClassByNameMaxKey).LRU().LoaderExpireFunc(f).Build()
+func (this *Cache) SetPdPartnerGoodsById(f func(key interface{}) (interface{}, *time.Duration, error)) {
+	this.PdPartnerGoodsByTpCache = gcache.New(config.GConfig.Cache.CardClassByNameMaxKey).LRU().LoaderExpireFunc(f).Build()
 }
 
-func (this *Cache) RemoveCardClassById(id int) {
-	if this.CardClassByTpCache == nil {
+func (this *Cache) RemovePdPartnerGoodsById(id int) {
+	if this.PdPartnerGoodsByTpCache == nil {
 		return
 	}
-	this.CardClassByTpCache.Remove(id)
+	this.PdPartnerGoodsByTpCache.Remove(id)
 }
 
 ///////////////provice

@@ -10,9 +10,9 @@ import (
 type CardClasssheet struct {
 	Id           *int64  `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"`                     //加上type:int(11)后AUTO_INCREMENT无效
 	Date         *string `json:"date,omitempty"     gorm:"column:date;type:varchar(15)"` //订单号
-	ClassBigTp      *int    `json:"class_big_tp,omitempty"     gorm:"column:class_big_tp;type:int(10);"`
+	ClassBigTp      *int64    `json:"class_big_tp,omitempty"     gorm:"column:class_big_tp;type:int(10);"`
 
-	ClassTp      *int    `json:"class_tp,omitempty"     gorm:"column:class_tp;type:int(10)"`
+	ClassTp      *int64    `json:"class_tp,omitempty"     gorm:"column:class_tp;type:int(10)"`
 	ClassISP     *int    `json:"isp,omitempty"    gorm:"column:isp;type:int(10)"`
 	OrderCount   *int64  `json:"order_count,omitempty"     gorm:"column:order_count;type:bigint(20);"`
 	ClassName    *string `json:"class_name,omitempty"     gorm:"-"`
@@ -112,7 +112,7 @@ func (this *CardClasssheet) GetByDateAndTp(date string, class_tp int) (*CardClas
 	return m, err
 }
 
-func (this *CardClasssheet) TxGetByDateAndTp(tx *gorm.DB, date string, class_tp *int) (*CardClasssheet, error) {
+func (this *CardClasssheet) TxGetByDateAndTp(tx *gorm.DB, date string, class_tp *int64) (*CardClasssheet, error) {
 	m := new(CardClasssheet)
 	var err error
 	if class_tp == nil {

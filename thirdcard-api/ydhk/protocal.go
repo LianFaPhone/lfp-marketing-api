@@ -2,7 +2,8 @@ package ydhk
 
 import (
 "LianFaPhone/lfp-marketing-api/common"
-"bytes"
+	"LianFaPhone/lfp-marketing-api/config"
+	"bytes"
 "encoding/json"
 "fmt"
 )
@@ -22,16 +23,22 @@ type(
 	}
 )
 
-func (this *ReProtocal) Send(ProviceCode string) (string, error) {
+func (this *ReProtocal) Send(isOao bool, ProviceCode string) (string, error) {
 	this.MsgType = "LiveHKCardNaprotocolReq"
 	this.Version = Const_Version
 	this.ProviceCode = ProviceCode
 
 	heads := map[string]string{
 		"Accept": "application/json, text/plain, */*",
-		"Host": Const_Host,
-		"Origin": Const_Url,
-		"Referer": Const_Url+"/rwx/rwkvue/young/",
+		"Host": config.GConfig.Jthk.Host,
+		"Origin": config.GConfig.Jthk.Url,
+		//"Referer": Const_Url+"/rwx/rwkvue/young/",
+	}
+
+	if isOao {
+		heads["Referer"] = config.GConfig.Jthk.Url + config.GConfig.Jthk.Referer_path_oao
+	}else{
+		heads["Referer"] = config.GConfig.Jthk.Url + config.GConfig.Jthk.Referer_path
 	}
 
 	reqData,err := json.Marshal(this)
@@ -39,7 +46,7 @@ func (this *ReProtocal) Send(ProviceCode string) (string, error) {
 		return "", err
 	}
 
-	resData, err := common.HttpSend(Const_Url+"/rwx/rwkweb/livehk/livehkProtocol/getCardNaprotocol", bytes.NewReader(reqData),"POST", heads)
+	resData, err := common.HttpSend(config.GConfig.Jthk.Url+"/rwx/rwkweb/livehk/livehkProtocol/getCardNaprotocol", bytes.NewReader(reqData),"POST", heads)
 	if err != nil {
 		return "", err
 	}

@@ -1,4 +1,4 @@
-package jthk19
+package jthk
 
 import (
 	"LianFaPhone/lfp-marketing-api/api"
@@ -26,8 +26,9 @@ type Ydhk struct{
 }
 
 func (this * Ydhk) GetProtocal(ctx iris.Context) {
+	isoao,_ := ctx.URLParamBool("isOao")
 	pCode := ctx.FormValue("province_code")
-	token,err := new(ReProtocal).Send(pCode)
+	token,err := new(ReProtocal).Send(isoao, pCode)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
@@ -37,7 +38,10 @@ func (this * Ydhk) GetProtocal(ctx iris.Context) {
 }
 
 func (this * Ydhk) GetToken(ctx iris.Context) {
-	token,err := new(ReToken).Send()
+	isoao,_ := ctx.URLParamBool("isOao")
+	channelId := ctx.URLParam("channelId")
+
+	token,err := new(ReToken).Send(isoao, channelId)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
@@ -47,7 +51,9 @@ func (this * Ydhk) GetToken(ctx iris.Context) {
 }
 
 func (this * Ydhk) GetsAddr(ctx iris.Context) {
-	ll, err := new(ReAddr).Send()
+	isoao,_ := ctx.URLParamBool("isOao")
+	//channelTp := ctx.URLParam("channelType")
+	ll, err := new(ReAddr).Send(isoao)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
@@ -57,6 +63,7 @@ func (this * Ydhk) GetsAddr(ctx iris.Context) {
 }
 
 func (this * Ydhk) ListNumberPool(ctx iris.Context) {
+	isoao,_ := ctx.URLParamBool("isOao")
 	param := new(api.FtYdhkNumberPoolList)
 	if err := ctx.ReadJSON(param); err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
@@ -67,7 +74,7 @@ func (this * Ydhk) ListNumberPool(ctx iris.Context) {
 		param.Page = param.Page -1
 	}
 
-	ll,err := new(ReCardSearch).Send(param.ProviceCode, param.Provice, param.CityCode, param.City, param.Searchkey, param.Page, param.Size)
+	ll,err := new(ReCardSearch).Send(isoao, param.ProviceCode, param.Provice, param.CityCode, param.City, param.Searchkey, param.Page, param.Size)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
@@ -77,6 +84,7 @@ func (this * Ydhk) ListNumberPool(ctx iris.Context) {
 }
 
 func (this * Ydhk) LockNumber(ctx iris.Context) {
+	isoao,_ := ctx.URLParamBool("isOao")
 	param := new(api.FtYdhkNumberPoolLock)
 	if err := ctx.ReadJSON(param); err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
@@ -84,7 +92,7 @@ func (this * Ydhk) LockNumber(ctx iris.Context) {
 		return
 	}
 
-	flag,err := new(ReCloseNumber).Send(param.ProviceCode, param.CityCode,  param.Number, param.Token)
+	flag,err := new(ReCloseNumber).Send(isoao, param.ProviceCode, param.CityCode,  param.Number, param.Token)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.Code(), err.Error())
@@ -98,8 +106,11 @@ func (this * Ydhk) LockNumber(ctx iris.Context) {
 }
 
 func (this * Ydhk) Apply(ctx iris.Context) {
+	isoao,_ := ctx.URLParamBool("isOao")
+//	productType := ctx.URLParamDefault("productType", "19")
+	productId := ctx.URLParam("productId")
+	channelId := ctx.URLParam("channelId")
 
-	//FtYdhkApply
 	param := new(api.FtYdhkApply)
 	if err := ctx.ReadJSON(param); err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
@@ -107,7 +118,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		return
 	}
 
-	errCode, orderId,oaoFlag,err := new(ReOrderSubmit).Send(param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
+	errCode, orderId,oaoFlag,err := new(ReOrderSubmit).Parse(channelId, productId).Send(isoao, param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
 		this.ExceptionSerive(ctx, errCode.Code(), err.Error())
@@ -150,15 +161,15 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			*modelParam.Status =	models.CONST_OrderStatus_New_UnFinish
 		}
 
-		if modelParam.ClassBigTp == nil || modelParam.ClassIsp == nil {
+		if modelParam.ClassBigTp == nil || modelParam.ClassIsp == nil || modelParam.ClassTp == nil{
 			if modelParam.ClassTp != nil {
-				cc,err := new(models.CardClass).GetByIdFromCache(*modelParam.ClassTp)
+				cc,err := new(models.PdPartnerGoods).GetByIdFromCache(*modelParam.ClassTp)
 				if err ==nil && cc != nil {
 					modelParam.ClassIsp = cc.ISP
 					modelParam.ClassBigTp = cc.BigTp
 				}
 			}else if param.ClassName != nil {
-				cc,err := new(models.CardClass).GetByNameFromCache(*param.ClassName)
+				cc,err := new(models.PdPartnerGoods).GetByCodeFromCache(*param.ClassName)
 				if err ==nil && cc != nil {
 					modelParam.ClassIsp = cc.ISP
 					modelParam.ClassBigTp = cc.BigTp
@@ -255,8 +266,9 @@ func (this *Ydhk) FtConfirm(ctx iris.Context) {
 }
 
 func (this *Ydhk) FtIdCheckUrlGet(ctx iris.Context) {
+	isOao,_ := ctx.URLParamBool("isOao")
+	channelId := ctx.URLParam("channelId")
 	param := new(api.FtIdCheckUrlGet)
-
 	err := Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
@@ -264,7 +276,7 @@ func (this *Ydhk) FtIdCheckUrlGet(ctx iris.Context) {
 		return
 	}
 
-	url,err := new(ReIdCheckUrl).Send(param.OrderNo, param.NewPhone, param.Token)
+	url,err := new(ReIdCheckUrl).Send(isOao,channelId, param.OrderNo, param.NewPhone, param.Token)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())

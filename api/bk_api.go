@@ -29,7 +29,7 @@ type (
 
 	BkCardOrder struct {
 		OrderNo   *string `valid:"required" json:"order_no,omitempty" ` //订单号
-		ClassId       *int    `valid:"optional" json:"class_tp,omitempty" `
+		ClassId       *int64    `valid:"optional" json:"class_tp,omitempty" `
 		ClassISP      *int    `valid:"optional" json:"class_isp,omitempty"`
 		Status        *int    `valid:"optional" json:"status,omitempty"`
 		TrueName      *string `valid:"optional" json:"true_name,omitempty"`
@@ -71,8 +71,8 @@ type (
 		Id       *int64  `valid:"optional" json:"id,omitempty"`
 		OrderNo   *string `valid:"optional" json:"order_no,omitempty" ` //订单号
 		ClassISP *int    `valid:"optional" json:"class_isp,omitempty"`
-		ClassBigTp  *int    `valid:"optional" json:"class_big_tp,omitempty" `
-		ClassTp  *int    `valid:"optional" json:"class_tp,omitempty" `
+		ClassBigTp  *int64    `valid:"optional" json:"class_big_tp,omitempty" `
+		ClassTp  *int64    `valid:"optional" json:"class_tp,omitempty" `
 		Status   *int    `valid:"optional" json:"status,omitempty"`
 		TrueName *string `valid:"optional" json:"true_name,omitempty"`
 		IdCard   *string `valid:"optional" json:"idcard,omitempty"`
@@ -130,7 +130,7 @@ type (
 
 	BkCardDateSheetList struct {
 		ClassBigTp  *int    `valid:"optional" json:"class_big_tp,omitempty" `
-		ClassTp  *int    `valid:"optional" json:"class_tp,omitempty" `
+		ClassTp  *int64    `valid:"optional" json:"class_tp,omitempty" `
 		ClassISP *int    `valid:"optional" json:"isp,omitempty"`
 		Province *string `valid:"optional" json:"province,omitempty" `
 		City *string `valid:"optional" json:"city,omitempty" `
@@ -344,8 +344,11 @@ type (
 
 	BkCardClassAdd struct{
 		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
-		BigTp    *int    `valid:"optional" json:"big_tp_id,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		BigTp    *int64    `valid:"required" json:"big_tp_id,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		Code     *string  `valid:"optional" json:"code,omitempty"     gorm:"column:code;type:varchar(10)" `
+		JdCode  *string  `valid:"optional" json:"jd_code,omitempty"     gorm:"column:jd_code;type:varchar(15)" `
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
+		UrlParam *string  `valid:"optional" json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
 		FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
@@ -358,10 +361,11 @@ type (
 	}
 
 	BkCardClass struct{
-		Id    *int   `valid:"required"  json:"id,omitempty"   "` //加上type:int(11)后AUTO_INCREMENT无效
+		Id    *int64   `valid:"required"  json:"id,omitempty"   "` //加上type:int(11)后AUTO_INCREMENT无效
 		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
+		JdCode  *string  `valid:"optional" json:"jd_code,omitempty"     gorm:"column:jd_code;type:varchar(15)" `
 
-		BigTp    *int    `valid:"optional" json:"big_tp_id,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		BigTp    *int64    `valid:"optional" json:"big_tp_id,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		//Tp    *int    `valid:"optional" json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
@@ -379,7 +383,7 @@ type (
 
 	BkCardClassList struct{
 		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
-		BigTp    *int    `valid:"optional" json:"big_tp_id,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		BigTp    *int64    `valid:"optional" json:"big_tp_id,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		//Tp    *int    `valid:"optional" json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
@@ -394,19 +398,53 @@ type (
 	//
 
 	BkCardClassBigTpAdd struct{
-		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
-	//	BigTp    *int    `valid:"optional" json:"big_tp,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
-		Name *string `valid:"optional" json:"name,omitempty"     gorm:"column:detail;type:varchar(50)"`
+		ISP   *int    `valid:"optional" json:"isp,omitempty"   `
+		Detail *string `valid:"optional" json:"detail,omitempty"  `
+		Name *string `valid:"optional" json:"name,omitempty"   `
+		Code *string `json:"code,omitempty"  `
+		GsdProvince *string `valid:"optional" json:"gsd_province,omitempty" `
+		GsdCity *string     `valid:"optional" json:"gsd_city,omitempty"  `
+		GsdProvinceCode *string   `valid:"optional" json:"gsd_province_code,omitempty" `
+		GsdCityCode *string       `valid:"optional" json:"gsd_city_code,omitempty"  `
+		MadeIn      *string       `valid:"optional" json:"made_in,omitempty" `
+		NoExpAddr   *string      `valid:"optional" json:"no_exp_addr,omitempty"  `
+		MinAge    *int    `valid:"optional" json:"min_age,omitempty"     `
+		MaxAge    *int    `valid:"optional" json:"max_age,omitempty" `
+		LimitCardCount  *int         `valid:"optional" json:"limit_card_count,omitempty" `
+		LimitCardPeriod *int64     `valid:"optional" json:"limit_card_period,omitempty" `
+		IdcardFiveFlag  *int      `valid:"optional" json:"idcard_five_flag,omitempty"   `
+		IdcardFivePeriod  *int64  `valid:"optional" json:"idcard_five_period,omitempty" `
+		RepeatExpAddrCount *int   `valid:"optional" json:"repeat_exp_addr_count,omitempty" `
+		RepeatExpAddrPeriod *int  `valid:"optional" json:"repeat_exp_addr_period,omitempty"  `
+		RepeatPhoneCount  *int   `valid:"optional" json:"repeat_phone_count,omitempty"  `
+		RepeatPhonePeriod  *int  `valid:"optional" json:"repeat_phone_period,omitempty" `
+		PrefixPath  *string  `valid:"optional" json:"prefix_path,omitempty"  `
 
 	}
 
 	BkCardClassBigTp struct{
-		Id    *int   `valid:"required"  json:"id,omitempty"   "` //加上type:int(11)后AUTO_INCREMENT无效
-		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
-		Name *string `valid:"optional" json:"name,omitempty"     gorm:"column:detail;type:varchar(50)"`
-		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
-
+		Id    *int64   `valid:"required"  json:"id,omitempty"   "`
+		ISP   *int    `valid:"optional" json:"isp,omitempty"    `
+		Name *string `valid:"optional" json:"name,omitempty"  `
+		Detail *string `valid:"optional" json:"detail,omitempty"  `
+		Code *string `json:"code,omitempty"  `
+		GsdProvince *string `valid:"optional" json:"gsd_province,omitempty" `
+		GsdCity *string     `valid:"optional" json:"gsd_city,omitempty"  `
+		GsdProvinceCode *string   `valid:"optional" json:"gsd_province_code,omitempty" `
+		GsdCityCode *string       `valid:"optional" json:"gsd_city_code,omitempty"  `
+		MadeIn      *string       `valid:"optional" json:"made_in,omitempty" `
+		NoExpAddr   *string      `valid:"optional" json:"no_exp_addr,omitempty"  `
+		MinAge    *int    `valid:"optional" json:"min_age,omitempty"     `
+		MaxAge    *int    `valid:"optional" json:"max_age,omitempty" `
+		LimitCardCount  *int         `valid:"optional" json:"limit_card_count,omitempty" `
+		LimitCardPeriod *int64     `valid:"optional" json:"limit_card_period,omitempty" `
+		IdcardFiveFlag  *int      `valid:"optional" json:"idcard_five_flag,omitempty"   `
+		IdcardFivePeriod  *int64  `valid:"optional" json:"idcard_five_period,omitempty" `
+		RepeatExpAddrCount *int   `valid:"optional" json:"repeat_exp_addr_count,omitempty" `
+		RepeatExpAddrPeriod *int  `valid:"optional" json:"repeat_exp_addr_period,omitempty"  `
+		RepeatPhoneCount  *int   `valid:"optional" json:"repeat_phone_count,omitempty"  `
+		RepeatPhonePeriod  *int  `valid:"optional" json:"repeat_phone_period,omitempty" `
+		PrefixPath  *string  `valid:"optional" json:"prefix_path,omitempty"  `
 		Valid    *int    `valid:"optional" json:"valid,omitempty"      ` //加上type:int(11)后AUTO_INCREMENT无效
 
 	}

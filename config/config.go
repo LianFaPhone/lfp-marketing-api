@@ -99,6 +99,7 @@ type Config struct {
 	Aliyun          Aliyun         `yaml:"aliyun"`
 	Baidu           Baidu          `yaml:"baidu"`
 	Task            Task           `yaml:"task"`
+	Jthk            Jthk           `yaml:"jthk"`
 }
 
 type System struct {
@@ -109,6 +110,7 @@ type System struct {
 	BkPort  string `yaml:"bk_port"`
 	DevId  string `yaml:"dev_id"`
 	FilePath string `yaml:"file_path"`
+	LfcxHost string `yaml:"lfcx_host"`
 }
 
 type Cache struct {
@@ -217,4 +219,19 @@ type Task struct{
 	ActiveTicker int64  `yaml:"active_ticker"`
 	YdhkUnfinishFlag bool  `yaml:"ydhk_unfinish_flag"`
 	YdhkUnfinishTicker int64  `yaml:"ydhk_unfinish_ticker"`
+}
+
+type Jthk struct{
+	Host string  `yaml:"host"`
+	Url  string  `yaml:"url"`
+	//Channel_id_19 string   `yaml:"channel_id_19"`
+	//Product_id_19 string    `yaml:"product_id_19"`
+	//Channel_id_39 string   `yaml:"channel_id_39"`
+	//Product_id_39 string   `yaml:"product_id_39"`
+	Referer_path  string   `yaml:"referer_path"`
+	//Channel_id_19_oao string   `yaml:"channel_id_19_oao"`
+	//Product_id_19_oao string   `yaml:"product_id_19_oao"`
+	//Channel_id_39_oao string   `yaml:"channel_id_39_oao"`
+	//Product_id_39_oao  string   `yaml:"product_id_39_oao"`
+	Referer_path_oao  string   `yaml:"referer_path_oao"`
 }

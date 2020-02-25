@@ -70,7 +70,7 @@ func (this *CardClassSheet) BkList(ctx iris.Context) {
 
 		for i := 0; i < len(*arr); i++ {
 			if (*arr)[i].ClassTp != nil {
-				ss, err :=new(models.CardClass).GetByIdFromCache(*(*arr)[i].ClassTp)
+				ss, err :=new(models.PdPartnerGoods).GetByIdFromCache(*(*arr)[i].ClassTp)
 				if ss != nil && err == nil {
 					(*arr)[i].ClassName = ss.Name
 				}

@@ -15,7 +15,7 @@ type CardDatesheet struct {
 	City         *string `json:"city,omitempty"     gorm:"column:city;type:varchar(20)"`
 	CityCode     *string `json:"city_code,omitempty"     gorm:"column:city_code;type:varchar(20)"`
 	ClassBigTp      *int    `json:"class_big_tp,omitempty"     gorm:"column:class_big_tp;type:int(10);"`
-	ClassTp      *int    `json:"class_tp,omitempty"   gorm:"column:class_tp;type:int(10)"`
+	ClassTp      *int64    `json:"class_tp,omitempty"   gorm:"column:class_tp;type:int(10)"`
 	ClassISP     *int    `json:"class_isp,omitempty"    gorm:"column:isp;type:int(10)"`
 	ClassName    *string `json:"class_name,omitempty"     gorm:"-"`
 	ClassIspName *string `json:"class_isp_name,omitempty"     gorm:"-"` //运营商
@@ -61,7 +61,7 @@ func (this *CardDatesheet) TxUpdate(tx *gorm.DB) error {
 	return nil
 }
 
-func (this *CardDatesheet) TxGetByConds(tx *gorm.DB, date int64, Province *string, City *string, class_tp, ClassISP *int) (*CardDatesheet, error) {
+func (this *CardDatesheet) TxGetByConds(tx *gorm.DB, date int64, Province *string, City *string, class_tp *int64, ClassISP *int) (*CardDatesheet, error) {
 	m := &CardDatesheet{
 		DateAt:   &date,
 		Province: Province,

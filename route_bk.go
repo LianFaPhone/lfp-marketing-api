@@ -118,7 +118,7 @@ func (this *WebServer) bkroutes() {
 		}
 		classBigTpPy := v1bk.Party("/cardclassbigtp")
 		{
-			ac := new(class.ClassBigTp)
+			ac := new(class.PdPartner)
 
 			classBigTpPy.Any("/gets", ac.Gets)
 			classBigTpPy.Post("/add", ac.Add)
@@ -128,7 +128,7 @@ func (this *WebServer) bkroutes() {
 		}
 		classPy := v1bk.Party("/cardclasstp")
 		{
-			ac := new(class.ClassTp)
+			ac := new(class.PdPartnerGoods)
 
 			classPy.Any("/gets", ac.Gets)
 			classPy.Post("/add", ac.Add)

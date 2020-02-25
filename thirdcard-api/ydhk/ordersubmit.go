@@ -2,6 +2,8 @@ package ydhk
 
 import (
 	apibackend "LianFaPhone/lfp-api/errdef"
+	"LianFaPhone/lfp-marketing-api/config"
+
 	//. "LianFaPhone/lfp-tools/autoorder-yidonghuaka/config"
 	//"LianFaPhone/lfp-base/log/zap"
 	"LianFaPhone/lfp-marketing-api/common"
@@ -46,12 +48,19 @@ type (
 	}
 )
 
-func (this *ReOrderSubmit) Send(token, inPhone, newPhone, LegalName,IdCard, address, province, city,  sendprovince, sendcity, sendqu string) (apibackend.EnumBasErr,string,bool, error) {
+func (this *ReOrderSubmit) Parse(channelId , productId string) *ReOrderSubmit{
+	this.ChannelId = channelId
+	this.CardProductId = productId
+	return this
+}
+
+func (this *ReOrderSubmit) Send(isOao bool, token, inPhone, newPhone, LegalName,IdCard, address, province, city,  sendprovince, sendcity, sendqu string) (apibackend.EnumBasErr,string,bool, error) {
 	return apibackend.BASERR_SUCCESS, "TestOrder112",true, nil
 	this.MsgType = "LiveHKCardTemporaryOrderReq"
 	this.Version = Const_Version
-	this.ChannelId = Const_ChannelId
-	this.CardProductId = base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(Const_CardProductId), []byte(token[0:16])))
+
+
+	this.CardProductId = base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(this.CardProductId), []byte(token[0:16])))
 
 	this.MobilePhone = base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(inPhone), []byte(token[0:16])))
 	this.MobileId = base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(newPhone), []byte(token[0:16])))
@@ -70,9 +79,18 @@ func (this *ReOrderSubmit) Send(token, inPhone, newPhone, LegalName,IdCard, addr
 
 	heads := map[string]string{
 		"Accept": "application/json, text/plain, */*",
-		"Host": Const_Host,
-		"Origin": Const_Url,
-		"Referer": Const_Url+"/rwx/rwkvue/young/",
+		"Host": config.GConfig.Jthk.Host,
+		"Origin": config.GConfig.Jthk.Url,
+		//"Referer": Const_Url+"/rwx/rwkvue/young/",
+	}
+
+	path := ""
+	if isOao {
+		path = "/rwx/rwkweb/livehk/card/delivery"
+		heads["Referer"] = config.GConfig.Jthk.Url + config.GConfig.Jthk.Referer_path_oao
+	}else{
+		path = "/rwx/rwkweb/livehk/card/temporaryorder"
+		heads["Referer"] = config.GConfig.Jthk.Url + config.GConfig.Jthk.Referer_path
 	}
 
 	reqData,err := json.Marshal(this)
@@ -80,7 +98,7 @@ func (this *ReOrderSubmit) Send(token, inPhone, newPhone, LegalName,IdCard, addr
 		return apibackend.BASERR_DATA_PACK_ERROR,"",false, err
 	}
 
-	resData, err := common.HttpSend(Const_Url+"/rwx/rwkweb/livehk/card/temporaryorder", bytes.NewReader(reqData),"POST", heads)
+	resData, err := common.HttpSend(config.GConfig.Jthk.Url+path, bytes.NewReader(reqData),"POST", heads)
 	if err != nil {
 		return apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR, "",false, err
 	}

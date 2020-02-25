@@ -12,9 +12,9 @@ type CardOrder struct {
 	OrderNo    *string `json:"order_no,omitempty"     gorm:"column:order_no;type:varchar(30);unique;index"` //订单号
 	ClassIsp   *int    `json:"class_isp,omitempty"     gorm:"column:class_isp;type:int(11);"`               //运营商
 
-	ClassBigTp    *int    `json:"class_big_tp,omitempty"     gorm:"column:class_big_tp;type:int(11);"`                 //手机卡套餐类型
+	ClassBigTp    *int64    `json:"class_big_tp,omitempty"     gorm:"column:class_big_tp;type:int(11);"`                 //手机卡套餐类型
 
-	ClassTp    *int    `json:"class_tp,omitempty"     gorm:"column:class_tp;type:int(11);"`                 //手机卡套餐类型
+	ClassTp    *int64    `json:"class_tp,omitempty"     gorm:"column:class_tp;type:int(11);"`                 //手机卡套餐类型
 	ClassName  *string `json:"class_name,omitempty"     gorm:"-"`
 	ClassDetail  *string `json:"class_detail,omitempty"     gorm:"-"`
 	Status     *int    `json:"status,omitempty"     gorm:"column:status;type:int(11);"` //订单状态
@@ -142,7 +142,7 @@ func (this *CardOrder) FtParseAdd(p *api.CardOrderApply, OrderId string) *CardOr
 	return acty
 }
 
-func (this *CardOrder) FtParseAdd2(p *api.OldCardOrderApply, OrderId string, ClassTp, Status int, Province, City, Area, Town, Address, IP string) *CardOrder {
+func (this *CardOrder) FtParseAdd2(p *api.OldCardOrderApply, OrderId string, ClassTp int64, Status int, Province, City, Area, Town, Address, IP string) *CardOrder {
 	acty := &CardOrder{
 		OrderNo:  &OrderId,
 		TrueName: p.TrueName,
@@ -253,7 +253,7 @@ func (this *CardOrder) FtParseStatus(p *api.FtCardOrderStatus) *CardOrder {
 	return acty
 }
 
-func (this *CardOrder) LimitCheckByIdCardAndTime(idcard string, createdAt int64, classTp, limit int) (bool, error) {
+func (this *CardOrder) LimitCheckByIdCardAndTime(idcard string, createdAt int64, classTp int64, limit int) (bool, error) {
 	count := 0
 	err := db.GDbMgr.Get().Model(this).Where("idcard = ? and class_tp = ? and created_at >= ? and valid = 1", idcard, classTp, createdAt).Count(&count).Error
 	if err != nil {

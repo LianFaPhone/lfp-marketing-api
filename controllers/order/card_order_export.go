@@ -123,7 +123,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 
 				if temp.ClassTp != nil {
 					//ZapLog().Info("cardclass 1")
-					cc,err := new(models.CardClass).GetByIdFromCache(*temp.ClassTp)
+					cc,err := new(models.PdPartnerGoods).GetByIdFromCache(*temp.ClassTp)
 					//ZapLog().Info("cardclass 2", zap.Error(err), zap.Any("cc",cc))
 					if err == nil && cc != nil{
 						temp.ClassName = cc.Detail

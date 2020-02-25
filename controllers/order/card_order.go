@@ -139,7 +139,7 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 
 	limit := 3
 	if param.ClassName != nil {
-		cc, err := new(models.CardClass).GetByNameFromCache(*param.ClassName)
+		cc, err := new(models.PdPartnerGoods).GetByCodeFromCache(*param.ClassName)
 		if err == nil && cc != nil && cc.MaxLimit != nil {
 			limit = *cc.MaxLimit
 		}
@@ -317,7 +317,7 @@ func (this *CardOrder) bkSubList(ctx iris.Context, status *int) {
 		temp := (*coArr)[i]
 		if temp.ClassTp != nil {
 			//ZapLog().Info("cardclass 1")
-			cc,err := new(models.CardClass).GetByIdFromCache(*temp.ClassTp)
+			cc,err := new(models.PdPartnerGoods).GetByIdFromCache(*temp.ClassTp)
 			//ZapLog().Info("cardclass 2", zap.Error(err), zap.Any("cc",cc))
 			if err == nil && cc != nil{
 				temp.ClassName = cc.Detail

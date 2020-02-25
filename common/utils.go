@@ -2,6 +2,7 @@ package common
 
 import (
 	"github.com/kataras/iris"
+	"math/rand"
 	"strings"
 )
 
@@ -33,4 +34,14 @@ func GetRealIp(ctx iris.Context) string {
 	}
 
 	return strings.Split(ips, ",")[0]
+}
+
+func GetRandomString(n int) string {
+	const letterBytes = "abcdefghijk012lmnopqrstuvwxy345zABCDEFGHIJKaLMNOPQRSTUVWXY678Z90"
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Int()%(len(letterBytes))]
+	}
+
+	return string(b)
 }

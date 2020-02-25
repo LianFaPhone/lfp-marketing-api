@@ -12,7 +12,7 @@ type CardOrderHistory struct {
 	Id         *int64  `json:"id,omitempty"        gorm:"column:id;primary_key;not null"`                   //加上type:int(11)后AUTO_INCREMENT无效
 	OrderNo    *string `json:"order_no,omitempty"     gorm:"column:order_no;type:varchar(30);unique;index"` //订单号
 	ClassIsp   *int    `json:"class_isp,omitempty"     gorm:"column:class_isp;type:int(11);"`               //运营商
-	ClassTp    *int    `json:"class_tp,omitempty"     gorm:"column:class_tp;type:int(11);"`                 //手机卡套餐类型
+	ClassTp    *int64    `json:"class_tp,omitempty"     gorm:"column:class_tp;type:int(11);"`                 //手机卡套餐类型
 	ClassName  *string `json:"class_name,omitempty"     gorm:"-"`
 	Status     *int    `json:"status,omitempty"     gorm:"column:status;type:int(11);"` //订单状态
 	StatusName *string `json:"status_name,omitempty"     gorm:"-"`
