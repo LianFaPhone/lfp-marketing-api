@@ -41,14 +41,14 @@ func (this *CardClassSheet) BkList(ctx iris.Context) {
 		groupStr += ",isp"
 		groupFlag = true
 	}
-	if (param.GroupClassBigTpFlag != nil)&&(*param.GroupClassBigTpFlag == 1) {
-		selectFileds = append(selectFileds, "class_big_tp")
-		groupStr += ",class_big_tp"
+	if (param.GroupPartnerFlag != nil)&&(*param.GroupPartnerFlag == 1) {
+		selectFileds = append(selectFileds, "partner_id")
+		groupStr += ",partner_id"
 		groupFlag = true
 	}
-	if (param.GroupClassTpFlag != nil)&&(*param.GroupClassTpFlag == 1) {
-		selectFileds = append(selectFileds, "class_tp")
-		groupStr += ",class_tp"
+	if (param.GroupPartnerGoodsFlag != nil)&&(*param.GroupPartnerGoodsFlag == 1) {
+		selectFileds = append(selectFileds, "partner_goods_code")
+		groupStr += ",partner_goods_code"
 		groupFlag = true
 	}
 
@@ -69,10 +69,10 @@ func (this *CardClassSheet) BkList(ctx iris.Context) {
 	if ok {
 
 		for i := 0; i < len(*arr); i++ {
-			if (*arr)[i].ClassTp != nil {
-				ss, err :=new(models.PdPartnerGoods).GetByIdFromCache(*(*arr)[i].ClassTp)
+			if (*arr)[i].PartnerGoodsCode != nil {
+				ss, err :=new(models.PdPartnerGoods).GetByCodeFromCache(*(*arr)[i].PartnerGoodsCode)
 				if ss != nil && err == nil {
-					(*arr)[i].ClassName = ss.Name
+					(*arr)[i].PartnerGoodsName = ss.Name
 				}
 			}
 		}

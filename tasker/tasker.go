@@ -59,6 +59,8 @@ func (this *Tasker) run() {
 		ydhkUnFinishCheckTicker.Stop()
 	}
 
+	ydhkExpressTicker := time.NewTicker(time.Hour * 3)
+
 	go func() {
 		defer models.PanicPrint()
 		return
@@ -113,7 +115,9 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-ydhkUnFinishCheckTicker.C:
-				//this.ydhkWork()
+				//this.ydhkOaoWork()
+			case <-ydhkExpressTicker.C:
+				//this.ydhkExpressWork()
 			}
 		}
 	}()

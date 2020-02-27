@@ -10,13 +10,13 @@ import (
 type CardClasssheet struct {
 	Id           *int64  `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"`                     //加上type:int(11)后AUTO_INCREMENT无效
 	Date         *string `json:"date,omitempty"     gorm:"column:date;type:varchar(15)"` //订单号
-	ClassBigTp      *int64    `json:"class_big_tp,omitempty"     gorm:"column:class_big_tp;type:int(10);"`
+	Isp   *int    `json:"isp,omitempty"     gorm:"column:isp;type:int(11);"`               //运营商
 
-	ClassTp      *int64    `json:"class_tp,omitempty"     gorm:"column:class_tp;type:int(10)"`
-	ClassISP     *int    `json:"isp,omitempty"    gorm:"column:isp;type:int(10)"`
+	PartnerId    *int64    `json:"partner_id,omitempty"     gorm:"column:partner_id;type:bigint(20);"`                 //手机卡套餐类型
+	PartnerGoodsCode    *string    `json:"partner_goods_code,omitempty"     gorm:"column:partner_goods_code;type:varchar(10);"`                 //手机卡套餐类型
 	OrderCount   *int64  `json:"order_count,omitempty"     gorm:"column:order_count;type:bigint(20);"`
-	ClassName    *string `json:"class_name,omitempty"     gorm:"-"`
-	ClassIspName *string `json:"class_isp_name,omitempty"     gorm:"-"` //运营商
+	PartnerGoodsName    *string `json:"partner_goods_name,omitempty"     gorm:"-"`
+	ClassIspName *string `json:"isp_name,omitempty"     gorm:"-"` //运营商
 	DateTp       *int `json:"date_tp,omitempty"     gorm:"column:date_tp;type:tinyint(3);"`
 	Table
 }
@@ -112,16 +112,16 @@ func (this *CardClasssheet) GetByDateAndTp(date string, class_tp int) (*CardClas
 	return m, err
 }
 
-func (this *CardClasssheet) TxGetByDateAndTp(tx *gorm.DB, date string, class_tp *int64) (*CardClasssheet, error) {
+func (this *CardClasssheet) TxGetByDateAndTp(tx *gorm.DB, date string, class_tp *string) (*CardClasssheet, error) {
 	m := new(CardClasssheet)
 	var err error
 	if class_tp == nil {
-		err = tx.Model(this).Where("date = ? and class_tp is null", date).Last(m).Error
+		err = tx.Model(this).Where("date = ? and partner_goods_code is null", date).Last(m).Error
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
 	} else {
-		err = tx.Model(this).Where("date = ? and class_tp = ?", date, class_tp).Last(m).Error
+		err = tx.Model(this).Where("date = ? and partner_goods_code = ?", date, class_tp).Last(m).Error
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
 		}

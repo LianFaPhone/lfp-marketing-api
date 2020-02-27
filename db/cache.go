@@ -11,6 +11,7 @@ var GCache Cache
 
 type Cache struct {
 	BlacklistAreaCache gcache.Cache
+	PdPartnerByIdCache gcache.Cache
 	PdPartnerGoodsByCodeCache gcache.Cache
 	PdPartnerGoodsByTpCache gcache.Cache
 	BsProvinceByNameCache gcache.Cache
@@ -165,3 +166,27 @@ func (this *Cache) RemoveAreaByName(id string) {
 	this.BsAreaByNameCache.Remove(id)
 }
 
+//////////////////////////////////////////////////////////////////
+
+func (this *Cache) GetPdPartnerById(id int64) (interface{}, error) {
+	if this.PdPartnerByIdCache == nil {
+		return nil, errors.New("not init")
+	}
+	value, err := this.PdPartnerByIdCache.Get(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return value, nil
+}
+
+func (this *Cache) SetPdPartnerById(f func(key interface{}) (interface{}, *time.Duration, error)) {
+	this.PdPartnerByIdCache = gcache.New(100).LRU().LoaderExpireFunc(f).Build()
+}
+
+func (this *Cache) RemovePdPartnerById(id int) {
+	if this.PdPartnerByIdCache == nil {
+		return
+	}
+	this.PdPartnerByIdCache.Remove(id)
+}

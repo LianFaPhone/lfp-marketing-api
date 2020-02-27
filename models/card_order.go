@@ -10,12 +10,12 @@ import (
 type CardOrder struct {
 	Id         *int64  `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"`  //加上type:int(11)后AUTO_INCREMENT无效
 	OrderNo    *string `json:"order_no,omitempty"     gorm:"column:order_no;type:varchar(30);unique;index"` //订单号
-	ClassIsp   *int    `json:"class_isp,omitempty"     gorm:"column:class_isp;type:int(11);"`               //运营商
+	Isp   *int    `json:"isp,omitempty"     gorm:"column:isp;type:int(11);"`               //运营商
 
-	ClassBigTp    *int64    `json:"class_big_tp,omitempty"     gorm:"column:class_big_tp;type:int(11);"`                 //手机卡套餐类型
+	PartnerId    *int64    `json:"partner_id,omitempty"     gorm:"column:partner_id;type:bigint(20);"`                 //手机卡套餐类型
+	PartnerGoodsCode    *string    `json:"partner_goods_code,omitempty"     gorm:"column:partner_goods_code;type:varchar(10);"`                 //手机卡套餐类型
 
-	ClassTp    *int64    `json:"class_tp,omitempty"     gorm:"column:class_tp;type:int(11);"`                 //手机卡套餐类型
-	ClassName  *string `json:"class_name,omitempty"     gorm:"-"`
+	PartnerGoodsName  *string `json:"partner_goods_name,omitempty"     gorm:"-"`
 	ClassDetail  *string `json:"class_detail,omitempty"     gorm:"-"`
 	Status     *int    `json:"status,omitempty"     gorm:"column:status;type:int(11);"` //订单状态
 	StatusName *string `json:"status_name,omitempty"     gorm:"-"`
@@ -41,60 +41,20 @@ type CardOrder struct {
 	ICCID         *string `json:"ICCID,omitempty"     gorm:"column:ICCID;type:varchar(22)"`                 //手机卡唯一识别码
 	NewPhone      *string `json:"new_phone,omitempty"     gorm:"column:new_phone;type:varchar(20)"`         //新手机号
 	Guishudi      *string `json:"guishudi,omitempty"     gorm:"column:guishudi;type:varchar(30)"`           //归属于哪个门店
-//	Dataurl1      *string `json:"dataurl1,omitempty"     gorm:"column:dataurl1;type:varchar(50)"`           //身份证照片地址
-//	Dataurl2      *string `json:"dataurl2,omitempty"     gorm:"column:dataurl2;type:varchar(50)"`           //身份证照片地址
-//	Dataurl3      *string `json:"dataurl3,omitempty"     gorm:"column:dataurl3;type:varchar(50)"`           //免冠照地址
+
 	IP            *string `json:"ip,omitempty"     gorm:"column:ip;type:varchar(40)"`                       //ip地址
 	Ips           *int    `json:"min_ips,omitempty"     gorm:"column:min_ips;type:int(10)"`                         //同一个ip下单次数
 	PhoneOSTp     *int    `json:"device_os_tp,omitempty"     gorm:"column:device_os_tp;type:int(11)"`       //设备类型
 	PhoneOSName   *string `json:"device_os_name,omitempty"     gorm:"-"`
 	IdCardAudit   *int    `json:"idcard_audit,omitempty"     gorm:"column:idcard_audit;type:tinyint(2)"`      //身份证是否审核通过
 	IdCardPicFlag   *int    `json:"idcard_pic_flag,omitempty"     gorm:"column:idcard_pic_flag;type:tinyint(2);default 0;"`      //身份证是否审核通过
-	//这个要废弃吧
-//	BspExpress    *string `json:"bsp_express,omitempty"     gorm:"column:bsp_express;type:varchar(20)"`       //快递名称
-//	BspExpressNo  *string `json:"bsp_express_no,omitempty"     gorm:"column:bsp_express_no;type:varchar(30)"` //快递单号
-	//	BspExpressRemark   *string    `json:"bsp_express_remark,omitempty"     gorm:"column:bsp_express_remark;type:varchar(50)"`
-//	BspStatus     *int    `json:"bsp_status,omitempty"     gorm:"column:bsp_status;type:int(11);"` //订单状态
-//	BspStatusName *string `json:"bsp_status_name,omitempty"     gorm:"-"`
-	//都要废弃
-//	Message       *string `json:"message,omitempty"     gorm:"column:message;type:varchar(30)"`  //湖南反馈信息
-//	BspRsp        *string `json:"bsp_rsp,omitempty"     gorm:"column:bsp_rsp;type:varchar(150)"` //湖南反馈信息
-//	NbMsg         *string `json:"nb_msg,omitempty"     gorm:"column:nb_msg;type:varchar(20)"`    //宁波反馈信息
-	//
+
 	IsBacklist *int `json:"is_blacklist,omitempty"     gorm:"-"`
 
 	ThirdOrderNo    *string `json:"third_order_no,omitempty"     gorm:"column:third_order_no;type:varchar(30);"` //订单号
 	ThirdResp    *string `json:"third_resp,omitempty"     gorm:"column:third_resp;type:varchar(30);"` //订单号
 
 	Table
-
-	//"id": "255418",
-	//"orderID": "DD1909021538227895",
-	//"ClassID": "5",
-	//"ClassName": "联通大王卡",
-	//"orderStatus": "已发货",
-	//"truename": "王岩平",
-	//"idcard": "'152325199807253519",
-	//"phone": "17304755629",
-	//"province": "内蒙古自治区",
-	//"addDate": "2019/9/2 15:38:02",
-	//"fahuoDate": "2019/9/2 19:53:24",
-	//"city": "通辽市",
-	//"area": "库伦旗",
-	//"town": "库伦镇",
-	//"address": "蒙医医院住院部6楼护士站",
-	//"express": "中通快递",
-	//"expressID": "73119112290694",
-	//"beizhu": "",
-	//"ICCID": "",
-	//"newPhone": "15606848757",
-	//"guishudi": "鄞州鄞中卓途创新电子代理2店",
-	//"dataurl1": "",
-	//"dataurl2": "",
-	//"dataurl3": "",
-	//"IP": "39.155.41.102",
-	//"IPS": "0",
-	//"phoneOS": "Iphone"
 }
 
 func (this *CardOrder) TableName() string {
@@ -106,8 +66,8 @@ func (this *CardOrder) FtParseAdd(p *api.CardOrderApply, OrderId string) *CardOr
 		OrderNo:  &OrderId,
 		TrueName: p.TrueName,
 		IdCard:   p.IdCard,
-		ClassTp:  p.ClassTp,
-		//		CountryCode: p.CountryCode,
+		PartnerId:  p.PartnerId,
+		PartnerGoodsCode: p.PartnerGoodsCode,
 		Phone:        p.Phone,
 		Province:     p.Province,
 		ProvinceCode: p.ProvinceCode,
@@ -124,7 +84,7 @@ func (this *CardOrder) FtParseAdd(p *api.CardOrderApply, OrderId string) *CardOr
 		//PushFlag:    new(int),
 		//PushTryCount:    new(int),
 		//SmsFlag: new(int),
-		ClassIsp: p.ClassISP,
+		Isp: p.ClassISP,
 		NewPhone: p.Number,
 		Status:   p.Status,
 		ThirdOrderNo: p.ThirdOrderNo,
@@ -142,43 +102,11 @@ func (this *CardOrder) FtParseAdd(p *api.CardOrderApply, OrderId string) *CardOr
 	return acty
 }
 
-func (this *CardOrder) FtParseAdd2(p *api.OldCardOrderApply, OrderId string, ClassTp int64, Status int, Province, City, Area, Town, Address, IP string) *CardOrder {
-	acty := &CardOrder{
-		OrderNo:  &OrderId,
-		TrueName: p.TrueName,
-		IdCard:   p.IdCard,
-		ClassTp:  &ClassTp,
-		Phone:    p.Phone,
-		Province: &Province,
-		City:     &City,
-		Area:     &Area,
-		Town:     &Town,
-		Address:  &Address,
-		IP:       &IP,
-
-		IdCardAudit: new(int),
-		//PushFlag:    new(int),
-		//PushTryCount:    new(int),
-		Status: &Status,
-		//ThirdOrderNo: p.ThirdOrderNo,
-	}
-
-	if acty.Valid == nil {
-		acty.Valid = new(int)
-		*acty.Valid = 1
-	}
-	*acty.IdCardAudit = CONST_IDCARD_Audit_pending
-	//*acty.PushFlag = 0
-	//*acty.PushTryCount = 0
-	//*acty.SmsFlag = 0
-
-	return acty
-}
-
 func (this *CardOrder) BkParse(p *api.BkCardOrder) *CardOrder {
 	acty := &CardOrder{
 		OrderNo:            p.OrderNo,
-		ClassTp:       p.ClassId,
+		PartnerId:  p.PartnerId,
+		PartnerGoodsCode: p.PartnerGoodsCode,
 		Status:        p.Status,
 		TrueName:      p.TrueName,
 		IdCard:        p.IdCard,
@@ -225,9 +153,9 @@ func (this *CardOrder) BkParseList(p *api.BkCardOrderList) *CardOrder {
 	acty := &CardOrder{
 		Id:        p.Id,
 		OrderNo:   p.OrderNo,
-		ClassIsp: p.ClassISP,
-		ClassBigTp: p.ClassBigTp,
-		ClassTp:   p.ClassTp,
+		Isp: p.ClassISP,
+		PartnerId:  p.PartnerId,
+		PartnerGoodsCode: p.PartnerGoodsCode,
 		Status:    p.Status,
 		TrueName:  p.TrueName,
 		IdCard:    p.IdCard,
@@ -253,22 +181,13 @@ func (this *CardOrder) FtParseStatus(p *api.FtCardOrderStatus) *CardOrder {
 	return acty
 }
 
-func (this *CardOrder) LimitCheckByIdCardAndTime(idcard string, createdAt int64, classTp int64, limit int) (bool, error) {
+func (this *CardOrder) LimitCheckByIdCardAndTime(idcard string, createdAt int64, partnerGoodsCode string, limit int) (bool, error) {
 	count := 0
-	err := db.GDbMgr.Get().Model(this).Where("idcard = ? and class_tp = ? and created_at >= ? and valid = 1", idcard, classTp, createdAt).Count(&count).Error
+	err := db.GDbMgr.Get().Model(this).Where("idcard = ? and partner_goods_code = ? and created_at >= ? and valid = 1", idcard, partnerGoodsCode, createdAt).Count(&count).Error
 	if err != nil {
 		return false, err
 	}
 	return count > limit, nil
-}
-
-func (this *CardOrder) LockUniqueByIdCardAndTime(idcard string, createdAt int64, classTp int) (bool, error) {
-	count := 0
-	err := db.GDbMgr.Get().Model(this).Where("idcard = ? and class_tp = ? and created_at >= ? and valid = 1", idcard, classTp, createdAt).Count(&count).Error
-	if err != nil {
-		return false, err
-	}
-	return count == 0, nil
 }
 
 func (this *CardOrder) Add() error {
@@ -430,6 +349,16 @@ func (this *CardOrder) UpdatesPhotosByOrderNo(OrderNo, url1, url2, url3 string) 
 
 func (this *CardOrder) UpdatesByOrderNo() (int64, error) {
 	query := db.GDbMgr.Get().Model(this).Where("order_no = ?", this.OrderNo).Updates(this)
+	return query.RowsAffected, query.Error
+
+}
+
+func (this *CardOrder) UpdatesByNewPhoneAndIdcard(newPhone, idcard ,condStr string) (int64, error) {
+	query := db.GDbMgr.Get().Model(this).Where("new_phone = ? and idcard = ?", newPhone, idcard)
+	if len(condStr) > 0 {
+		query =query.Where(condStr)
+	}
+	query.Updates(this)
 	return query.RowsAffected, query.Error
 
 }

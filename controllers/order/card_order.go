@@ -137,11 +137,17 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 		countryCode = *param.CountryCode
 	}
 
-	limit := 3
-	if param.ClassName != nil {
-		cc, err := new(models.PdPartnerGoods).GetByCodeFromCache(*param.ClassName)
-		if err == nil && cc != nil && cc.MaxLimit != nil {
-			limit = *cc.MaxLimit
+	limitCardCount := 3
+	limitCardPeriod := int64(2592000)
+	if param.PartnerId != nil {
+		cc, _ := new(models.PdPartner).GetByIdFromCache(*param.PartnerId)
+		if cc != nil {
+			if cc.LimitCardCount != nil {
+				limitCardCount = *cc.LimitCardCount
+			}
+			if cc.LimitCardPeriod != nil {
+				limitCardPeriod = *cc.LimitCardPeriod
+			}
 		}
 	}
 
@@ -165,7 +171,7 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 	param.IP = common.GetRealIp(ctx)
 
 	//这个以后再想
-	orderNo := fmt.Sprintf("D%s%s%d", config.GConfig.Server.DevId, time.Now().Format("060102030405000"), GIdGener.Gen())
+	orderNo := fmt.Sprintf("D%s%s%03d", config.GConfig.Server.DevId, time.Now().Format("060102030405000"), GIdGener.Gen())
 	param.Status = new(int)
 	*param.Status = models.CONST_OrderStatus_New
 
@@ -176,7 +182,7 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 	modelParam := new(models.CardOrder).FtParseAdd(param, orderNo)
 
 //	tx := db.GDbMgr.Get().Begin()
-	upFlag, err := modelParam.LimitCheckByIdCardAndTime(*param.IdCard, time.Now().Unix()-24*3600*30*3, *param.ClassTp, limit)
+	upFlag, err := modelParam.LimitCheckByIdCardAndTime(*param.IdCard, time.Now().Unix()-limitCardPeriod, *param.PartnerGoodsCode, limitCardCount)
 	if err != nil {
 //		tx.Rollback()
 		ZapLog().With(zap.Error(err)).Error("database err")
@@ -315,12 +321,12 @@ func (this *CardOrder) bkSubList(ctx iris.Context, status *int) {
 	coArr := results.List.(*[]*models.CardOrder)
 	for i := 0; i < len(*coArr); i++ {
 		temp := (*coArr)[i]
-		if temp.ClassTp != nil {
+		if temp.PartnerGoodsCode != nil {
 			//ZapLog().Info("cardclass 1")
-			cc,err := new(models.PdPartnerGoods).GetByIdFromCache(*temp.ClassTp)
+			cc,err := new(models.PdPartnerGoods).GetByCodeFromCache(*temp.PartnerGoodsCode)
 			//ZapLog().Info("cardclass 2", zap.Error(err), zap.Any("cc",cc))
 			if err == nil && cc != nil{
-				temp.ClassName = cc.Detail
+				temp.PartnerGoodsName = cc.Name
 			}
 		}
 		if temp.PhoneOSTp != nil {

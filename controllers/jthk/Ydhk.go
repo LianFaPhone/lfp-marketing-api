@@ -118,7 +118,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		return
 	}
 
-	errCode, orderId,oaoFlag,err := new(ReOrderSubmit).Parse(channelId, productId).Send(isoao, param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
+	errCode, orderId,oaoFlag,err := new(ReOrderSubmit).Parse(channelId, productId, nil).Send(isoao, param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
 		this.ExceptionSerive(ctx, errCode.Code(), err.Error())
@@ -131,9 +131,10 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			OrderNo:  &orderNo,
 			TrueName: &param.LeagalName,
 			IdCard:   &param.CertificateNo,
-			ClassIsp: param.ClassISP,
-			ClassBigTp: param.ClassBigTp,
-			ClassTp:  param.ClassTp,
+			Isp: param.ClassISP,
+			PartnerId : param.PartnerId,              //手机卡套餐类型
+			PartnerGoodsCode : param.PartnerGoodsCode,           //手机卡套餐类型
+
 			//		CountryCode: p.CountryCode,
 			Phone:        &param.Phone,
 			Province:     &param.SendProvinceName,
@@ -161,21 +162,17 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			*modelParam.Status =	models.CONST_OrderStatus_New_UnFinish
 		}
 
-		if modelParam.ClassBigTp == nil || modelParam.ClassIsp == nil || modelParam.ClassTp == nil{
-			if modelParam.ClassTp != nil {
-				cc,err := new(models.PdPartnerGoods).GetByIdFromCache(*modelParam.ClassTp)
+		if modelParam.PartnerId == nil || modelParam.Isp == nil {
+				cc,err := new(models.PdPartnerGoods).GetByCodeFromCache(*param.PartnerGoodsCode)
 				if err ==nil && cc != nil {
-					modelParam.ClassIsp = cc.ISP
-					modelParam.ClassBigTp = cc.BigTp
+					modelParam.PartnerId = cc.PartnerId
+					if modelParam.Isp == nil {
+						partner,_ := new(models.PdPartner).GetByIdFromCache(*modelParam.PartnerId)
+						if partner != nil {
+							modelParam.Isp = partner.Isp
+						}
+					}
 				}
-			}else if param.ClassName != nil {
-				cc,err := new(models.PdPartnerGoods).GetByCodeFromCache(*param.ClassName)
-				if err ==nil && cc != nil {
-					modelParam.ClassIsp = cc.ISP
-					modelParam.ClassBigTp = cc.BigTp
-					modelParam.ClassTp = cc.Id
-				}
-			}
 		}
 
 		if modelParam.IP == nil {
@@ -218,13 +215,57 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		if err := modelParam.Add(); err != nil {
 			//		tx.Rollback()
 			ZapLog().With(zap.Error(err)).Error("database err")
-			this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+			//this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 			return
 		}
 
 	}()
 
 	this.Response(ctx, &api.FtResYdhkApply{orderId,oaoFlag})
+}
+
+func (this * Ydhk) OfflineActive(ctx iris.Context) {
+	//isoao, _ := ctx.URLParamBool("isOao")
+	//	productType := ctx.URLParamDefault("productType", "19")
+	productId := ctx.URLParam("productId")
+	channelId := ctx.URLParam("channelId")
+
+	param := new(api.FtYdhkApply)
+	if err := ctx.ReadJSON(param); err != nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		ZapLog().Error("param err", zap.Error(err))
+		return
+	}
+
+	oaoModel := new(string)
+	*oaoModel = "2"
+	errCode, orderId, oaoFlag, err := new(ReOrderSubmit).Parse(channelId, productId, oaoModel).OfflineActiveSend(param.AccessToken, param.Phone, param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity, param.SendDistrict)
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("Retoken send err")
+		this.ExceptionSerive(ctx, errCode.Code(), err.Error())
+		return
+	}
+	this.Response(ctx, &api.FtResYdhkApply{orderId,oaoFlag})
+
+	go func() {
+		modelParam := &models.CardOrder{
+			Status : new(int),
+			ThirdOrderNo: &orderId,
+		}
+
+		if oaoFlag == true {
+			*modelParam.Status =	models.CONST_OrderStatus_New
+		}else{
+			*modelParam.Status =	models.CONST_OrderStatus_New_UnFinish
+		}
+
+		condStr := "created_at >= " +fmt.Sprintf("%d", time.Now().Unix() - 12*3600)
+		_, err := modelParam.UpdatesByNewPhoneAndIdcard(param.NewPhone, param.CertificateNo, condStr)
+		if err != nil {
+			ZapLog().With(zap.Error(err)).Error("database err")
+			return
+		}
+	}()
 }
 
 

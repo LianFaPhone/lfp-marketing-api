@@ -1,15 +1,6 @@
 package api
 
 type (
-	OldCardOrderApply struct {
-		TrueName *string `valid:"required" json:"truename,omitempty"`
-		IdCard   *string `valid:"required" json:"idcard,omitempty"`
-		Phone    *string `valid:"required" json:"phone,omitempty"`
-		Address  string  `valid:"optional" json:"address,omitempty"` //小区及门牌号
-		Address2 string  `valid:"optional" json:"address,omitempty"` //小区及门牌号
-		Channel  string  `valid:"optional" json:"channel,omitempty"` //小区及门牌号
-
-	}
 
 	CardOrderApply struct {
 		VerifyId *string `valid:"optional" json:"verify_uuid,omitempty"` //短信验证码，防止薅羊毛
@@ -28,10 +19,9 @@ type (
 		TownCode     *string `valid:"optional" json:"town_code,omitempty"`     //东明路街道
 		Address      *string `valid:"optional" json:"address,omitempty"`       //小区及门牌号
 
-		ClassBigTp   *int64    `valid:"optional" json:"class_big_tp,omitempty"`
-		ClassTp      *int64    `valid:"optional" json:"class_tp,omitempty"`
-		ClassName   *string `valid:"optional" json:"class_name,omitempty"`
-		ClassISP     *int    `valid:"optional" json:"class_isp,omitempty"`
+		PartnerId    *int64    `json:"valid:"optional" partner_id,omitempty"`                 //手机卡套餐类型
+		PartnerGoodsCode    *string    `valid:"optional" json:"partner_goods_code,omitempty"`                 //手机卡套餐类型
+		ClassISP     *int    `valid:"optional" json:"isp,omitempty"`
 		IP           string  `valid:"optional" json:"ip,omitempty"`
 		Ips          *int    `valid:"optional" json:"-"` //屏幕材质？
 		PhoneOSTp    *int    `valid:"optional" json:"class_isp,omitempty"`
@@ -94,11 +84,16 @@ type (
 		Number *string `valid:"required"  json:"number,omitempty"`
 	}
 
-	FtCardClass struct{
-		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
-		BigTp    *int    `valid:"optional" json:"big_tp,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-		Tp    *int    `valid:"optional" json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-		Name *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)"`
+
+	FtResPdPartnerGoodsGet struct{
+		Code     *string  `json:"code,omitempty"     gorm:"column:code;type:varchar(10);unique" `
+		UrlParam *string  `json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
+		ImgUrl *string `json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
+		NoExpAddr   *string      `json:"no_exp_addr,omitempty"     gorm:"column:no_exp_addr;type:varchar(200)"`
+		MinAge    *int    `json:"min_age,omitempty"     gorm:"column:min_age;type:int(11)"`
+		MaxAge    *int    `json:"max_age,omitempty"     gorm:"column:max_age;type:int(11)"`
+		SmsFlag *int    `json:"sms_flag,omitempty"      gorm:"column:sms_flag;type:tinyint(4)"`
+		IdcardDispplay *int    `json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3);default 0"`
 
 	}
 
@@ -158,10 +153,10 @@ type(
 
 		AccessToken     string   `json:"token"`
 
-		ClassBigTp   *int64    `valid:"optional" json:"class_big_tp,omitempty"`
-		ClassTp      *int64    `valid:"optional" json:"class_tp,omitempty"`
-		ClassName   *string `valid:"optional" json:"class_name,omitempty"`
-		ClassISP     *int    `valid:"optional" json:"class_isp,omitempty"`
+		PartnerId    *int64    `json:"valid:"optional" partner_id,omitempty"  `                 //手机卡套餐类型
+		PartnerGoodsCode    *string    `valid:"optional" json:"partner_goods_code,omitempty"   `                 //手机卡套餐类型
+
+		ClassISP     *int    `valid:"optional" json:"isp,omitempty"`
 		IP           *string  `valid:"optional" json:"ip,omitempty"` //从header
 		PhoneOSTp    *int    `valid:"optional" json:"device_os_tp,omitempty"` //从header
 

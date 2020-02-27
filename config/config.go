@@ -234,4 +234,5 @@ type Jthk struct{
 	//Channel_id_39_oao string   `yaml:"channel_id_39_oao"`
 	//Product_id_39_oao  string   `yaml:"product_id_39_oao"`
 	Referer_path_oao  string   `yaml:"referer_path_oao"`
+	ParterCode    string      `yaml:"partner_code"`
 }

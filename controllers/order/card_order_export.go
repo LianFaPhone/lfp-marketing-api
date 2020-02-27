@@ -121,16 +121,16 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 					appendData[1] = *temp.OrderNo
 				}
 
-				if temp.ClassTp != nil {
+				if temp.PartnerGoodsCode != nil {
 					//ZapLog().Info("cardclass 1")
-					cc,err := new(models.PdPartnerGoods).GetByIdFromCache(*temp.ClassTp)
+					cc,err := new(models.PdPartnerGoods).GetByCodeFromCache(*temp.PartnerGoodsCode)
 					//ZapLog().Info("cardclass 2", zap.Error(err), zap.Any("cc",cc))
 					if err == nil && cc != nil{
-						temp.ClassName = cc.Detail
+						temp.PartnerGoodsName = cc.Name
 					}
 				}
-				if temp.ClassName != nil {
-					appendData[2] = *temp.ClassName
+				if temp.PartnerGoodsName != nil {
+					appendData[2] = *temp.PartnerGoodsName
 				}
 
 				if temp.Status != nil {

@@ -18,8 +18,9 @@ type (
 		Town         *string `valid:"optional" json:"town,omitempty"`          //东明路街道, town street
 		TownCode     *string `valid:"optional" json:"town_code,omitempty"`     //东明路街道
 		Address      *string `valid:"optional" json:"address,omitempty"`       //小区及门牌号
-		ClassTp      *int    `valid:"optional" json:"class_tp,omitempty"`
-		ClassAlias   *string `valid:"optional" json:"class_alias,omitempty"`
+		PartnerId    *int64    `json:"valid:"optional" partner_id,omitempty"  `                 //手机卡套餐类型
+		PartnerGoodsCode    *string    `valid:"optional" json:"partner_goods_code,omitempty"   `                 //手机卡套餐类型
+		Isp          *int   `json:"valid:"optional" isp,omitempty"  `
 	}
 
 	ResBkCardOrderNewImport struct {
@@ -29,8 +30,9 @@ type (
 
 	BkCardOrder struct {
 		OrderNo   *string `valid:"required" json:"order_no,omitempty" ` //订单号
-		ClassId       *int64    `valid:"optional" json:"class_tp,omitempty" `
-		ClassISP      *int    `valid:"optional" json:"class_isp,omitempty"`
+		PartnerId    *int64    `json:"valid:"optional" partner_id,omitempty"  `                 //手机卡套餐类型
+		PartnerGoodsCode    *string    `valid:"optional" json:"partner_goods_code,omitempty"   `                 //手机卡套餐类型
+		ClassISP      *int    `valid:"optional" json:"isp,omitempty"`
 		Status        *int    `valid:"optional" json:"status,omitempty"`
 		TrueName      *string `valid:"optional" json:"true_name,omitempty"`
 		IdCard        *string `valid:"optional" json:"idcard,omitempty"`
@@ -70,9 +72,10 @@ type (
 	BkCardOrderList struct {
 		Id       *int64  `valid:"optional" json:"id,omitempty"`
 		OrderNo   *string `valid:"optional" json:"order_no,omitempty" ` //订单号
-		ClassISP *int    `valid:"optional" json:"class_isp,omitempty"`
-		ClassBigTp  *int64    `valid:"optional" json:"class_big_tp,omitempty" `
-		ClassTp  *int64    `valid:"optional" json:"class_tp,omitempty" `
+		ClassISP *int    `valid:"optional" json:"isp,omitempty"`
+		PartnerId    *int64    `json:"valid:"optional" partner_id,omitempty"  `                 //手机卡套餐类型
+		PartnerGoodsCode    *string    `valid:"optional" json:"partner_goods_code,omitempty"   `                 //手机卡套餐类型
+
 		Status   *int    `valid:"optional" json:"status,omitempty"`
 		TrueName *string `valid:"optional" json:"true_name,omitempty"`
 		IdCard   *string `valid:"optional" json:"idcard,omitempty"`
@@ -104,8 +107,8 @@ type (
 	BkCardClassSheetList struct {
 		Date       *string `valid:"optional"  json:"date,omitempty" ` //订单号
 		GroupIspFlag  *int    `valid:"optional"  json:"group_isp_flag,omitempty"`
-		GroupClassBigTpFlag *int    `valid:"optional"  json:"group_class_big_tp_flag,omitempty"`
-		GroupClassTpFlag    *int   `valid:"optional"  json:"group_class_tp_flag,omitempty"`
+		GroupPartnerFlag *int    `valid:"optional"  json:"group_partner_flag,omitempty"`
+		GroupPartnerGoodsFlag    *int   `valid:"optional"  json:"group_partner_goods_flag,omitempty"`
 		DateTp     *int    `valid:"optional"  json:"date_tp,omitempty"`
 		StartCreatedAt *int64 `valid:"optional" json:"start_created_at,omitempty"`
 		EndCreatedAt   *int64 `valid:"optional" json:"end_created_at,omitempty"`
@@ -117,8 +120,7 @@ type (
 	BkCardAreaSheetList struct {
 		GroupProvinceFlag *int `valid:"optional" json:"group_province_flag,omitempty" `
 		GroupCityFlag *int `valid:"optional" json:"group_city_flag,omitempty" `
-		//ProvinceCode *string `valid:"optional" json:"province_code,omitempty" `
-		//CityCode *string `valid:"optional" json:"city_code,omitempty" `
+
 		DateTp     *int    `valid:"optional"  json:"date_tp,omitempty"`
 		StartCreatedAt  *int64    `valid:"optional" json:"start_created_at,omitempty"`
 		EndCreatedAt    *int64    `valid:"optional" json:"start_created_at,omitempty"`
@@ -129,13 +131,13 @@ type (
 	}
 
 	BkCardDateSheetList struct {
-		ClassBigTp  *int    `valid:"optional" json:"class_big_tp,omitempty" `
-		ClassTp  *int64    `valid:"optional" json:"class_tp,omitempty" `
+		PartnerId  *int64    `valid:"optional" json:"partner_id,omitempty" `
+		PartnerGoodsCode  *string    `valid:"optional" json:"partner_goods_code,omitempty" `
 		ClassISP *int    `valid:"optional" json:"isp,omitempty"`
 		Province *string `valid:"optional" json:"province,omitempty" `
 		City *string `valid:"optional" json:"city,omitempty" `
-		GroupClassBigTpFlag  *int    `valid:"optional" json:"group_class_big_tp_flag,omitempty" `
-		GroupClassTpFlag  *int    `valid:"optional" json:"group_class_tp_flag,omitempty" `
+		GroupPartnerFlag  *int    `valid:"optional" json:"group_partner_flag,omitempty" `
+		GroupPartnerGoodsFlag  *int    `valid:"optional" json:"group_partner_goods_flag,omitempty" `
 		GroupClassISPFlag *int    `valid:"optional" json:"group_isp_flag,omitempty"`
 		GroupProvinceFlag *int `valid:"optional" json:"group_province_flag,omitempty" `
 		GroupCityFlag *int `valid:"optional" json:"group_city_flag,omitempty" `
@@ -342,62 +344,62 @@ type (
 		IdCard   []*string `valid:"optional" json:"idcard,omitempty"`
 	}
 
-	BkCardClassAdd struct{
-		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
-		BigTp    *int64    `valid:"required" json:"big_tp_id,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+	BkPartnerGoodsAdd struct{
+		PartnerId    *int64    `valid:"required" json:"partner_id,omitempty"       gorm:"column:partner_id;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Code     *string  `valid:"optional" json:"code,omitempty"     gorm:"column:code;type:varchar(10)" `
 		JdCode  *string  `valid:"optional" json:"jd_code,omitempty"     gorm:"column:jd_code;type:varchar(15)" `
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 		UrlParam *string  `valid:"optional" json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
-		FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
-		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+	//	FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
 		ShortChain *string `valid:"optional" json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
 		LongChain *string `valid:"optional" json:"long_chain,omitempty"     gorm:"column:long_chain;type:varchar(250)"`
 		ThirdLongChain *string `valid:"optional" json:"third_long_chain,omitempty"     gorm:"column:third_long_chain;type:varchar(250)"`
-		MaxLimit    *int    `valid:"optional" json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
+//		MaxLimit    *int    `valid:"optional" json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 	}
 
-	BkCardClass struct{
+	BkPartnerGoodsStatusUpdate struct {
+		Id     *int64  `valid:"required"  json:"id,omitempty"   "` //加上type:int(11)后AUTO_INCREMENT无效
+		Valid    *int    `valid:"optional" json:"valid,omitempty"`
+	}
+
+	BkPartnerGoods struct{
 		Id    *int64   `valid:"required"  json:"id,omitempty"   "` //加上type:int(11)后AUTO_INCREMENT无效
-		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
 		JdCode  *string  `valid:"optional" json:"jd_code,omitempty"     gorm:"column:jd_code;type:varchar(15)" `
+		PartnerId    *int64    `valid:"optional" json:"partner_id,omitempty"       gorm:"column:partner_id;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 
-		BigTp    *int64    `valid:"optional" json:"big_tp_id,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-		//Tp    *int    `valid:"optional" json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
-		FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
-		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
+	//	FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
+	//	SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+	//	IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
 
 		ShortChain *string `valid:"optional" json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
 		LongChain *string `valid:"optional" json:"long_chain,omitempty"     gorm:"column:long_chain;type:varchar(250)"`
 		ThirdLongChain *string `valid:"optional" json:"third_long_chain,omitempty"     gorm:"column:third_long_chain;type:varchar(250)"`
-		MaxLimit    *int    `valid:"optional" json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+	//	MaxLimit    *int    `valid:"optional" json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 
 	}
 
-	BkCardClassList struct{
+	BkPartnerGoodsList struct{
 		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
-		BigTp    *int64    `valid:"optional" json:"big_tp_id,omitempty"       gorm:"column:big_tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-		//Tp    *int    `valid:"optional" json:"tp,omitempty"       gorm:"column:tp;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		PartnerId    *int64    `valid:"optional" json:"partner_id,omitempty"       gorm:"column:partner_id;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
-		FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
-		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
+	//	FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
+	//	SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+	//	IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
+		Valid    *int    `valid:"optional" json:"valid,omitempty"      `
 
 		Page         int64   `valid:"required" json:"page,omitempty"`
 		Size         int64   `valid:"optional" json:"size,omitempty"`
 	}
 	//
 
-	BkCardClassBigTpAdd struct{
+	BkPartnerAdd struct{
 		ISP   *int    `valid:"optional" json:"isp,omitempty"   `
 		Detail *string `valid:"optional" json:"detail,omitempty"  `
 		Name *string `valid:"optional" json:"name,omitempty"   `
@@ -419,10 +421,14 @@ type (
 		RepeatPhoneCount  *int   `valid:"optional" json:"repeat_phone_count,omitempty"  `
 		RepeatPhonePeriod  *int  `valid:"optional" json:"repeat_phone_period,omitempty" `
 		PrefixPath  *string  `valid:"optional" json:"prefix_path,omitempty"  `
+		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
+		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		Stock *int    `valid:"optional" json:"stock,omitempty"      gorm:"column:stock;type:int(11);default 0"`
+		ProductionNotes *string `valid:"optional" json:"production_notes,omitempty"      gorm:"column:production_notes;type:varchar(50);"`
 
 	}
 
-	BkCardClassBigTp struct{
+	BkPartner struct{
 		Id    *int64   `valid:"required"  json:"id,omitempty"   "`
 		ISP   *int    `valid:"optional" json:"isp,omitempty"    `
 		Name *string `valid:"optional" json:"name,omitempty"  `
@@ -445,17 +451,26 @@ type (
 		RepeatPhoneCount  *int   `valid:"optional" json:"repeat_phone_count,omitempty"  `
 		RepeatPhonePeriod  *int  `valid:"optional" json:"repeat_phone_period,omitempty" `
 		PrefixPath  *string  `valid:"optional" json:"prefix_path,omitempty"  `
-		Valid    *int    `valid:"optional" json:"valid,omitempty"      ` //加上type:int(11)后AUTO_INCREMENT无效
+		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
+		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		Stock *int    `valid:"optional" json:"stock,omitempty"      gorm:"column:stock;type:int(11);default 0"`
+		ProductionNotes *string `valid:"optional" json:"production_notes,omitempty"      gorm:"column:production_notes;type:varchar(50);"`
 
+		Valid    *int    `valid:"optional" json:"valid,omitempty"      `
 	}
 
-	BkCardClassBigTpList struct{
+	BkPartnerList struct{
 		ISP   *int    `valid:"optional" json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
 
 		Name *string `valid:"optional" json:"name,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		Valid    *int    `valid:"optional" json:"valid,omitempty"       gorm:"column:valid;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Page         int64   `valid:"required" json:"page,omitempty"`
 		Size         int64   `valid:"optional" json:"size,omitempty"`
+	}
+
+	BkPdPartnerGoodsStatusUpdate struct{
+		Id    *int64   `valid:"required"  json:"id,omitempty"   "`
+		Valid    *int    `valid:"optional" json:"valid,omitempty"       gorm:"column:valid;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 	}
 
 	BkPhotoDownload struct{

@@ -14,11 +14,12 @@ type CardDatesheet struct {
 	ProvinceCode *string `json:"province_code,omitempty"     gorm:"column:province_code;type:varchar(20)"`
 	City         *string `json:"city,omitempty"     gorm:"column:city;type:varchar(20)"`
 	CityCode     *string `json:"city_code,omitempty"     gorm:"column:city_code;type:varchar(20)"`
-	ClassBigTp      *int    `json:"class_big_tp,omitempty"     gorm:"column:class_big_tp;type:int(10);"`
-	ClassTp      *int64    `json:"class_tp,omitempty"   gorm:"column:class_tp;type:int(10)"`
-	ClassISP     *int    `json:"class_isp,omitempty"    gorm:"column:isp;type:int(10)"`
-	ClassName    *string `json:"class_name,omitempty"     gorm:"-"`
-	ClassIspName *string `json:"class_isp_name,omitempty"     gorm:"-"` //运营商
+	Isp   *int    `json:"isp,omitempty"     gorm:"column:isp;type:int(11);"`               //运营商
+
+	PartnerId    *int64    `json:"partner_id,omitempty"     gorm:"column:partner_id;type:bigint(20);"`                 //手机卡套餐类型
+	PartnerGoodsCode    *string    `json:"partner_goods_code,omitempty"     gorm:"column:partner_goods_code;type:varchar(10);"`                 //手机卡套餐类型
+	PartnerGoodsName    *string `json:"partner_goods_name,omitempty"     gorm:"-"`
+	IspName *string `json:"isp_name,omitempty"     gorm:"-"` //运营商
 
 	OrderCount *int64 `json:"order_count,omitempty"     gorm:"column:order_count;type:bigint(20);"`
 	Table
@@ -36,9 +37,9 @@ func (this *CardDatesheet) ParseList(p *api.BkCardDateSheetList) *CardDatesheet 
 		//ProvinceCode:p.ProvinceCode ,
 		City  :p.City,
 
-		ClassBigTp : p.ClassBigTp,
-		ClassTp  :p.ClassTp,
-		ClassISP  :p.ClassISP,
+		PartnerId : p.PartnerId,
+		PartnerGoodsCode  :p.PartnerGoodsCode,
+		Isp  :p.ClassISP,
 
 	}
 	ss.Valid = p.Valid
@@ -61,13 +62,13 @@ func (this *CardDatesheet) TxUpdate(tx *gorm.DB) error {
 	return nil
 }
 
-func (this *CardDatesheet) TxGetByConds(tx *gorm.DB, date int64, Province *string, City *string, class_tp *int64, ClassISP *int) (*CardDatesheet, error) {
+func (this *CardDatesheet) TxGetByConds(tx *gorm.DB, date int64, Province *string, City *string, PartnerGoodsCode *string, ClassISP *int) (*CardDatesheet, error) {
 	m := &CardDatesheet{
 		DateAt:   &date,
 		Province: Province,
 		City:     City,
-		ClassISP: ClassISP,
-		ClassTp:  class_tp,
+		PartnerGoodsCode  :PartnerGoodsCode,
+		Isp  :ClassISP,
 	}
 	var err error
 	err = tx.Model(this).Where(m).Last(m).Error

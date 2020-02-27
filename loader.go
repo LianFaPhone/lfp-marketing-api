@@ -34,6 +34,7 @@ func Loader() error {
 	db.GCache.SetBlacklistArea(new(models.BlacklistArea).InnerGetBy)
 	db.GCache.SetPdPartnerGoodsByCode(new(models.PdPartnerGoods).InnerGetByCode)
 	db.GCache.SetPdPartnerGoodsById(new(models.PdPartnerGoods).InnerGetById)
+	db.GCache.SetPdPartnerById(new(models.PdPartner).InnerGetById)
 	//db.GCache.SetProvinceByName(new(models.CardClass).InnerGetById)
 	//db.GCache.SetShareInfoFunc(new(models.ShareInfo).InnerGetByAcId)
 	//db.GCache.SetPageFunc(new(models.Page).InnerGetByAcId)

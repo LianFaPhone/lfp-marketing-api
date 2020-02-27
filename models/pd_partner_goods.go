@@ -33,18 +33,14 @@ const (
 
 type PdPartnerGoods struct{
 	Id    *int64   `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"` //加上type:int(11)后AUTO_INCREMENT无效
-	ISP   *int    `json:"isp,omitempty"      gorm:"column:isp;type:int(11)"`
 
-	BigTp    *int64    `json:"big_tp_id,omitempty"       gorm:"column:big_tp_id;type:bigint(20)"` //
-	Code     *string  `json:"code,omitempty"     gorm:"column:code;type:varchar(10)" `
+	PartnerId    *int64    `json:"partner_id,omitempty"       gorm:"column:partner_id;type:bigint(20)"` //
+	Code     *string  `json:"code,omitempty"     gorm:"column:code;type:varchar(10);unique" `
 	JdCode  *string  `json:"jd_code,omitempty"     gorm:"column:jd_code;type:varchar(15)" `
-	MaxLimit    *int    `json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+//	MaxLimit    *int    `json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 	Name  *string `json:"name,omitempty"     gorm:"column:name;type:varchar(15)" `
 	UrlParam *string  `json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
 	Detail *string `json:"detail,omitempty"     gorm:"column:detail;type:varchar(20)"` //拼音首字母缩写
-	SmsFlag *int    `json:"sms_flag,omitempty"      gorm:"column:sms_flag;type:tinyint(4)"`
-
-	IdcardDispplay *int    `json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3);default 0"`
 	ShortChain *string `json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
 	ImgUrl *string `json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
 //	FileUrl *string `json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
@@ -60,21 +56,19 @@ func (this *PdPartnerGoods) TableName() string {
 	return "pd_partner_goods"
 }
 
-func (this * PdPartnerGoods) ParseAdd(p *api.BkCardClassAdd) *PdPartnerGoods {
+func (this * PdPartnerGoods) ParseAdd(p *api.BkPartnerGoodsAdd) *PdPartnerGoods {
 	cc := &PdPartnerGoods{
-		ISP: p.ISP,
-		//Tp:  p.Tp,
 		Name: p.Name,
-		MaxLimit: p.MaxLimit,
+		//MaxLimit: p.MaxLimit,
 		Detail: p.Detail,
 		ImgUrl: p.ImgUrl,
 //		FileUrl: p.FileUrl,
-		SmsFlag: p.SmsFlag,
-		BigTp: p.BigTp,
+		//SmsFlag: p.SmsFlag,
+		PartnerId: p.PartnerId,
 		ShortChain: p.ShortChain,
 		LongChain : p.LongChain,
 		ThirdLongChain :p.ThirdLongChain,
-		IdcardDispplay: p.IdcardDispplay,
+		//IdcardDispplay: p.IdcardDispplay,
 		Code: p.Code,
 		UrlParam: p.UrlParam,
 		JdCode: p.JdCode,
@@ -84,38 +78,36 @@ func (this * PdPartnerGoods) ParseAdd(p *api.BkCardClassAdd) *PdPartnerGoods {
 	return  cc
 }
 
-func (this * PdPartnerGoods) Parse(p *api.BkCardClass) *PdPartnerGoods {
+func (this * PdPartnerGoods) Parse(p *api.BkPartnerGoods) *PdPartnerGoods {
 	return &PdPartnerGoods{
 		Id: p.Id,
-		ISP: p.ISP,
+
 		//Tp:  p.Tp,
 		Name: p.Name,
 		Detail: p.Detail,
 		ImgUrl: p.ImgUrl,
 //		FileUrl: p.FileUrl,
-		SmsFlag: p.SmsFlag,
-		BigTp: p.BigTp,
+		//SmsFlag: p.SmsFlag,
+		PartnerId: p.PartnerId,
 		ShortChain: p.ShortChain,
 		LongChain : p.LongChain,
 		ThirdLongChain :p.ThirdLongChain,
-		MaxLimit: p.MaxLimit,
-		IdcardDispplay: p.IdcardDispplay,
+		//MaxLimit: p.MaxLimit,
+		//IdcardDispplay: p.IdcardDispplay,
 
 	}
 }
 
-func (this * PdPartnerGoods) ParseList(p *api.BkCardClassList) *PdPartnerGoods {
+func (this * PdPartnerGoods) ParseList(p *api.BkPartnerGoodsList) *PdPartnerGoods {
 	return &PdPartnerGoods{
-		ISP: p.ISP,
-		//Tp:  p.Tp,
 		Name: p.Name,
 
 		Detail: p.Detail,
 		ImgUrl: p.ImgUrl,
 //		FileUrl: p.FileUrl,
-		SmsFlag: p.SmsFlag,
-		BigTp: p.BigTp,
-		IdcardDispplay: p.IdcardDispplay,
+	//	SmsFlag: p.SmsFlag,
+		PartnerId: p.PartnerId,
+	//	IdcardDispplay: p.IdcardDispplay,
 	}
 }
 
@@ -164,7 +156,7 @@ func (this *PdPartnerGoods) GetById(tp int64) (*PdPartnerGoods, error) {
 
 func (this *PdPartnerGoods) Unique() (bool, error) {
 	var count int
-	err := db.GDbMgr.Get().Model(this).Where("name = ? ", this.Name).Count(&count).Error
+	err := db.GDbMgr.Get().Model(this).Where("code = ? ", this.Code).Count(&count).Error
 	if err != nil {
 		return false,err
 	}
@@ -195,6 +187,30 @@ func (this *PdPartnerGoods) Update() (*PdPartnerGoods, error) {
 	}
 	return this,nil
 }
+
+func (this *PdPartnerGoods) UpdateStatus(id *int64, valid *int) (*PdPartnerGoods, error) {
+	err := db.GDbMgr.Get().Model(this).Where("id = ? ", id).Update("valid", valid).Error
+	if err != nil {
+		return nil,err
+	}
+	err = db.GDbMgr.Get().Model(this).Where("id = ? ", id).Last(this).Error
+	if err != nil {
+		return nil,err
+	}
+	return this,nil
+}
+
+func (this *PdPartnerGoods) UpdatesStatusByPartner(partnerid *int64, valid *int) (*PdPartnerGoods, error) {
+	if partnerid == nil {
+		return nil, nil
+	}
+	err := db.GDbMgr.Get().Model(this).Where("partner_id = ? ", partnerid).Update("valid", valid).Error
+	if err != nil {
+		return nil,err
+	}
+	return this,nil
+}
+
 
 func (this *PdPartnerGoods) ListWithConds(page, size int64, needFields []string, condPair []*SqlPairCondition) (*common.Result, error) {
 	var list []*PdPartnerGoods

@@ -32,7 +32,7 @@ func (this *PdPartnerGoods) Gets(ctx iris.Context) {
 
 
 func (this *PdPartnerGoods) Add(ctx iris.Context) {
-	param := new(api.BkCardClassAdd)
+	param := new(api.BkPartnerGoodsAdd)
 
 	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -46,7 +46,7 @@ func (this *PdPartnerGoods) Add(ctx iris.Context) {
 		*param.Code = common.GetRandomString(10)
 	}
 
-	partner,err := new(models.PdPartner).GetById(*param.BigTp)
+	partner,err := new(models.PdPartner).GetById(*param.PartnerId)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("db err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -87,7 +87,7 @@ func (this *PdPartnerGoods) Add(ctx iris.Context) {
 
 func (this *PdPartnerGoods) Get(ctx iris.Context) {
 	//设置套餐，图片，上传文件
-	param := new(api.BkCardClass)
+	param := new(api.BkPartnerGoods)
 
 	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -108,7 +108,7 @@ func (this *PdPartnerGoods) Get(ctx iris.Context) {
 
 func (this *PdPartnerGoods) FtGet(ctx iris.Context) {
 	//设置套餐，图片，上传文件
-	className := ctx.FormValue("name")
+	className := ctx.FormValue("code")
 	if len(className) == 0 {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err")
@@ -122,27 +122,41 @@ func (this *PdPartnerGoods) FtGet(ctx iris.Context) {
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
 	}
-	if cc == nil {
+	if cc == nil || (cc.Valid!=nil && *cc.Valid == 0) {
 		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_NOT_FOUND.Desc())
 		return
 	}
 
-	dd := &models.PdPartnerGoods{
-		ISP: cc.ISP,
-		BigTp: cc.BigTp,
-		//Tp: cc.Tp,
-		Name: cc.Name,
-		ImgUrl: cc.ImgUrl,
-		SmsFlag: cc.SmsFlag,
+	partner ,err := new(models.PdPartner).GetByIdFromCache(*cc.PartnerId)
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("Update err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		return
+	}
+	if partner == nil || (partner.Valid!=nil && *partner.Valid == 0) {
+		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_NOT_FOUND.Desc())
+		return
 	}
 
-	this.Response(ctx, dd)
+	newCC := &api.FtResPdPartnerGoodsGet{
+		Code   : cc.Code,
+		UrlParam : cc.UrlParam,
+		ImgUrl :cc.ImgUrl,
+		NoExpAddr: partner.NoExpAddr,
+		MinAge: partner.MinAge,
+		MaxAge: partner.MaxAge,
+		SmsFlag: partner.SmsFlag,
+		IdcardDispplay: partner.IdcardDispplay,
+
+	}
+
+	this.Response(ctx, newCC)
 }
 
 
 func (this *PdPartnerGoods) Update(ctx iris.Context) {
 	//设置套餐，图片，上传文件
-	param := new(api.BkCardClass)
+	param := new(api.BkPartnerGoods)
 
 	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -162,7 +176,7 @@ func (this *PdPartnerGoods) Update(ctx iris.Context) {
 
 func (this *PdPartnerGoods) List(ctx iris.Context) {
 	//设置套餐，图片，上传文件
-	param := new(api.BkCardClassList)
+	param := new(api.BkPartnerGoodsList)
 
 	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -172,6 +186,26 @@ func (this *PdPartnerGoods) List(ctx iris.Context) {
 	}
 
 	ll, err := new(models.PdPartnerGoods).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("Update err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		return
+	}
+	this.Response(ctx, ll)
+}
+
+func (this *PdPartnerGoods) UpdateStatus(ctx iris.Context) {
+	//设置套餐，图片，上传文件
+	param := new(api.BkPartnerGoodsStatusUpdate)
+
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
+	if err != nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		ZapLog().Error("param err", zap.Error(err))
+		return
+	}
+
+	ll, err := new(models.PdPartnerGoods).UpdateStatus(param.Id, param.Valid)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())

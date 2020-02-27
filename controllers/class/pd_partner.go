@@ -30,7 +30,7 @@ func (this *PdPartner) Gets(ctx iris.Context) {
 
 
 func (this *PdPartner) Add(ctx iris.Context) {
-	param := new(api.BkCardClassBigTpAdd)
+	param := new(api.BkPartnerAdd)
 
 	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -63,7 +63,7 @@ func (this *PdPartner) Add(ctx iris.Context) {
 
 func (this *PdPartner) Get(ctx iris.Context) {
 	//设置套餐，图片，上传文件
-	param := new(api.BkCardClassBigTp)
+	param := new(api.BkPartner)
 
 	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -83,7 +83,7 @@ func (this *PdPartner) Get(ctx iris.Context) {
 
 func (this *PdPartner) Update(ctx iris.Context) {
 	//设置套餐，图片，上传文件
-	param := new(api.BkCardClassBigTp)
+	param := new(api.BkPartner)
 
 	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -103,7 +103,7 @@ func (this *PdPartner) Update(ctx iris.Context) {
 
 func (this *PdPartner) List(ctx iris.Context) {
 	//设置套餐，图片，上传文件
-	param := new(api.BkCardClassBigTpList)
+	param := new(api.BkPartnerList)
 
 	err := controllers.Tools.ShouldBindJSON(ctx, param)
 	if err != nil {
@@ -117,6 +117,30 @@ func (this *PdPartner) List(ctx iris.Context) {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
+	}
+	this.Response(ctx, ll)
+}
+
+func (this *PdPartner) UpdateStatus(ctx iris.Context) {
+	//设置套餐，图片，上传文件
+	param := new(api.BkPdPartnerGoodsStatusUpdate)
+
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
+	if err != nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		ZapLog().Error("param err", zap.Error(err))
+		return
+	}
+
+	ll, err := new(models.PdPartner).UpdateStatus(param.Id, param.Valid)
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("Update err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		return
+	}
+	if ll !=nil && param.Valid != nil && *param.Valid == 0 {
+		//下架商品
+		new(models.PdPartnerGoods).UpdatesStatusByPartner(ll.Id, param.Valid)
 	}
 	this.Response(ctx, ll)
 }

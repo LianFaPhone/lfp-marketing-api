@@ -85,7 +85,7 @@ func (this *Tasker) StoreSheet(dateMap map[string]*models.CardClasssheet, AreaMa
 		return false
 	}
 	for _, v := range dateMap {
-		sheet, err := new(models.CardClasssheet).TxGetByDateAndTp(tx, *v.Date, v.ClassTp)
+		sheet, err := new(models.CardClasssheet).TxGetByDateAndTp(tx, *v.Date, v.PartnerGoodsCode)
 		if err != nil {
 			ZapLog().Error("CardDatesheet GetByDate err", zap.Error(err))
 			tx.Rollback()
@@ -187,16 +187,16 @@ func (this *Tasker) genSheetMap(orders []*models.CardOrder) (map[string]*models.
 		}
 		*classsheet.OrderCount = *classsheet.OrderCount + 1
 
-		if orders[j].ClassTp != nil {
-			classsheet, ok = classMap[fmt.Sprintf("%s_%d", dateStr, *orders[j].ClassTp)]
+		if orders[j].PartnerGoodsCode != nil {
+			classsheet, ok = classMap[fmt.Sprintf("%s_%s", dateStr, *orders[j].PartnerGoodsCode)]
 			if !ok {
 				classsheet = &models.CardClasssheet{
 					Date:       &dateStr,
-					ClassTp:    orders[j].ClassTp,
+					PartnerGoodsCode:    orders[j].PartnerGoodsCode,
 					OrderCount: new(int64),
 				}
 				*classsheet.OrderCount = 0
-				classMap[fmt.Sprintf("%s_%d", dateStr, *orders[j].ClassTp)] = classsheet
+				classMap[fmt.Sprintf("%s_%s", dateStr, *orders[j].PartnerGoodsCode)] = classsheet
 			}
 			if classsheet.OrderCount == nil {
 				classsheet.OrderCount = new(int64)
@@ -315,8 +315,8 @@ func (this *Tasker) genSheetMap(orders []*models.CardOrder) (map[string]*models.
 		//}
 
 		//省，市，运营商,套餐
-		if orders[j].ClassIsp != nil && orders[j].ClassTp != nil {
-			key = fmt.Sprintf("%d_%s_%s_%d_%d", dateInt, *orders[j].Province, *orders[j].City, *orders[j].ClassIsp, *orders[j].ClassTp)
+		if orders[j].Isp != nil && orders[j].PartnerGoodsCode != nil {
+			key = fmt.Sprintf("%d_%s_%s_%d_%s", dateInt, *orders[j].Province, *orders[j].City, *orders[j].Isp, *orders[j].PartnerGoodsCode)
 			areasheet, ok := AreaMap[key]
 			if !ok {
 				areasheet = &models.CardAreasheet{

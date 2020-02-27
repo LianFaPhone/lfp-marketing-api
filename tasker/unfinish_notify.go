@@ -63,9 +63,9 @@ func (this *Tasker) newUnFinishSmsWork5hour() {
 				startId = *orderArr[i].Id
 			}
 
-			cc,err := new(models.PdPartnerGoods).GetById(*orderArr[i].ClassTp)
+			cc,err := new(models.PdPartnerGoods).GetByCode(*orderArr[i].PartnerGoodsCode)
 			if err != nil {
-				ZapLog().Error("Nofind CardClass ", zap.Error(err), zap.Int64("classTp", *orderArr[i].ClassTp))
+				ZapLog().Error("Nofind CardClass ", zap.Error(err), zap.String("classTp", *orderArr[i].PartnerGoodsCode))
 				continue
 			}
 			if cc == nil || cc.ShortChain == nil ||orderArr[i].Phone == nil{
@@ -147,9 +147,9 @@ func (this *Tasker) newUnFinishSmsWork5min() {
 				startId = *orderArr[i].Id
 			}
 
-			cc,err := new(models.PdPartnerGoods).GetById(*orderArr[i].ClassTp)
+			cc,err := new(models.PdPartnerGoods).GetByCode(*orderArr[i].PartnerGoodsCode)
 			if err != nil {
-				ZapLog().Error("Nofind CardClass ", zap.Error(err), zap.Int64("classTp", *orderArr[i].ClassTp))
+				ZapLog().Error("Nofind CardClass ", zap.Error(err), zap.String("classTp", *orderArr[i].PartnerGoodsCode))
 				continue
 			}
 			if cc == nil || cc.ThirdLongChain == nil ||orderArr[i].Phone == nil{
@@ -163,7 +163,7 @@ func (this *Tasker) newUnFinishSmsWork5min() {
 			}
 			shortChain,err := reShortChain.Send()
 			if err != nil {
-				ZapLog().Error("baidu_api.ReDwzCreate ",zap.Error(err),  zap.Int64("classTp", *orderArr[i].ClassTp))
+				ZapLog().Error("baidu_api.ReDwzCreate ",zap.Error(err),  zap.String("classTp", *orderArr[i].PartnerGoodsCode))
 				continue
 			}
 

@@ -116,7 +116,7 @@ func (this *WebServer) bkroutes() {
 
 			datesheetPy.Post("/list", ac.BkList)
 		}
-		classBigTpPy := v1bk.Party("/cardclassbigtp")
+		classBigTpPy := v1bk.Party("/pdparter")
 		{
 			ac := new(class.PdPartner)
 
@@ -125,8 +125,9 @@ func (this *WebServer) bkroutes() {
 			classBigTpPy.Any("/get", ac.Get)
 			classBigTpPy.Post("/update", ac.Update)
 			classBigTpPy.Post("/list", ac.List)
+			classBigTpPy.Post("/status-update", ac.UpdateStatus)
 		}
-		classPy := v1bk.Party("/cardclasstp")
+		classPy := v1bk.Party("/pdpartergoods")
 		{
 			ac := new(class.PdPartnerGoods)
 

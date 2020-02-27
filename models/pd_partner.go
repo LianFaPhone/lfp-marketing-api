@@ -3,6 +3,9 @@ package models
 import (
 	"LianFaPhone/lfp-marketing-api/api"
 	"github.com/jinzhu/gorm"
+	"github.com/juju/errors"
+	"math/rand"
+	"time"
 )
 
 import (
@@ -34,7 +37,10 @@ type PdPartner struct{
 	RepeatPhoneCount  *int   `json:"repeat_phone_count,omitempty"     gorm:"column:repeat_phone_count;type:int(11)"`
 	RepeatPhonePeriod  *int  `json:"repeat_phone_period,omitempty"     gorm:"column:repeat_phone_period;type:bigint(20)"`
 	PrefixPath  *string  `json:"prefix_path,omitempty"     gorm:"column:prefix_path;type:varchar(30)"`
-
+	SmsFlag *int    `json:"sms_flag,omitempty"      gorm:"column:sms_flag;type:tinyint(4)"`
+	IdcardDispplay *int    `json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3);default 0"`
+	Stock *int    `json:"stock,omitempty"      gorm:"column:stock;type:int(11);default 0"`
+	ProductionNotes *string `json:"production_notes,omitempty"      gorm:"column:production_notes;type:varchar(50);"`
 	Table
 }
 //partner 产品渠道
@@ -42,7 +48,7 @@ func (this *PdPartner) TableName() string {
 	return "pd_partner"
 }
 
-func (this * PdPartner) ParseAdd(p *api.BkCardClassBigTpAdd) *PdPartner {
+func (this * PdPartner) ParseAdd(p *api.BkPartnerAdd) *PdPartner {
 	cc := &PdPartner{
 		Isp: p.ISP,
 		Name: p.Name,
@@ -65,13 +71,17 @@ func (this * PdPartner) ParseAdd(p *api.BkCardClassBigTpAdd) *PdPartner {
 		RepeatPhoneCount: p.RepeatPhoneCount,
 		RepeatPhonePeriod : p.RepeatPhonePeriod,
 		PrefixPath: p.PrefixPath,
+		SmsFlag: p.SmsFlag,
+		IdcardDispplay: p.IdcardDispplay,
+		Stock: p.Stock,
+		ProductionNotes: p.ProductionNotes,
 	}
 	cc.Valid = new(int)
 	*cc.Valid = 1
 	return  cc
 }
 
-func (this * PdPartner) Parse(p *api.BkCardClassBigTp) *PdPartner {
+func (this * PdPartner) Parse(p *api.BkPartner) *PdPartner {
 	d :=  &PdPartner{
 		Id: p.Id,
 
@@ -97,15 +107,20 @@ func (this * PdPartner) Parse(p *api.BkCardClassBigTp) *PdPartner {
 		RepeatPhoneCount: p.RepeatPhoneCount,
 		RepeatPhonePeriod : p.RepeatPhonePeriod,
 		PrefixPath: p.PrefixPath,
+		SmsFlag: p.SmsFlag,
+		IdcardDispplay: p.IdcardDispplay,
+		Stock: p.Stock,
+		ProductionNotes: p.ProductionNotes,
 	}
 	d.Valid = p.Valid
 	return d
 }
 
-func (this * PdPartner) ParseList(p *api.BkCardClassBigTpList) *PdPartner {
+func (this * PdPartner) ParseList(p *api.BkPartnerList) *PdPartner {
 	d:= &PdPartner{
 		Isp: p.ISP,
 		Name: p.Name,
+
 	}
 
 	d.Valid = p.Valid
@@ -114,6 +129,17 @@ func (this * PdPartner) ParseList(p *api.BkCardClassBigTpList) *PdPartner {
 
 func (this *PdPartner) Get() (*PdPartner, error) {
 	err := db.GDbMgr.Get().Model(this).Where("id = ? ", this.Id).Last(this).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil,nil
+	}
+	if err != nil {
+		return nil,err
+	}
+	return this,nil
+}
+
+func (this *PdPartner) GetByCode( code string) (*PdPartner, error) {
+	err := db.GDbMgr.Get().Model(this).Where("code = ? ", code).Last(this).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil,nil
 	}
@@ -149,7 +175,7 @@ func (this *PdPartner) Gets() ([]*PdPartner, error) {
 
 func (this *PdPartner) Unique() (bool, error) {
 	var count int
-	err := db.GDbMgr.Get().Model(this).Where("name = ? ", this.Name).Count(&count).Error
+	err := db.GDbMgr.Get().Model(this).Where("code = ? ", this.Code).Count(&count).Error
 	if err != nil {
 		return false,err
 	}
@@ -200,4 +226,51 @@ func (this *PdPartner) ListWithConds(page, size int64, needFields []string, cond
 	}
 
 	return new(common.Result).PageQuery(query, &PdPartner{}, &list, page, size, nil, "")
+}
+
+func (this *PdPartner) UpdateStatus(id *int64, valid *int) (*PdPartner, error) {
+	err := db.GDbMgr.Get().Model(this).Where("id = ? ", id).Update("valid", valid).Error
+	if err != nil {
+		return nil,err
+	}
+	err = db.GDbMgr.Get().Model(this).Where("id = ? ", id).Last(this).Error
+	if err != nil {
+		return nil,err
+	}
+	return this,nil
+}
+
+func (this *PdPartner) GetByIdFromCache(id int64) (*PdPartner, error) {
+	data,err := db.GCache.GetPdPartnerById(id)
+	if err == gorm.ErrRecordNotFound {
+		return nil,nil
+	}
+	if err != nil {
+		return nil,err
+	}
+	if data == nil {
+		return nil, nil
+	}
+
+	acty, ok := data.(*PdPartner)
+	if !ok {
+		return nil, errors.Annotate(err, "type err")
+	}
+	return acty,nil
+}
+
+func (this *PdPartner) InnerGetById(input interface{}) (interface{}, *time.Duration, error) {
+	expire := time.Second * time.Duration(3600*10+rand.Intn(600))
+	id,ok := input.(int64)
+	if !ok {
+		return nil,nil, errors.New("type err")
+	}
+	acty,err := new(PdPartner).GetById(id)
+	if err != nil {
+		return nil, nil, errors.Annotate(err, "Activity GetByIdAndFields")
+	}
+	if acty == nil {
+		return nil, nil, gorm.ErrRecordNotFound  // nil,nil,nil可能将是永远不超时
+	}
+	return  acty, &expire, nil
 }

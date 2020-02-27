@@ -34,10 +34,10 @@ func (this *CardDateSheet) BkList(ctx iris.Context) {
 	arr, ok := results.List.(*[]*models.CardDatesheet)
 	if ok {
 		for i := 0; i < len(*arr); i++ {
-			if (*arr)[i].ClassTp != nil {
-				ss, err :=new(models.PdPartnerGoods).GetByIdFromCache(*(*arr)[i].ClassTp)
+			if (*arr)[i].PartnerGoodsCode != nil {
+				ss, err :=new(models.PdPartnerGoods).GetByCodeFromCache(*(*arr)[i].PartnerGoodsCode)
 				if ss != nil && err == nil {
-					(*arr)[i].ClassName = ss.Name
+					(*arr)[i].PartnerGoodsName = ss.Name
 				}
 			}
 		}
