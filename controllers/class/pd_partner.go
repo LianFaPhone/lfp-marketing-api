@@ -6,6 +6,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/models"
 	"github.com/kataras/iris"
 	"go.uber.org/zap"
+	"strings"
 )
 import (
 	apibackend "LianFaPhone/lfp-api/errdef"
@@ -37,6 +38,9 @@ func (this *PdPartner) Add(ctx iris.Context) {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
 		return
+	}
+	if param.PrefixPath != nil {
+		*param.PrefixPath = strings.Replace(*param.PrefixPath, " ", "", -1)
 	}
 
 	modelParam := new(models.PdPartner).ParseAdd(param)

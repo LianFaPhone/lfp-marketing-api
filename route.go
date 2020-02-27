@@ -63,7 +63,7 @@ func (this *WebServer) routes() {
 	v1 := app.Party("/v1/ft/market", crs /*, interceptor.Interceptor*/).AllowMethods(iris.MethodOptions)
 	{
 		//活动，添加，list，更新，警用 全是后端的
-		cardClassParty := v1.Party("/cardclass")
+		cardClassParty := v1.Party("/partnergoods")
 		{
 			cc := new(class.PdPartnerGoods)
 			{

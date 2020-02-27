@@ -403,7 +403,7 @@ type (
 		ISP   *int    `valid:"optional" json:"isp,omitempty"   `
 		Detail *string `valid:"optional" json:"detail,omitempty"  `
 		Name *string `valid:"optional" json:"name,omitempty"   `
-		Code *string `json:"code,omitempty"  `
+		Code *string `valid:"optional" json:"code,omitempty"  `
 		GsdProvince *string `valid:"optional" json:"gsd_province,omitempty" `
 		GsdCity *string     `valid:"optional" json:"gsd_city,omitempty"  `
 		GsdProvinceCode *string   `valid:"optional" json:"gsd_province_code,omitempty" `
@@ -433,7 +433,7 @@ type (
 		ISP   *int    `valid:"optional" json:"isp,omitempty"    `
 		Name *string `valid:"optional" json:"name,omitempty"  `
 		Detail *string `valid:"optional" json:"detail,omitempty"  `
-		Code *string `json:"code,omitempty"  `
+		Code *string `valid:"optional" json:"code,omitempty"  `
 		GsdProvince *string `valid:"optional" json:"gsd_province,omitempty" `
 		GsdCity *string     `valid:"optional" json:"gsd_city,omitempty"  `
 		GsdProvinceCode *string   `valid:"optional" json:"gsd_province_code,omitempty" `

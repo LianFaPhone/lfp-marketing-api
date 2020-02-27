@@ -136,6 +136,7 @@ func (this *WebServer) bkroutes() {
 			classPy.Any("/get", ac.Get)
 			classPy.Post("/update", ac.Update)
 			classPy.Post("/list", ac.List)
+			classPy.Post("/status-update", ac.UpdateStatus)
 		}
 		statusPy := v1bk.Party("/orderstatus")
 		{
