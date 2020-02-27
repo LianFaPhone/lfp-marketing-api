@@ -73,7 +73,7 @@ type (
 		Id       *int64  `valid:"optional" json:"id,omitempty"`
 		OrderNo   *string `valid:"optional" json:"order_no,omitempty" ` //订单号
 		ClassISP *int    `valid:"optional" json:"isp,omitempty"`
-		PartnerId    *int64    `json:"valid:"optional" partner_id,omitempty"  `                 //手机卡套餐类型
+		PartnerId    *int64    `json:"valid:"optional" json:"partner_id,omitempty"  `                 //手机卡套餐类型
 		PartnerGoodsCode    *string    `valid:"optional" json:"partner_goods_code,omitempty"   `                 //手机卡套餐类型
 
 		Status   *int    `valid:"optional" json:"status,omitempty"`
@@ -421,10 +421,10 @@ type (
 		RepeatPhoneCount  *int   `valid:"optional" json:"repeat_phone_count,omitempty"  `
 		RepeatPhonePeriod  *int  `valid:"optional" json:"repeat_phone_period,omitempty" `
 		PrefixPath  *string  `valid:"optional" json:"prefix_path,omitempty"  `
-		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
-		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-		Stock *int    `valid:"optional" json:"stock,omitempty"      gorm:"column:stock;type:int(11);default 0"`
-		ProductionNotes *string `valid:"optional" json:"production_notes,omitempty"      gorm:"column:production_notes;type:varchar(50);"`
+		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"`
+		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"`
+		Stock *int    `valid:"optional" json:"stock,omitempty"  `
+		ProductionNotes *string `valid:"optional" json:"production_notes,omitempty"`
 
 	}
 

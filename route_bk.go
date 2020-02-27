@@ -2,6 +2,7 @@ package main
 
 import (
 	"LianFaPhone/lfp-marketing-api/controllers"
+	"LianFaPhone/lfp-marketing-api/controllers/area"
 	"LianFaPhone/lfp-marketing-api/controllers/black"
 	"LianFaPhone/lfp-marketing-api/controllers/class"
 	. "LianFaPhone/lfp-marketing-api/controllers/order"
@@ -30,6 +31,13 @@ func (this *WebServer) bkroutes() {
 
 	v1bk := app.Party("/v1/bk/market", crs)
 	{
+		areaPy := v1bk.Party("/area")
+		{
+			bsP := new(area.BsProvice)
+			areaPy.Get("/bsprovince/gets", bsP.Gets)
+			bsC := new(area.BsCity)
+			areaPy.Get("/bscity/gets", bsC.Gets)
+		}
 		phoneNumberPy := v1bk.Party("/numberpool")
 		{
 			ac := new(phonepool.PhoneNumberPool)
