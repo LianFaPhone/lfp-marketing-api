@@ -145,6 +145,7 @@ func (this *WebServer) routes() {
 			ydhkParty.Get("/protocal-get", ac.GetProtocal)
 			ydhkParty.Post("/order-confirm", ac.FtConfirm)
 			ydhkParty.Post("/idcheckurl-get", ac.FtIdCheckUrlGet)
+			ydhkParty.Post("/offline-active", ac.OfflineActive)
 		}
 
 		jthkParty := v1.Party("/jthk")
@@ -160,6 +161,7 @@ func (this *WebServer) routes() {
 			jthkParty.Get("/protocal-get", ac.GetProtocal)
 			jthkParty.Post("/order-confirm", ac.FtConfirm)
 			jthkParty.Post("/idcheckurl-get", ac.FtIdCheckUrlGet)
+			ydhkParty.Post("/offline-active", ac.OfflineActive)
 		}
 
 	}
