@@ -1,13 +1,8 @@
 package area
 
 import (
-	. "LianFaPhone/lfp-marketing-api/controllers"
-	"LianFaPhone/lfp-marketing-api/models"
-	"github.com/kataras/iris"
-	"go.uber.org/zap"
 	apibackend "LianFaPhone/lfp-api/errdef"
 	. "LianFaPhone/lfp-base/log/zap"
-	"LianFaPhone/lfp-marketing-api/api"
 	. "LianFaPhone/lfp-marketing-api/controllers"
 	"LianFaPhone/lfp-marketing-api/models"
 	"github.com/kataras/iris"
