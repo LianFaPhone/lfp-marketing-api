@@ -21,104 +21,6 @@ type CardOrder struct {
 	//IdGener
 	Controllers
 }
-//
-//func (this *CardOrder) OldApply(ctx iris.Context) {
-//	param := new(api.OldCardOrderApply)
-//
-//	err := Tools.ShouldBindQuery(ctx, param)
-//	if err != nil {
-//		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
-//		ZapLog().Error("param err", zap.Error(err))
-//		return
-//	}
-//	//countryCode := "0086"
-//	//
-//	////检测id是否有效
-//	//recipient := countryCode + *param.Phone
-//	//verification := common.NewVerification(&db.GRedis, "sim", "")
-//	//flag,err := verification.Check(*param.VerifyId, 0,  recipient)
-//	//if err != nil {
-//	//	ZapLog().With(zap.Error(err)).Error("Verify err")
-//	//	this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
-//	//	return
-//	//}
-//	//if !flag {
-//	//	ZapLog().With(zap.Error(err)).Error("Sms Verify err")
-//	//	//this.ExceptionSerive(ctx, apibackend.BASERR_ACTIVITY_FISSIONSHARE_SMS_INCORRECT_VERIFYCODE.Code(), apibackend.BASERR_ACTIVITY_FISSIONSHARE_SMS_INCORRECT_VERIFYCODE.OriginDesc())
-//	//	//return
-//	//}
-//
-//	IP := common.GetRealIp(ctx)
-//
-//	classTp, ok := models.ClassTpMap2[param.Channel]
-//	if !ok {
-//		ZapLog().Error("bug err")
-//		this.ExceptionSerive(ctx, apibackend.BASERR_UNKNOWN_BUG.Code(), apibackend.BASERR_UNKNOWN_BUG.Desc())
-//		return
-//	}
-//
-//	//这个以后再想
-//	orderNo := fmt.Sprintf("D%s%d", time.Now().Format("060102030405000"), this.Gen())
-//
-//	Status := models.CONST_OrderStatus_New
-//
-//	addrArr := strings.Split(param.Address, " ")
-//	provice := ""
-//	city := ""
-//	area := ""
-//	town := ""
-//	if len(addrArr) == 3 {
-//		provice = addrArr[0]
-//		city = addrArr[0]
-//		area = addrArr[1]
-//		town = addrArr[2]
-//	} else if len(addrArr) > 3 {
-//		provice = addrArr[0]
-//		city = addrArr[1]
-//		area = addrArr[2]
-//		town = addrArr[3]
-//	} else if len(addrArr) >= 1 {
-//		provice = addrArr[0]
-//		city = addrArr[0]
-//		area = addrArr[0]
-//		town = addrArr[0]
-//	}
-//
-//	modelParam := new(models.CardOrder).FtParseAdd2(param, orderNo, classTp.Tp, Status, provice, city, area, town, param.Address2, IP)
-//
-//	tx := db.GDbMgr.Get().Begin()
-//	uniqueFlag, err := modelParam.TxLockUniqueByIdCardAndTime(tx, *param.IdCard, time.Now().Unix()-24*3600*30*6, classTp.Tp)
-//	if err != nil {
-//		tx.Rollback()
-//		ZapLog().With(zap.Error(err)).Error("database err")
-//		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
-//		return
-//	}
-//	if !uniqueFlag {
-//		tx.Rollback()
-//		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_EXISTS.Code(), apibackend.BASERR_OBJECT_EXISTS.Desc())
-//		return
-//	}
-//
-//	//插入数据库
-//	if err := modelParam.TxAdd(tx); err != nil {
-//		tx.Rollback()
-//		ZapLog().With(zap.Error(err)).Error("database err")
-//		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
-//		return
-//	}
-//	tx.Commit()
-//
-//	go func() {
-//		if !config.GConfig.BasNotify.SwitchFlag {
-//			return
-//		}
-//		if err := sdk.GNotifySdk.SendSms(nil, *param.Phone, "wangka_complete", 0); err != nil {
-//			ZapLog().With(zap.Error(err), zap.String("phone", *param.Phone)).Error("GNotifySdk.SendSms[wangka_complete] err")
-//		}
-//	}()
-//	this.Response(ctx, nil)
-//}
 
 
 
@@ -137,6 +39,7 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 		countryCode = *param.CountryCode
 	}
 
+	/*********薅羊毛控制*********************/
 	limitCardCount := 3
 	limitCardPeriod := int64(2592000)
 	if param.PartnerId != nil {
@@ -150,6 +53,7 @@ func (this *CardOrder) Apply(ctx iris.Context) {
 			}
 		}
 	}
+	/******************************/
 
 	//检测id是否有效
 	recipient := countryCode + *param.Phone
