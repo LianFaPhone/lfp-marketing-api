@@ -205,6 +205,7 @@ func (this *PdPartner) Update() (*PdPartner, error) {
 	if err != nil {
 		return nil,err
 	}
+	db.GCache.RemovePdPartnerById(*this.Id)
 	return this,nil
 }
 
@@ -237,6 +238,7 @@ func (this *PdPartner) UpdateStatus(id *int64, valid *int) (*PdPartner, error) {
 	if err != nil {
 		return nil,err
 	}
+	db.GCache.RemovePdPartnerById(*this.Id)
 	return this,nil
 }
 

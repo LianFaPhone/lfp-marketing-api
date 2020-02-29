@@ -87,7 +87,7 @@ func (this *Cache) SetPdPartnerGoodsById(f func(key interface{}) (interface{}, *
 	this.PdPartnerGoodsByTpCache = gcache.New(config.GConfig.Cache.CardClassByNameMaxKey).LRU().LoaderExpireFunc(f).Build()
 }
 
-func (this *Cache) RemovePdPartnerGoodsById(id int) {
+func (this *Cache) RemovePdPartnerGoodsById(id int64) {
 	if this.PdPartnerGoodsByTpCache == nil {
 		return
 	}
@@ -184,7 +184,7 @@ func (this *Cache) SetPdPartnerById(f func(key interface{}) (interface{}, *time.
 	this.PdPartnerByIdCache = gcache.New(100).LRU().LoaderExpireFunc(f).Build()
 }
 
-func (this *Cache) RemovePdPartnerById(id int) {
+func (this *Cache) RemovePdPartnerById(id int64) {
 	if this.PdPartnerByIdCache == nil {
 		return
 	}

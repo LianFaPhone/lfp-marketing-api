@@ -188,6 +188,10 @@ func (this *PdPartnerGoods) Update() (*PdPartnerGoods, error) {
 	if err != nil {
 		return nil,err
 	}
+	if this.Code != nil {
+		db.GCache.RemovePdPartnerGoodsByCode(*this.Code)
+	}
+	db.GCache.RemovePdPartnerGoodsById(*this.Id)
 	return this,nil
 }
 
@@ -200,6 +204,11 @@ func (this *PdPartnerGoods) UpdateStatus(id *int64, valid *int) (*PdPartnerGoods
 	if err != nil {
 		return nil,err
 	}
+	if this.Code != nil {
+		db.GCache.RemovePdPartnerGoodsByCode(*this.Code)
+	}
+	db.GCache.RemovePdPartnerGoodsById(*this.Id)
+
 	return this,nil
 }
 
