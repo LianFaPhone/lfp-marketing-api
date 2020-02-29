@@ -50,7 +50,7 @@ type (
 		Valid         *int    `valid:"optional"  json:"valid,omitempty"`
 		Express       *string `valid:"optional" json:"express,omitempty"  `    //快递名称
 		ExpressNo     *string `valid:"optional" json:"express_no,omitempty"  ` //快递单号
-		ExpressRemark *string `valid:"optional" json:"express_remark,omitempty"  `     //备注
+		ExpressRemark *string `valid:"optional" json:"remark,omitempty"  `     //备注
 
 	}
 
