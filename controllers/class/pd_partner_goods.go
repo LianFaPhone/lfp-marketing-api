@@ -185,13 +185,29 @@ func (this *PdPartnerGoods) List(ctx iris.Context) {
 		return
 	}
 
-	ll, err := new(models.PdPartnerGoods).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
+	results, err := new(models.PdPartnerGoods).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
 	}
-	this.Response(ctx, ll)
+	coArr := results.List.(*[]*models.PdPartnerGoods)
+	for i := 0; i < len(*coArr); i++ {
+		temp := (*coArr)[i]
+		if temp.PartnerId == nil {
+			continue
+		}
+		pt,err := new(models.PdPartner).GetByIdFromCache(*temp.PartnerId)
+		if err != nil {
+			continue
+		}
+		if pt == nil {
+			continue
+		}
+		temp.PartnerName = pt.Name
+
+	}
+	this.Response(ctx, results)
 }
 
 func (this *PdPartnerGoods) UpdateStatus(ctx iris.Context) {

@@ -51,6 +51,7 @@ type PdPartnerGoods struct{
 //	FileUrl *string `json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
 	LongChain *string `json:"long_chain,omitempty"     gorm:"column:long_chain;type:varchar(250)"`
 	ThirdLongChain *string `json:"third_long_chain,omitempty"     gorm:"column:third_long_chain;type:varchar(250)"`
+	PartnerName    *string    `json:"partner_name,omitempty"       gorm:"-"` //
 
 	///////////////////////////
 
