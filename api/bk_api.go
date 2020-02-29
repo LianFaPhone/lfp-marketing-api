@@ -350,6 +350,8 @@ type (
 		JdCode  *string  `valid:"optional" json:"jd_code,omitempty"     gorm:"column:jd_code;type:varchar(15)" `
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 		UrlParam *string  `valid:"optional" json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
+		SellPoint *string `valid:"optional" json:"sell_point,omitempty"     gorm:"column:sell_point;type:varchar(50)"` //拼音首字母缩写
+
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
 	//	FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
@@ -368,6 +370,7 @@ type (
 		Id    *int64   `valid:"required"  json:"id,omitempty"   "` //加上type:int(11)后AUTO_INCREMENT无效
 		JdCode  *string  `valid:"optional" json:"jd_code,omitempty"     gorm:"column:jd_code;type:varchar(15)" `
 		PartnerId    *int64    `valid:"optional" json:"partner_id,omitempty"       gorm:"column:partner_id;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		SellPoint *string `valid:"optional" json:"sell_point,omitempty"     gorm:"column:sell_point;type:varchar(50)"` //拼音首字母缩写
 
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
