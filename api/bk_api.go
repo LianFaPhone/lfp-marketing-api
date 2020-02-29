@@ -352,6 +352,8 @@ type (
 		UrlParam *string  `valid:"optional" json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
 		SellPoint *string `valid:"optional" json:"sell_point,omitempty"     gorm:"column:sell_point;type:varchar(50)"` //拼音首字母缩写
 		BgColor *string `valid:"optional" json:"bg_color,omitempty"     gorm:"column:bg_color;type:varchar(30)"` //
+		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
 
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
@@ -378,8 +380,8 @@ type (
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
 	//	FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
-	//	SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
-	//	IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
+		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
+		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
 
 		ShortChain *string `valid:"optional" json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
 		LongChain *string `valid:"optional" json:"long_chain,omitempty"     gorm:"column:long_chain;type:varchar(250)"`

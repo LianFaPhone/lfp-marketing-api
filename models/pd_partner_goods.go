@@ -42,6 +42,9 @@ type PdPartnerGoods struct{
 	UrlParam *string  `json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
 	SellPoint *string `json:"sell_point,omitempty"     gorm:"column:sell_point;type:varchar(50)"`
 	BgColor *string `json:"bg_color,omitempty"     gorm:"column:bg_color;type:varchar(30)"` //
+	SmsFlag *int    `json:"sms_flag,omitempty"      gorm:"column:sms_flag;type:tinyint(4)"`
+	IdcardDispplay *int    `json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3);default 0"`
+
 	Detail *string `json:"detail,omitempty"     gorm:"column:detail;type:varchar(20)"`
 	ShortChain *string `json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
 	ImgUrl *string `json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
@@ -66,12 +69,12 @@ func (this * PdPartnerGoods) ParseAdd(p *api.BkPartnerGoodsAdd) *PdPartnerGoods 
 		Detail: p.Detail,
 		ImgUrl: p.ImgUrl,
 //		FileUrl: p.FileUrl,
-		//SmsFlag: p.SmsFlag,
+		SmsFlag: p.SmsFlag,
 		PartnerId: p.PartnerId,
 		ShortChain: p.ShortChain,
 		LongChain : p.LongChain,
 		ThirdLongChain :p.ThirdLongChain,
-		//IdcardDispplay: p.IdcardDispplay,
+		IdcardDispplay: p.IdcardDispplay,
 		Code: p.Code,
 		UrlParam: p.UrlParam,
 		JdCode: p.JdCode,
@@ -92,7 +95,7 @@ func (this * PdPartnerGoods) Parse(p *api.BkPartnerGoods) *PdPartnerGoods {
 		Detail: p.Detail,
 		ImgUrl: p.ImgUrl,
 //		FileUrl: p.FileUrl,
-		//SmsFlag: p.SmsFlag,
+		SmsFlag: p.SmsFlag,
 		PartnerId: p.PartnerId,
 		ShortChain: p.ShortChain,
 		LongChain : p.LongChain,
@@ -100,7 +103,7 @@ func (this * PdPartnerGoods) Parse(p *api.BkPartnerGoods) *PdPartnerGoods {
 		SellPoint: p.SellPoint,
 		BgColor: p.BgColor,
 
-
+		IdcardDispplay: p.IdcardDispplay,
 		//MaxLimit: p.MaxLimit,
 		//IdcardDispplay: p.IdcardDispplay,
 
