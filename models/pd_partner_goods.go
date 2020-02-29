@@ -40,8 +40,9 @@ type PdPartnerGoods struct{
 //	MaxLimit    *int    `json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 	Name  *string `json:"name,omitempty"     gorm:"column:name;type:varchar(15)" `
 	UrlParam *string  `json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
-	SellPoint *string `json:"sell_point,omitempty"     gorm:"column:sell_point;type:varchar(50)"` //拼音首字母缩写
-	Detail *string `json:"detail,omitempty"     gorm:"column:detail;type:varchar(20)"` //拼音首字母缩写
+	SellPoint *string `json:"sell_point,omitempty"     gorm:"column:sell_point;type:varchar(50)"`
+	BgColor *string `json:"bg_color,omitempty"     gorm:"column:bg_color;type:varchar(30)"` //
+	Detail *string `json:"detail,omitempty"     gorm:"column:detail;type:varchar(20)"`
 	ShortChain *string `json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
 	ImgUrl *string `json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
 //	FileUrl *string `json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
@@ -75,6 +76,7 @@ func (this * PdPartnerGoods) ParseAdd(p *api.BkPartnerGoodsAdd) *PdPartnerGoods 
 		UrlParam: p.UrlParam,
 		JdCode: p.JdCode,
 		SellPoint: p.SellPoint,
+		BgColor: p.BgColor,
 	}
 	cc.Valid = new(int)
 	*cc.Valid = 1
@@ -96,6 +98,8 @@ func (this * PdPartnerGoods) Parse(p *api.BkPartnerGoods) *PdPartnerGoods {
 		LongChain : p.LongChain,
 		ThirdLongChain :p.ThirdLongChain,
 		SellPoint: p.SellPoint,
+		BgColor: p.BgColor,
+
 
 		//MaxLimit: p.MaxLimit,
 		//IdcardDispplay: p.IdcardDispplay,
