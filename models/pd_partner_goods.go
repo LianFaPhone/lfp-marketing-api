@@ -99,7 +99,7 @@ func (this * PdPartnerGoods) Parse(p *api.BkPartnerGoods) *PdPartnerGoods {
 }
 
 func (this * PdPartnerGoods) ParseList(p *api.BkPartnerGoodsList) *PdPartnerGoods {
-	return &PdPartnerGoods{
+	ppg:= &PdPartnerGoods{
 		Name: p.Name,
 
 		Detail: p.Detail,
@@ -107,8 +107,11 @@ func (this * PdPartnerGoods) ParseList(p *api.BkPartnerGoodsList) *PdPartnerGood
 //		FileUrl: p.FileUrl,
 	//	SmsFlag: p.SmsFlag,
 		PartnerId: p.PartnerId,
+		//Valid: p.Valid,
 	//	IdcardDispplay: p.IdcardDispplay,
 	}
+	ppg.Valid = p.Valid
+	return ppg
 }
 
 func (this *PdPartnerGoods) Get() (*PdPartnerGoods, error) {
