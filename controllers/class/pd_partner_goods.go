@@ -59,7 +59,7 @@ func (this *PdPartnerGoods) Add(ctx iris.Context) {
 	}
 	param.LongChain = new(string)
 	if partner.Code !=nil {
-		*param.LongChain += config.GConfig.Server.LfcxHost+ *partner.PrefixPath +"/"+ *partner.Code +"/"+ *param.Code
+		*param.LongChain = config.GConfig.Server.LfcxHost+ *partner.PrefixPath +"/"+ *partner.Code +"/"+ *param.Code
 	}
 
 	modelParam := new(models.PdPartnerGoods).ParseAdd(param)
@@ -166,13 +166,38 @@ func (this *PdPartnerGoods) Update(ctx iris.Context) {
 		return
 	}
 
-	ll, err := new(models.PdPartnerGoods).Parse(param).Update()
+	modelParam := new(models.PdPartnerGoods).Parse(param)
+	res, err := modelParam.Update()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 		return
 	}
-	this.Response(ctx, ll)
+	this.Response(ctx, res)
+	if res != nil && res.PartnerId != nil {
+		partner,err := new(models.PdPartner).GetById(*res.PartnerId)
+		if err != nil {
+			ZapLog().With(zap.Error(err)).Error("db err")
+			return
+		}
+		if partner == nil {
+			ZapLog().With(zap.Error(err)).Error("nofind partner err")
+			return
+		}
+		LongChain := ""
+		if partner.Code !=nil {
+			LongChain += config.GConfig.Server.LfcxHost+ *partner.PrefixPath +"/"+ *partner.Code +"/"+ *res.Code
+		}
+		if len(LongChain) <= 0 {
+			return
+		}
+		newUp := models.PdPartnerGoods{
+			Id: param.Id,
+			LongChain: &LongChain,
+		}
+		newUp.Update()
+	}
+
 }
 
 func (this *PdPartnerGoods) List(ctx iris.Context) {
