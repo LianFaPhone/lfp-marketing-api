@@ -30,12 +30,40 @@ func (this *Tasker) ydhkOaoWork() {
 		startId = *recoder.IdTag
 	}
 
+	if len(config.GConfig.Jthk.ParterCode) <= 0 || len(config.GConfig.Jthk.ParterCodeArr) <= 0 {
+		return
+	}
+
+	partnerIds := make([]*int64, 0)
+	for i:=0; i< len(config.GConfig.Jthk.ParterCodeArr);i++ {
+		if len(config.GConfig.Jthk.ParterCodeArr[i]) <= 0 {
+			continue
+		}
+		parter,err := new(models.PdPartner).GetByCode(config.GConfig.Jthk.ParterCodeArr[i])
+		if err != nil {
+			ZapLog().Error("GetByCOde err", zap.Error(err))
+			continue
+		}
+		if parter == nil {
+			continue
+		}
+		partnerIds = append(partnerIds, parter.Id)
+	}
+
+	if len(partnerIds) <= 0 {
+		return
+	}
+
 	for true {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 			//&models.SqlPairCondition{"class_big_tp = ?", 5},
 			&models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 15*60},
 			//条件还得处理下
+		}
+
+		if len(partnerIds) > 0 {
+			conds = append(conds, &models.SqlPairCondition{"partner_id in (?)", partnerIds})
 		}
 
 		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds, nil)
@@ -141,15 +169,26 @@ func (this *Tasker) ydhkExpressWork() {
 		startId = *recoder.IdTag
 	}
 
-	if len(config.GConfig.Jthk.ParterCode) <= 0 {
+	if len(config.GConfig.Jthk.ParterCode) <= 0 || len(config.GConfig.Jthk.ParterCodeArr) <= 0{
 		return
 	}
-	parter,err := new(models.PdPartner).GetByCode(config.GConfig.Jthk.ParterCode)
-	if err != nil {
-		//日志
-		return
+	partnerIds := make([]*int64, 0)
+	for i:=0; i< len(config.GConfig.Jthk.ParterCodeArr);i++ {
+		if len(config.GConfig.Jthk.ParterCodeArr[i]) <= 0 {
+			continue
+		}
+		parter,err := new(models.PdPartner).GetByCode(config.GConfig.Jthk.ParterCodeArr[i])
+		if err != nil {
+			ZapLog().Error("GetByCOde err", zap.Error(err))
+			continue
+		}
+		if parter == nil {
+			continue
+		}
+		partnerIds = append(partnerIds, parter.Id)
 	}
-	if parter == nil {
+
+	if len(partnerIds) <= 0 {
 		return
 	}
 
@@ -159,7 +198,10 @@ func (this *Tasker) ydhkExpressWork() {
 			//&models.SqlPairCondition{"class_big_tp = ?", 5},
 			&models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 24*3600},
 			//条件还得处理下
-			&models.SqlPairCondition{"partner_id = ?", parter.Id},
+			//&models.SqlPairCondition{"partner_id in ?", parter.Id},
+		}
+		if len(partnerIds) > 0 {
+			conds = append(conds, &models.SqlPairCondition{"partner_id in (?)", partnerIds})
 		}
 
 		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds, nil)

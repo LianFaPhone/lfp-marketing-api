@@ -5,6 +5,7 @@ import (
 	"github.com/ulule/limiter"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"strings"
 )
 
 var GConfig Config
@@ -75,6 +76,11 @@ func PreProcess() error {
 			return err
 		}
 		GPreConfig.IpSmsLimits = append(GPreConfig.IpSmsLimits, &rate)
+	}
+	if len(GConfig.Jthk.ParterCode) > 0 {
+		GConfig.Jthk.ParterCode = strings.Replace(GConfig.Jthk.ParterCode, " ", "", -1)
+		GConfig.Jthk.ParterCode = strings.TrimSuffix(GConfig.Jthk.ParterCode, ",")
+		GConfig.Jthk.ParterCodeArr = strings.Split(GConfig.Jthk.ParterCode, ",")
 	}
 	return nil
 }
@@ -235,4 +241,5 @@ type Jthk struct{
 	//Product_id_39_oao  string   `yaml:"product_id_39_oao"`
 	Referer_path_oao  string   `yaml:"referer_path_oao"`
 	ParterCode    string      `yaml:"partner_code"`
+	ParterCodeArr []string   `yaml:"-"`
 }

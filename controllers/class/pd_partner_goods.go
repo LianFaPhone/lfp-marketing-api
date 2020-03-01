@@ -148,7 +148,7 @@ func (this *PdPartnerGoods) FtGet(ctx iris.Context) {
 		SmsFlag: cc.SmsFlag,
 		IdcardDispplay: cc.IdcardDispplay,
 		BgColor: cc.BgColor,
-
+		Name: cc.Name,
 	}
 
 	this.Response(ctx, newCC)

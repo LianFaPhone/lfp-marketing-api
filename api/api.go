@@ -95,6 +95,7 @@ type (
 		SmsFlag *int    `json:"sms_flag,omitempty"      gorm:"column:sms_flag;type:tinyint(4)"`
 		IdcardDispplay *int    `json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3);default 0"`
 		BgColor  *string    `json:"bg_color,omitempty"`
+		Name     *string   `json:"name,omitempty"`
 	}
 
 	FtPhoneNumberLock struct{
