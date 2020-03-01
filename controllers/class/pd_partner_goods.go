@@ -58,7 +58,7 @@ func (this *PdPartnerGoods) Add(ctx iris.Context) {
 		return
 	}
 	param.LongChain = new(string)
-	if partner.PrefixPath != nil && len(*partner.PrefixPath) > 0 && partner.Code !=nil {
+	if partner.Code !=nil {
 		*param.LongChain += config.GConfig.Server.LfcxHost+ *partner.PrefixPath +"/"+ *partner.Code +"/"+ *param.Code
 	}
 
