@@ -157,7 +157,7 @@ func (this *Tasker) ydhkExpressWork() {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 			//&models.SqlPairCondition{"class_big_tp = ?", 5},
-			&models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 12*3600},
+			&models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 24*3600},
 			//条件还得处理下
 			&models.SqlPairCondition{"partner_id = ?", parter.Id},
 		}

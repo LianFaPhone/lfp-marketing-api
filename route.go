@@ -148,21 +148,21 @@ func (this *WebServer) routes() {
 			ydhkParty.Post("/offline-active", ac.OfflineActive)
 		}
 
-		jthkParty := v1.Party("/jthk")
-		{
-			ac := new(jthk.Ydhk)
-
-			jthkParty.Any("/token-get", ac.GetToken)
-			jthkParty.Any("/addr-gets", ac.GetsAddr)
-			jthkParty.Any("/numberpool-list", ac.ListNumberPool)
-			jthkParty.Any("/number-lock", ac.LockNumber)
-			jthkParty.Any("/apply", ac.Apply)
-			jthkParty.Any("/photo-upload", ac.UploadPhoto)
-			jthkParty.Get("/protocal-get", ac.GetProtocal)
-			jthkParty.Post("/order-confirm", ac.FtConfirm)
-			jthkParty.Post("/idcheckurl-get", ac.FtIdCheckUrlGet)
-			ydhkParty.Post("/offline-active", ac.OfflineActive)
-		}
+		//jthkParty := v1.Party("/jthk")
+		//{
+		//	ac := new(jthk.Ydhk)
+		//
+		//	jthkParty.Any("/token-get", ac.GetToken)
+		//	jthkParty.Any("/addr-gets", ac.GetsAddr)
+		//	jthkParty.Any("/numberpool-list", ac.ListNumberPool)
+		//	jthkParty.Any("/number-lock", ac.LockNumber)
+		//	jthkParty.Any("/apply", ac.Apply)
+		//	jthkParty.Any("/photo-upload", ac.UploadPhoto)
+		//	jthkParty.Get("/protocal-get", ac.GetProtocal)
+		//	jthkParty.Post("/order-confirm", ac.FtConfirm)
+		//	jthkParty.Post("/idcheckurl-get", ac.FtIdCheckUrlGet)
+		//	ydhkParty.Post("/offline-active", ac.OfflineActive)
+		//}
 
 	}
 

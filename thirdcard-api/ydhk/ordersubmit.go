@@ -56,7 +56,7 @@ func (this *ReOrderSubmit) Parse(channelId , productId string, OaoModel *string)
 }
 
 func (this *ReOrderSubmit) Send(isOao bool, token, inPhone, newPhone, LegalName,IdCard, address, province, city,  sendprovince, sendcity, sendqu string) (apibackend.EnumBasErr,string,bool, error) {
-	return apibackend.BASERR_SUCCESS, "TestOrder112",true, nil
+	//return apibackend.BASERR_SUCCESS, "TestOrder112",true, nil
 	this.MsgType = "LiveHKCardTemporaryOrderReq"
 	this.Version = Const_Version
 
@@ -115,7 +115,7 @@ func (this *ReOrderSubmit) Send(isOao bool, token, inPhone, newPhone, LegalName,
 }
 
 func (this *ReOrderSubmit) OfflineActiveSend( token, inPhone, newPhone, LegalName,IdCard, address, province, city,  sendprovince, sendcity, sendqu string) (apibackend.EnumBasErr,string,bool, error) {
-	return apibackend.BASERR_SUCCESS, "TestOrder112",true, nil
+	//return apibackend.BASERR_SUCCESS, "TestOrder112",true, nil
 	this.MsgType = "LiveHKCardTemporaryOrderReq"
 	this.Version = Const_Version
 

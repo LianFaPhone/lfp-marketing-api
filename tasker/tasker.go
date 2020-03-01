@@ -115,9 +115,9 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-ydhkUnFinishCheckTicker.C:
-				//this.ydhkOaoWork()
+				this.ydhkOaoWork()
 			case <-ydhkExpressTicker.C:
-				//this.ydhkExpressWork()
+				this.ydhkExpressWork()
 			}
 		}
 	}()
