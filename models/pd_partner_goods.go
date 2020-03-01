@@ -105,6 +105,7 @@ func (this * PdPartnerGoods) Parse(p *api.BkPartnerGoods) *PdPartnerGoods {
 		BgColor: p.BgColor,
 
 		IdcardDispplay: p.IdcardDispplay,
+		UrlParam: p.UrlParam,
 		//MaxLimit: p.MaxLimit,
 		//IdcardDispplay: p.IdcardDispplay,
 
