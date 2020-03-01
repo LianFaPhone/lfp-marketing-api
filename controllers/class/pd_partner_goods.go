@@ -147,6 +147,7 @@ func (this *PdPartnerGoods) FtGet(ctx iris.Context) {
 		MaxAge: partner.MaxAge,
 		SmsFlag: cc.SmsFlag,
 		IdcardDispplay: cc.IdcardDispplay,
+		BgColor: cc.BgColor,
 
 	}
 

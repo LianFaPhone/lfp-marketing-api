@@ -94,7 +94,7 @@ type (
 		MaxAge    *int    `json:"max_age,omitempty"     gorm:"column:max_age;type:int(11)"`
 		SmsFlag *int    `json:"sms_flag,omitempty"      gorm:"column:sms_flag;type:tinyint(4)"`
 		IdcardDispplay *int    `json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3);default 0"`
-
+		BgColor  *string    `json:"bg_color,omitempty"`
 	}
 
 	FtPhoneNumberLock struct{
