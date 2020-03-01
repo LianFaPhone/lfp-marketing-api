@@ -59,7 +59,11 @@ func (this *PdPartnerGoods) Add(ctx iris.Context) {
 	}
 	param.LongChain = new(string)
 	if partner.Code !=nil {
-		*param.LongChain = config.GConfig.Server.LfcxHost+ *partner.PrefixPath +"/"+ *partner.Code +"/"+ *param.Code
+		*param.LongChain = config.GConfig.Server.LfcxHost
+		if partner.PrefixPath != nil {
+			*param.LongChain += *partner.PrefixPath
+		}
+		*param.LongChain += "/"+ *partner.Code +"/"+ *param.Code
 	}
 
 	modelParam := new(models.PdPartnerGoods).ParseAdd(param)
@@ -184,10 +188,15 @@ func (this *PdPartnerGoods) Update(ctx iris.Context) {
 			ZapLog().With(zap.Error(err)).Error("nofind partner err")
 			return
 		}
-		LongChain := ""
-		if partner.Code !=nil {
-			LongChain += config.GConfig.Server.LfcxHost+ *partner.PrefixPath +"/"+ *partner.Code +"/"+ *res.Code
+		LongChain := config.GConfig.Server.LfcxHost
+		if partner.Code ==nil || res.Code == nil{
+			return
 		}
+
+		if partner.PrefixPath != nil {
+			LongChain +=*partner.PrefixPath
+		}
+		LongChain += "/"+ *partner.Code +"/"+ *res.Code
 		if len(LongChain) <= 0 {
 			return
 		}
