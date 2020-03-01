@@ -152,6 +152,34 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		return
 	}
 
+	if (len(channelId) == 0) && (param.PartnerGoodsCode != nil) {
+		ppg,err := new(models.PdPartnerGoods).GetByCodeFromCache(*param.PartnerGoodsCode)
+		if err != nil {
+			this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+			ZapLog().Error("datebase err", zap.Error(err))
+			return
+		}
+		if ppg == nil {
+			this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_NOT_FOUND.Desc())
+			ZapLog().Error("nofind ppg err")
+			return
+		}
+		if ppg.UrlParam == nil {
+			this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Desc())
+			ZapLog().Error("nofind urlparam err")
+			return
+		}
+		vv, _ := url.ParseQuery(*ppg.UrlParam)
+		channelId = vv.Get("channelId")
+		productId = vv.Get("productId")
+		isoao,_ = strconv.ParseBool(vv.Get("isOao"))
+		if len(channelId) ==0 || len(productId) == 0 {
+			this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Desc())
+			ZapLog().Error("nofind urlparam err")
+			return
+		}
+	}
+
 	errCode, orderId,oaoFlag,err := new(ReOrderSubmit).Parse(channelId, productId, nil).Send(isoao, param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")

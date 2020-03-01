@@ -154,10 +154,10 @@ type(
 
 		AccessToken     string   `json:"token"`
 
-		PartnerId    *int64    `json:"valid:"optional" partner_id,omitempty"  `                 //手机卡套餐类型
+		PartnerId    *int64    `valid:"optional" json:"-"  `                 //手机卡套餐类型
 		PartnerGoodsCode    *string    `valid:"optional" json:"partner_goods_code,omitempty"   `                 //手机卡套餐类型
 
-		ClassISP     *int    `valid:"optional" json:"isp,omitempty"`
+		ClassISP     *int    `valid:"optional" json:"-"`
 		IP           *string  `valid:"optional" json:"ip,omitempty"` //从header
 		PhoneOSTp    *int    `valid:"optional" json:"device_os_tp,omitempty"` //从header
 
