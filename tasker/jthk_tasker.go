@@ -76,7 +76,7 @@ func (this *Tasker) ydhkOaoWork() {
 			return
 		}
 
-		ZapLog().Sugar().Infof("jthktasker %d", len(orderArr))
+		//ZapLog().Sugar().Infof("jthktasker %d", len(orderArr))
 
 		//记录id, 倒叙
 		for i := len(orderArr) - 1; i >= 0; i-- {
@@ -216,7 +216,7 @@ func (this *Tasker) ydhkExpressWork() {
 			return
 		}
 
-		ZapLog().Sugar().Infof("jthktasker express %d", len(orderArr))
+		//ZapLog().Sugar().Infof("jthktasker express %d", len(orderArr))
 
 		//记录id, 倒叙
 		haveExpreeFlag := false

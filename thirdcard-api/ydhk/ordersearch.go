@@ -45,8 +45,11 @@ type (
 		Data *OrderInfo `json:"data"`
 	}
 )
-
+//idcard后6位
 func (this *ReOrderSerach) Send(phone, idcard string) ([]*OrderInfo, error) {
+	if len(idcard) > 9 {
+		idcard = idcard[len(idcard)-6:]
+	}
 
 	formBody := make(url.Values)
 	formBody.Add("mobilephone", phone)
