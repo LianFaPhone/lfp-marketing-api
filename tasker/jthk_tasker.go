@@ -6,6 +6,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/models"
 	"LianFaPhone/lfp-marketing-api/thirdcard-api/ydhk"
 	"go.uber.org/zap"
+	"strings"
 	"time"
 )
 
@@ -106,22 +107,30 @@ func (this *Tasker) ydhkOaoWork() {
 				continue
 			}
 
-			oaoFlag := false
+			var chooseOne *ydhk.OrderInfo
 			for j:=0; j< len(yidongArr); j++ {
 				if yidongArr[j].Number == nil || orderArr[i].NewPhone == nil{
 					continue
 				}
 				if * yidongArr[j].Number == *orderArr[i].NewPhone {
-					oaoFlag = true
+					chooseOne = yidongArr[j]
 					break
 				}
 			}
 
-			if !oaoFlag {
+			if chooseOne == nil {
 				log:= "oao未发现"
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
+
+			//if chooseOne.Status != nil{
+			//	*chooseOne.Status = strings.ToUpper(*chooseOne.Status)
+			//	if *chooseOne.Status == "FA" {
+			//
+			//		continue
+			//	}
+			//}
 
 
 			mp.Status = new(int)
@@ -230,7 +239,7 @@ func (this *Tasker) ydhkExpressWork() {
 			if  *orderArr[i].Status != models.CONST_OrderStatus_New {
 				continue
 			}
-			if orderArr[i].ExpressNo != nil && len(*orderArr[i].ExpressNo) > 0{
+			if orderArr[i].ExpressNo != nil && len(*orderArr[i].ExpressNo) > 0 && orderArr[i].Express !=nil && len(*orderArr[i].Express) > 0{
 				haveExpreeFlag = true
 				continue
 			}
@@ -269,6 +278,27 @@ func (this *Tasker) ydhkExpressWork() {
 
 			mp.Express = chooseOne.ShipmentCompany
 			mp.ExpressNo = chooseOne.ShipmentNo
+
+			if chooseOne.Status != nil{
+				*chooseOne.Status = strings.ToUpper(*chooseOne.Status)
+				if !strings.HasPrefix(*chooseOne.Status, "S")  { // 不成功
+					log:= "快递状态错误:"+*chooseOne.Status
+					new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+					//continue
+				}
+			}
+
+			if (mp.Express == nil) && (chooseOne.ShipmentNo !=nil) && (len(chooseOne.Tid) > 0) && (chooseOne.ShipmentCompanyCode != nil) {
+				orderDetail,err := new(ydhk.ReOrderDetailSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard, chooseOne.Tid, *chooseOne.ShipmentCompanyCode, *chooseOne.ShipmentNo)
+				if err != nil {
+					log:= "快递详情查询错误:"+err.Error()
+					new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				}
+				if orderDetail != nil {
+					mp.Express = orderDetail.ShipmentCompany
+				}
+			}
+
 
 
 

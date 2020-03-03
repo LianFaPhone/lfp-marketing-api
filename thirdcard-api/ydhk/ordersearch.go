@@ -28,8 +28,9 @@ type (
 		Mobilephone *string      `json:"mobilephone"`      //:"16637207824",
 		ShipmentNo   *string      `json:"shipmentNo"`    //快递订单号:"JDVB02166598201",
 		ShipmentCompany  *string    `json:"shipmentCompany"`  //:null,快递公司
-		//"shipmentCompanyCode":"40",
+		ShipmentCompanyCode *string `json:"shipmentCompanyCode"`
 		//"status":"AC",
+		Status *string `json:"status"`
 		//"name":null,
 		//"address":null,
 		Number   *string       `json:"number"`    //:"17814678474",
@@ -80,7 +81,10 @@ func (this *ReOrderSerach) Send(phone, idcard string) ([]*OrderInfo, error) {
 	return res.Datas, nil
 }
 
-func (this *ReOrderDetailSerach) Send(phone, idcard, tid string) (*OrderInfo, error) {
+func (this *ReOrderDetailSerach) Send(phone, idcard, tid, shipmentCompanyCode,shipmentNo  string) (*OrderInfo, error) {
+	if len(idcard) > 9 {
+		idcard = idcard[len(idcard)-6:]
+	}
 
 	formBody := make(url.Values)
 	formBody.Add("mobilephone", phone)
@@ -92,8 +96,9 @@ func (this *ReOrderDetailSerach) Send(phone, idcard, tid string) (*OrderInfo, er
 		"Accept": "*/*",
 		//"Host": config.GConfig.Jthk.Host,
 		"Origin": config.GConfig.Jthk.SearchUrl,
+		"X-Requested-With":"XMLHttpRequest",
 		// http://rwx.mmarket.com/rwkgzh/views/youthCard/order/detailNew.jsp?mobilephone=16637207824&certificateNo=220174&tid=SC19280T19121700402909&shipmentCompanyCode=40&shipmentNo=JDVB02166598201
-		//"Referer": GConfig.Server.Url+"/rwkgzh/views/youthCard/order/orderList.jsp?mobilephone="+phone+"&certificateNo="+idcard,
+		"Referer": config.GConfig.Jthk.SearchUrl+"/rwkgzh/views/youthCard/order/detailNew.jsp?mobilephone="+phone+"&certificateNo="+idcard+"&tid="+tid+"&shipmentCompanyCode="+shipmentCompanyCode+"&shipmentNo="+shipmentNo,
 	}
 
 
