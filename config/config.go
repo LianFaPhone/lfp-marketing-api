@@ -230,6 +230,7 @@ type Task struct{
 type Jthk struct{
 	Host string  `yaml:"host"`
 	Url  string  `yaml:"url"`
+	SearchUrl  string  `yaml:"search_url"`
 	//Channel_id_19 string   `yaml:"channel_id_19"`
 	//Product_id_19 string    `yaml:"product_id_19"`
 	//Channel_id_39 string   `yaml:"channel_id_39"`
