@@ -5,6 +5,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/config"
 	"LianFaPhone/lfp-marketing-api/models"
 	"LianFaPhone/lfp-marketing-api/thirdcard-api/ydhk"
+	"fmt"
 	"go.uber.org/zap"
 	"strings"
 	"time"
@@ -59,7 +60,7 @@ func (this *Tasker) ydhkOaoWork() {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 			//&models.SqlPairCondition{"class_big_tp = ?", 5},
-			&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 15*60},
+			&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 60*60},
 			//条件还得处理下
 		}
 
@@ -98,16 +99,43 @@ func (this *Tasker) ydhkOaoWork() {
 
 			mp := &models.CardOrder{
 				Id: orderArr[i].Id,
+				Status: new(int),
 			}
 
-			yidongArr,err := new(ydhk.ReOrderSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard)
+			resOrderShortSerach,err := new(ydhk.ReOrderShortSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard);
 			if err != nil {
 				log:= "OAO检测："+err.Error()
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
+			if resOrderShortSerach.Ret != 200 {
+				log:= fmt.Sprintf("OAO检测：%d-%s", resOrderShortSerach.Ret, resOrderShortSerach.Msg)
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				*mp.Status = models.CONST_OrderStatus_Fail
+				if err = mp.Update(); err != nil {
+					ZapLog().Error("CardOrder Update err", zap.Error(err))
+				}
+				continue
+			}
+
+			resOrderSearch,err := new(ydhk.ReOrderSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard)
+			if err != nil {
+				log:= "OAO检测："+err.Error()
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				continue
+			}
+			if resOrderSearch.Ret != 200 {
+				log:= fmt.Sprintf("OAO检测：%d-%s", resOrderSearch.Ret, resOrderSearch.Msg)
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				*mp.Status = models.CONST_OrderStatus_Fail
+				if err = mp.Update(); err != nil {
+					ZapLog().Error("CardOrder Update err", zap.Error(err))
+				}
+				continue
+			}
 
 			var chooseOne *ydhk.OrderInfo
+			yidongArr := resOrderSearch.Datas
 			for j:=0; j< len(yidongArr); j++ {
 				if yidongArr[j].Number == nil || orderArr[i].NewPhone == nil{
 					continue
@@ -118,7 +146,6 @@ func (this *Tasker) ydhkOaoWork() {
 				}
 			}
 
-			mp.Status = new(int)
 			if chooseOne == nil {
 				log:= "OAO检测：oao未发现"
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
@@ -247,14 +274,20 @@ func (this *Tasker) ydhkExpressWork() {
 				Id: orderArr[i].Id,
 			}
 
-			yidongArr,err := new(ydhk.ReOrderSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard)
+			resOrderSearch,err := new(ydhk.ReOrderSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard)
 			if err != nil {
 				log:= "快递查询："+err.Error()
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
+			if resOrderSearch.Ret != 200 {
+				log:= fmt.Sprintf("快递查询：%d-%s", resOrderSearch.Ret, resOrderSearch.Msg)
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				continue
+			}
 
 			var chooseOne *ydhk.OrderInfo
+			yidongArr := resOrderSearch.Datas
 			for j:=0; j< len(yidongArr); j++ {
 				if yidongArr[j].Number == nil || orderArr[i].NewPhone == nil {
 					continue
@@ -291,9 +324,6 @@ func (this *Tasker) ydhkExpressWork() {
 					mp.Express = orderDetail.ShipmentCompany
 				}
 			}
-
-
-
 
 			mp.Status = new(int)
 			*mp.Status = models.CONST_OrderStatus_Already_Delivered

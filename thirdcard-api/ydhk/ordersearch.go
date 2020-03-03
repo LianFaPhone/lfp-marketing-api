@@ -3,8 +3,6 @@ package ydhk
 import (
 	"LianFaPhone/lfp-marketing-api/common"
 	"LianFaPhone/lfp-marketing-api/config"
-	. "LianFaPhone/lfp-base/log/zap"
-
 	//. "LianFaPhone/lfp-tools/autoorder-search-yidonghuaka/config"
 	"encoding/json"
 	"fmt"
@@ -45,9 +43,17 @@ type (
 		Msg string   `json:"message"`
 		Data *OrderInfo `json:"data"`
 	}
+	ReOrderShortSerach struct {
+
+	}
+	ResOrderShortSerach struct {
+		Ret   int    `json:"code"`
+		Msg string   `json:"message"`
+		Data *string `json:"data"`
+	}
 )
 //idcard后6位
-func (this *ReOrderSerach) Send(phone, idcard string) ([]*OrderInfo, error) {
+func (this *ReOrderSerach) Send(phone, idcard string) (*ResOrderSerach, error) {
 	if len(idcard) > 9 {
 		idcard = idcard[len(idcard)-6:]
 	}
@@ -65,7 +71,7 @@ func (this *ReOrderSerach) Send(phone, idcard string) ([]*OrderInfo, error) {
 		"Referer": config.GConfig.Jthk.SearchUrl+"/rwkgzh/views/youthCard/order/orderList.jsp?mobilephone="+phone+"&certificateNo="+idcard,
 	}
 
-	ZapLog().Sugar().Infof("url[%s][%v][%v]", config.GConfig.Jthk.SearchUrl,heads, formBody )
+	//ZapLog().Sugar().Infof("url[%s][%v][%v]", config.GConfig.Jthk.SearchUrl,heads, formBody )
 
 	resData, err := common.HttpFormSend(config.GConfig.Jthk.SearchUrl+"/rwkgzh/youth/youthCard/query.tv", formBody,"POST", heads)
 	if err != nil {
@@ -75,10 +81,10 @@ func (this *ReOrderSerach) Send(phone, idcard string) ([]*OrderInfo, error) {
 	if err = json.Unmarshal(resData, res); err != nil {
 		return  nil, err
 	}
-	if res.Ret !=200 {
-		return nil, fmt.Errorf("%d-%s",res.Ret, res.Msg)
-	}
-	return res.Datas, nil
+	//if res.Ret !=200 {
+	//	return nil, fmt.Errorf("%d-%s",res.Ret, res.Msg)
+	//}
+	return res, nil
 }
 
 func (this *ReOrderDetailSerach) Send(phone, idcard, tid, shipmentCompanyCode,shipmentNo  string) (*OrderInfo, error) {
@@ -115,4 +121,43 @@ func (this *ReOrderDetailSerach) Send(phone, idcard, tid, shipmentCompanyCode,sh
 		return nil, fmt.Errorf("%d-%s",res.Ret, res.Msg)
 	}
 	return res.Data, nil
+}
+
+//返回值，第一个参数是否业务错误
+func (this *ReOrderShortSerach) Send(phone, idcard string) (*ResOrderShortSerach, error) {
+	if len(idcard) > 9 {
+		idcard = idcard[len(idcard)-6:]
+	}
+
+	formBody := make(url.Values)
+	formBody.Add("mobilephone", phone)
+	formBody.Add("certificateNo", idcard)
+
+	heads := map[string]string{
+		"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+		"Accept": "*/*",
+		//"Host": config.GConfig.Jthk.Host,
+		"X-Requested-With":"XMLHttpRequest",
+		"Origin": config.GConfig.Jthk.SearchUrl,
+		"Referer": config.GConfig.Jthk.SearchUrl+"/rwkgzh/views/youthCard/order/queryOrder.jsp?weixinAppNo=gh_d8c3e948668a",
+	}
+
+	//ZapLog().Sugar().Infof("url[%s][%v][%v]", config.GConfig.Jthk.SearchUrl,heads, formBody )
+
+	resData, err := common.HttpFormSend(config.GConfig.Jthk.SearchUrl+"/rwkgzh/youth/youthCard/shortQuery.tv", formBody,"POST", heads)
+	if err != nil {
+		return  nil,err
+	}
+	res := new(ResOrderShortSerach)
+	if err = json.Unmarshal(resData, res); err != nil {
+		return   nil,err
+	}
+	//if res.Ret !=200 {
+	//	if res.Data!=nil {
+	//		return  fmt.Errorf("%d-%s-%s",res.Ret, res.Msg, *res.Data)
+	//	}else{
+	//		return  fmt.Errorf("%d-%s",res.Ret, res.Msg)
+	//	}
+	//}
+	return res,nil
 }
