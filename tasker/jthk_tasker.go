@@ -91,7 +91,7 @@ func (this *Tasker) ydhkOaoWork() {
 				continue
 			}
 			if orderArr[i].Phone == nil || orderArr[i].NewPhone == nil || orderArr[i].IdCard == nil {
-				log:= "信息不全"
+				log:= "OAO检测：信息不全"
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
@@ -102,7 +102,7 @@ func (this *Tasker) ydhkOaoWork() {
 
 			yidongArr,err := new(ydhk.ReOrderSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard)
 			if err != nil {
-				log:= err.Error()
+				log:= "OAO检测："+err.Error()
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
@@ -118,23 +118,16 @@ func (this *Tasker) ydhkOaoWork() {
 				}
 			}
 
+			mp.Status = new(int)
 			if chooseOne == nil {
-				log:= "oao未发现"
+				log:= "OAO检测：oao未发现"
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
-				continue
+				//continue
+				*mp.Status = models.CONST_OrderStatus_Fail
+			}else{
+				*mp.Status = models.CONST_OrderStatus_New
 			}
 
-			//if chooseOne.Status != nil{
-			//	*chooseOne.Status = strings.ToUpper(*chooseOne.Status)
-			//	if *chooseOne.Status == "FA" {
-			//
-			//		continue
-			//	}
-			//}
-
-
-			mp.Status = new(int)
-			*mp.Status = models.CONST_OrderStatus_New
 
 
 			if err = mp.Update(); err != nil {
@@ -245,7 +238,7 @@ func (this *Tasker) ydhkExpressWork() {
 			}
 
 			if orderArr[i].Phone == nil || orderArr[i].NewPhone == nil || orderArr[i].IdCard == nil {
-				log:= "信息不全"
+				log:= "快递查询：信息不全"
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
@@ -256,7 +249,7 @@ func (this *Tasker) ydhkExpressWork() {
 
 			yidongArr,err := new(ydhk.ReOrderSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard)
 			if err != nil {
-				log:= err.Error()
+				log:= "快递查询："+err.Error()
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
@@ -282,7 +275,7 @@ func (this *Tasker) ydhkExpressWork() {
 			if chooseOne.Status != nil{
 				*chooseOne.Status = strings.ToUpper(*chooseOne.Status)
 				if !strings.HasPrefix(*chooseOne.Status, "S")  { // 不成功
-					log:= "快递状态错误:"+*chooseOne.Status
+					log:= "快递查询：状态错误-"+*chooseOne.Status
 					new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 					//continue
 				}
@@ -291,7 +284,7 @@ func (this *Tasker) ydhkExpressWork() {
 			if (mp.Express == nil) && (chooseOne.ShipmentNo !=nil) && (len(chooseOne.Tid) > 0) && (chooseOne.ShipmentCompanyCode != nil) {
 				orderDetail,err := new(ydhk.ReOrderDetailSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard, chooseOne.Tid, *chooseOne.ShipmentCompanyCode, *chooseOne.ShipmentNo)
 				if err != nil {
-					log:= "快递详情查询错误:"+err.Error()
+					log:= "快递详情查询:"+err.Error()
 					new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				}
 				if orderDetail != nil {
