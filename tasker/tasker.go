@@ -51,7 +51,7 @@ func (this *Tasker) run() {
 
 	jthkNewUnfinishNotifyTicker := time.NewTicker(time.Minute * 3)
 	//cardOrderUnFinishSms5MinTicker.Stop()
-	jthkFailNotifyTicker := time.NewTicker(time.Minute * 60)
+	jthkFailNotifyTicker := time.NewTicker(time.Minute * 90)
 	//cardOrderUnFinishSms1HourTicker.Stop()
 
 	ydhkUnFinishSmallCheckTicker := time.NewTicker(time.Minute * 3)
@@ -86,14 +86,23 @@ func (this *Tasker) run() {
 		}
 	}()
 
-	go func() {
+	//oao测试 和 发短信 都有时效性要求，超过时间就无效了。所以性能不够得时候得加机器
+	go func() {//15分钟处理不完就失效了
 		defer models.PanicPrint()
 		for {
 			select {
 			case <-jthkNewUnfinishNotifyTicker.C:
 				this.jthkNewUnFinishNotify()
+			}
+		}
+	}()
+
+	go func() {
+		defer models.PanicPrint()
+		for {
+			select {
 			case <-jthkFailNotifyTicker.C:
-				this.jthkFailNotify()
+				 this.jthkFailNotify()
 			}
 		}
 	}()
@@ -118,12 +127,28 @@ func (this *Tasker) run() {
 		defer models.PanicPrint()
 		for {
 			select {
+			case <- ydhkUnFinishCheckTicker.C:
+				this.ydhkOaoWork("ydhk_oao", 3610, true)
+			}
+		}
+	}()
+
+	go func() { //超过 1分钟500笔oao订单后需要调整
+		defer models.PanicPrint()
+		for {
+			select {
 			case <-ydhkUnFinishSmallCheckTicker.C:
 				this.ydhkOaoWork("ydhk_small_oao", 8*60, false)
-			case <- ydhkUnFinishCheckTicker.C:
-				this.ydhkOaoWork("ydhk_oao", 3600, true)
+			}
+		}
+	}()
+
+	go func() {
+		defer models.PanicPrint()
+		for {
+			select {
 			case <-ydhkExpressTicker.C:
-				this.ydhkExpressWork()
+				this.ydhkExpressWork() //24小时
 			}
 		}
 	}()

@@ -88,6 +88,7 @@ func (this *Tasker) jthkFailNotify() {
 		if len(orderArr) < 10 {
 			break
 		}
+		time.Sleep(time.Second * 30)
 	}
 
 }
@@ -125,8 +126,8 @@ func (this *Tasker) jthkNewUnFinishNotify() {
 	for true {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
-			&models.SqlPairCondition{"created_at <= ?", nowTime-15*60},
-			&models.SqlPairCondition{"created_at >= ?", nowTime-25*60},
+			&models.SqlPairCondition{"created_at <= ?", nowTime-20*60},
+			&models.SqlPairCondition{"created_at >= ?", nowTime-35*60},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New_UnFinish},
 		}
 		if len(partnerIds) > 0 {
@@ -166,7 +167,7 @@ func (this *Tasker) jthkNewUnFinishNotify() {
 				continue
 			}
 
-			time.Sleep(time.Millisecond * 1)
+			//time.Sleep(time.Millisecond * 1)
 		}
 
 		err = recoder.Update(startId)
@@ -178,6 +179,7 @@ func (this *Tasker) jthkNewUnFinishNotify() {
 		if len(orderArr) < 10 {
 			break
 		}
+		//time.Sleep(time.Second * 1)
 	}
 
 }
