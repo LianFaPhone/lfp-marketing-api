@@ -190,6 +190,7 @@ func (this *CardOrder) LimitCheckByIdCardAndTime(idcard string, createdAt int64,
 	return count > limit, nil
 }
 
+
 func (this *CardOrder) Add() error {
 	err := db.GDbMgr.Get().Create(this).Error
 	if err != nil {
@@ -375,6 +376,19 @@ func (this *CardOrder) Get() (*CardOrder, error) {
 func (this *CardOrder) GetByIdcardAndPhone(conds *SqlPairCondition) (*CardOrder, error) {
 	acty := new(CardOrder)
 	query := db.GDbMgr.Get().Where("idcard = ? and phone = ?", this.IdCard, this.Phone)
+	if conds != nil {
+		query = query.Where(conds.Key, conds.Value)
+	}
+	err := query.Last(acty).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return acty, err
+}
+
+func (this *CardOrder) GetByIdcardAndNewPhone(idcard, newPhone string, conds *SqlPairCondition) (*CardOrder, error) {
+	acty := new(CardOrder)
+	query := db.GDbMgr.Get().Where("idcard = ? and new_phone = ?", idcard, newPhone)
 	if conds != nil {
 		query = query.Where(conds.Key, conds.Value)
 	}

@@ -37,7 +37,7 @@ func (this *Tasker) clearWork() {
 
 		delCount, err := new(models.CardOrderLog).DelWithConds(conds, 10)
 		if err != nil {
-			ZapLog().Error("CardOrder GetLimitByCond err", zap.Error(err))
+			ZapLog().Error("CardOrderLog DelWithConds err", zap.Error(err))
 			return
 		}
 		if  delCount <= 10 {

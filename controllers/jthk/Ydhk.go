@@ -180,110 +180,155 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		}
 	}
 
-	errCode, orderId,oaoFlag,err := new(ReOrderSubmit).Parse(channelId, productId, nil).Send(isoao, param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
-	if err != nil {
-		ZapLog().With(zap.Error(err)).Error("Retoken send err")
-		this.ExceptionSerive(ctx, errCode.Code(), err.Error())
-		return
+	errCode, orderId,oaoFlag,orderErr := new(ReOrderSubmit).Parse(channelId, productId, nil).Send(isoao, param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
+	if orderErr != nil {
+		ZapLog().With(zap.Error(orderErr)).Error("Retoken send err")
+		this.ExceptionSerive(ctx, errCode.Code(), orderErr.Error())
+		if errCode != apibackend.BASERR_CARDMARKET_PHONECARD_APPLY_FAID_AND_SHOW {
+			return
+		}
+	}else{
+		this.Response(ctx, &api.FtResYdhkApply{orderId,oaoFlag})
 	}
 
 	go func(){
-		orderNo := fmt.Sprintf("D%s%s%03d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
-		modelParam := &models.CardOrder{
-			OrderNo:  &orderNo,
-			TrueName: &param.LeagalName,
-			IdCard:   &param.CertificateNo,
-			Isp: param.ClassISP,
-			PartnerId : param.PartnerId,              //手机卡套餐类型
-			PartnerGoodsCode : param.PartnerGoodsCode,           //手机卡套餐类型
-
-			//		CountryCode: p.CountryCode,
-			Phone:        &param.Phone,
-			Province:     &param.SendProvinceName,
-			ProvinceCode: &param.Province,
-			City:         &param.SendCityName,
-			CityCode:     &param.City,
-			Area:         &param.SendDistrictName,
-			AreaCode:     &param.SendDistrict,
-			//Town:         p.Town,
-			Address:      &param.Address,
-			IP:           param.IP,
-			PhoneOSTp:    param.PhoneOSTp,
-
-			NewPhone: &param.NewPhone,
-			ThirdOrderNo: &orderId,
+		oldOrder,_ := new(models.CardOrder).GetByIdcardAndNewPhone(param.CertificateNo, param.NewPhone, &models.SqlPairCondition{"created_at > ?", time.Now().Unix() - 300})
+		if oldOrder != nil { // 老订单
+			this.recordOldOrder(oldOrder, errCode, oaoFlag, orderErr)
+		}else{
+			this.recordNewOrder(ctx, param, orderId, errCode, oaoFlag, orderErr)
 		}
 
-		modelParam.Valid = new(int)
-		*modelParam.Valid = 1
+	}()
 
-		modelParam.Status = new(int)
+}
+
+func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thirdOrderId string, errCode apibackend.EnumBasErr, oaoFlag bool, orderErr error) {
+	orderNo := fmt.Sprintf("D%s%s%03d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
+	modelParam := &models.CardOrder{
+		OrderNo:  &orderNo,
+		TrueName: &param.LeagalName,
+		IdCard:   &param.CertificateNo,
+		Isp: param.ClassISP,
+		PartnerId : param.PartnerId,              //手机卡套餐类型
+		PartnerGoodsCode : param.PartnerGoodsCode,           //手机卡套餐类型
+
+		//		CountryCode: p.CountryCode,
+		Phone:        &param.Phone,
+		Province:     &param.SendProvinceName,
+		ProvinceCode: &param.Province,
+		City:         &param.SendCityName,
+		CityCode:     &param.City,
+		Area:         &param.SendDistrictName,
+		AreaCode:     &param.SendDistrict,
+		//Town:         p.Town,
+		Address:      &param.Address,
+		IP:           param.IP,
+		PhoneOSTp:    param.PhoneOSTp,
+
+		NewPhone: &param.NewPhone,
+		ThirdOrderNo: &thirdOrderId,
+	}
+
+	modelParam.Valid = new(int)
+	*modelParam.Valid = 1
+
+
+
+	if modelParam.PartnerId == nil || modelParam.Isp == nil {
+		cc,err := new(models.PdPartnerGoods).GetByCodeFromCache(*param.PartnerGoodsCode)
+		if err ==nil && cc != nil {
+			modelParam.PartnerId = cc.PartnerId
+			if modelParam.Isp == nil {
+				partner,_ := new(models.PdPartner).GetByIdFromCache(*modelParam.PartnerId)
+				if partner != nil {
+					modelParam.Isp = partner.Isp
+				}
+			}
+		}
+	}
+
+	if modelParam.IP == nil {
+		IP := common.GetRealIp(ctx)
+		modelParam.IP = &IP
+	}
+
+	if modelParam.PhoneOSTp == nil {
+		device := ctx.GetHeader("User-Agent")
+		if strings.Contains(device, "Android") {
+			modelParam.PhoneOSTp = new(int)
+			*modelParam.PhoneOSTp =  models.CONST_PHONEOS_Android
+		}else if  strings.Contains(device, "iPhone")  {
+			modelParam.PhoneOSTp = new(int)
+			*modelParam.PhoneOSTp =  models.CONST_PHONEOS_Iphone
+		}else if  strings.Contains(device, "iPad")  {
+			modelParam.PhoneOSTp = new(int)
+			*modelParam.PhoneOSTp =  models.CONST_PHONEOS_Ipad
+		} else {
+			modelParam.PhoneOSTp = new(int)
+			*modelParam.PhoneOSTp =  models.CONST_PHONEOS_Other
+		}
+	}
+
+	if modelParam.City != nil {
+		pp,err := new(models.BsCity).GetByName(*modelParam.City)
+		if err ==nil && pp != nil {
+			modelParam.CityCode = pp.Code
+		}
+	}
+
+	if modelParam.Area != nil {
+		pp,err := new(models.BsArea).GetByName(*modelParam.Area)
+		if err ==nil && pp != nil {
+			modelParam.AreaCode = pp.Code
+		}
+	}
+
+	modelParam.Status = new(int)
+	if errCode != 0 {
+		*modelParam.Status =	models.CONST_OrderStatus_Fail
+	}else{
 		if oaoFlag == true {
 			*modelParam.Status =	models.CONST_OrderStatus_New
 		}else{
 			*modelParam.Status =	models.CONST_OrderStatus_New_UnFinish
 		}
+	}
 
-		if modelParam.PartnerId == nil || modelParam.Isp == nil {
-				cc,err := new(models.PdPartnerGoods).GetByCodeFromCache(*param.PartnerGoodsCode)
-				if err ==nil && cc != nil {
-					modelParam.PartnerId = cc.PartnerId
-					if modelParam.Isp == nil {
-						partner,_ := new(models.PdPartner).GetByIdFromCache(*modelParam.PartnerId)
-						if partner != nil {
-							modelParam.Isp = partner.Isp
-						}
-					}
-				}
-		}
-
-		if modelParam.IP == nil {
-			IP := common.GetRealIp(ctx)
-			modelParam.IP = &IP
-		}
-
-		if modelParam.PhoneOSTp == nil {
-			device := ctx.GetHeader("User-Agent")
-			if strings.Contains(device, "Android") {
-				modelParam.PhoneOSTp = new(int)
-				*modelParam.PhoneOSTp =  models.CONST_PHONEOS_Android
-			}else if  strings.Contains(device, "iPhone")  {
-				modelParam.PhoneOSTp = new(int)
-				*modelParam.PhoneOSTp =  models.CONST_PHONEOS_Iphone
-			}else if  strings.Contains(device, "iPad")  {
-				modelParam.PhoneOSTp = new(int)
-				*modelParam.PhoneOSTp =  models.CONST_PHONEOS_Ipad
-			} else {
-				modelParam.PhoneOSTp = new(int)
-				*modelParam.PhoneOSTp =  models.CONST_PHONEOS_Other
-			}
-		}
-
-		if modelParam.City != nil {
-			pp,err := new(models.BsCity).GetByName(*modelParam.City)
-			if err ==nil && pp != nil {
-				modelParam.CityCode = pp.Code
-			}
-		}
-
-		if modelParam.Area != nil {
-			pp,err := new(models.BsArea).GetByName(*modelParam.Area)
-			if err ==nil && pp != nil {
-				modelParam.AreaCode = pp.Code
-			}
-		}
-
-
-		if err := modelParam.Add(); err != nil {
-			//		tx.Rollback()
+	if err := modelParam.Add(); err != nil {
+		ZapLog().With(zap.Error(err)).Error("database err")
+		return
+	}
+	if errCode != 0 {
+		log := orderErr.Error()
+		if err := new(models.CardOrderLog).FtParseAdd(nil,&orderNo, &log).Add(); err != nil {
 			ZapLog().With(zap.Error(err)).Error("database err")
-			//this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
-			return
 		}
+	}
+}
 
-	}()
+func (this * Ydhk) recordOldOrder(oldOrder *models.CardOrder, errCode apibackend.EnumBasErr, oaoFlag bool, orderErr error) {
+	newStatus := models.CONST_OrderStatus_Fail
+	if errCode == 0 {
+		if oaoFlag == true {
+			newStatus =	models.CONST_OrderStatus_New
+		}else{
+			newStatus =	models.CONST_OrderStatus_New_UnFinish
+		}
+	}
+	if (oldOrder.Status!=nil) && (*oldOrder.Status == models.CONST_OrderStatus_Fail) {
+		if err := new(models.CardOrder).UpdateStatusByOrderNo(*oldOrder.OrderNo, newStatus); err != nil {
+			ZapLog().With(zap.Error(err)).Error("database err")
+		}
+	}
 
-	this.Response(ctx, &api.FtResYdhkApply{orderId,oaoFlag})
+	log := "订单申请成功"
+	if errCode != 0 {
+		log = orderErr.Error()
+	}
+	if err := new(models.CardOrderLog).FtParseAdd(nil,oldOrder.OrderNo, &log).Add(); err != nil {
+		ZapLog().With(zap.Error(err)).Error("database err")
+	}
 }
 
 func (this * Ydhk) OfflineActive(ctx iris.Context) {

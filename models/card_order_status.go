@@ -33,6 +33,9 @@ const (
 
 	CONST_OrderStatus_Already_Activated      = 8     //已激活
 	CONST_OrderStatus_Already_Activated_Name = "已激活" //已激活
+
+	CONST_OrderStatus_Fail  = 11     //新订单
+	CONST_OrderStatus_Fail_Name = "失败" //
 )
 
 var PathToOrderStatus = map[string] int {
@@ -46,6 +49,7 @@ var PathToOrderStatus = map[string] int {
 	"recyclebin": CONST_OrderStatus_Recyclebin ,
 	"unmatch": CONST_OrderStatus_UnMatch ,
 	"activated": CONST_OrderStatus_Already_Activated ,
+	"fail":CONST_OrderStatus_Fail,
 }
 
 var OrderStatusMap = map[int]string{
@@ -58,6 +62,7 @@ var OrderStatusMap = map[int]string{
 	CONST_OrderStatus_Recyclebin:        CONST_OrderStatus_Recyclebin_Name,
 	CONST_OrderStatus_UnMatch:           CONST_OrderStatus_UnMatch_Name,
 	CONST_OrderStatus_Already_Activated: CONST_OrderStatus_Already_Activated_Name,
+	CONST_OrderStatus_Fail:              CONST_OrderStatus_Fail_Name,
 }
 
 var OrderStatusArr = []*OrderStatus{
@@ -70,4 +75,5 @@ var OrderStatusArr = []*OrderStatus{
 	&OrderStatus{CONST_OrderStatus_Recyclebin, CONST_OrderStatus_Recyclebin_Name},
 	&OrderStatus{CONST_OrderStatus_UnMatch, CONST_OrderStatus_UnMatch_Name},
 	&OrderStatus{CONST_OrderStatus_Already_Activated, CONST_OrderStatus_Already_Activated_Name},
+	&OrderStatus{CONST_OrderStatus_Fail, CONST_OrderStatus_Fail_Name},
 }

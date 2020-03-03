@@ -59,7 +59,7 @@ func (this *Tasker) run() {
 		ydhkUnFinishCheckTicker.Stop()
 	}
 
-	ydhkExpressTicker := time.NewTicker(time.Hour * 3)
+	ydhkExpressTicker := time.NewTicker(time.Minute * 3)
 
 	go func() {
 		defer models.PanicPrint()

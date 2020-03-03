@@ -20,7 +20,7 @@ func (this *Tasker) ydhkOaoWork() {
 
 	if recoder == nil {
 		if recoder, err = new(models.IdRecorder).Add("ydhk_oao", 0); err != nil {
-			ZapLog().Error("IdRecorder Add card_order_ips err", zap.Error(err))
+			ZapLog().Error("IdRecorder Add ydhk_oao err", zap.Error(err))
 			return
 		}
 	}
@@ -75,6 +75,8 @@ func (this *Tasker) ydhkOaoWork() {
 			//fmt.Println("nil data")
 			return
 		}
+
+		ZapLog().Sugar().Infof("jthktasker %d", len(orderArr))
 
 		//记录id, 倒叙
 		for i := len(orderArr) - 1; i >= 0; i-- {
@@ -213,6 +215,8 @@ func (this *Tasker) ydhkExpressWork() {
 			//fmt.Println("nil data")
 			return
 		}
+
+		ZapLog().Sugar().Infof("jthktasker express %d", len(orderArr))
 
 		//记录id, 倒叙
 		haveExpreeFlag := false
