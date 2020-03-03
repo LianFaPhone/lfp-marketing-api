@@ -58,7 +58,7 @@ func (this *Tasker) ydhkOaoWork() {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 			//&models.SqlPairCondition{"class_big_tp = ?", 5},
-			&models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 15*60},
+			&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 15*60},
 			//条件还得处理下
 		}
 
@@ -108,7 +108,7 @@ func (this *Tasker) ydhkOaoWork() {
 
 			oaoFlag := false
 			for j:=0; j< len(yidongArr); j++ {
-				if yidongArr[j].Number == nil {
+				if yidongArr[j].Number == nil || orderArr[i].NewPhone == nil{
 					continue
 				}
 				if * yidongArr[j].Number == *orderArr[i].NewPhone {
@@ -198,7 +198,7 @@ func (this *Tasker) ydhkExpressWork() {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 			//&models.SqlPairCondition{"class_big_tp = ?", 5},
-			&models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 24*3600},
+			&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 24*3600},
 			//条件还得处理下
 			//&models.SqlPairCondition{"partner_id in ?", parter.Id},
 		}
@@ -254,7 +254,7 @@ func (this *Tasker) ydhkExpressWork() {
 
 			var chooseOne *ydhk.OrderInfo
 			for j:=0; j< len(yidongArr); j++ {
-				if yidongArr[j].Number == nil {
+				if yidongArr[j].Number == nil || orderArr[i].NewPhone == nil {
 					continue
 				}
 				if * yidongArr[j].Number == *orderArr[i].NewPhone {
