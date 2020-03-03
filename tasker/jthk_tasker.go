@@ -284,7 +284,7 @@ func (this *Tasker) ydhkExpressWork() {
 		}
 
 		if ! haveExpreeFlag {
-			return
+			//return
 		}
 
 		err = recoder.Update(startId)

@@ -3,6 +3,7 @@ package ydhk
 import (
 	"LianFaPhone/lfp-marketing-api/common"
 	"LianFaPhone/lfp-marketing-api/config"
+	. "LianFaPhone/lfp-base/log/zap"
 
 	//. "LianFaPhone/lfp-tools/autoorder-search-yidonghuaka/config"
 	"encoding/json"
@@ -60,7 +61,7 @@ func (this *ReOrderSerach) Send(phone, idcard string) ([]*OrderInfo, error) {
 		"Referer": config.GConfig.Jthk.SearchUrl+"/rwkgzh/views/youthCard/order/orderList.jsp?mobilephone="+phone+"&certificateNo="+idcard,
 	}
 
-
+	ZapLog().Sugar().Infof("url[%s][%v][%v]", config.GConfig.Jthk.SearchUrl,heads, formBody )
 
 	resData, err := common.HttpFormSend(config.GConfig.Jthk.SearchUrl+"/rwkgzh/youth/youthCard/query.tv", formBody,"POST", heads)
 	if err != nil {
