@@ -1,7 +1,6 @@
 package tasker
 
 import (
-	baidu_api "LianFaPhone/lfp-marketing-api/baidu-api"
 	"LianFaPhone/lfp-marketing-api/models"
 	"LianFaPhone/lfp-marketing-api/sdk"
 	"go.uber.org/zap"
@@ -12,20 +11,25 @@ import (
 	. "LianFaPhone/lfp-base/log/zap"
 )
 
-func (this *Tasker) newUnFinishSmsWork5hour() {
+func (this *Tasker) jthkFailNotify() {
 	defer models.PanicPrint()
 
-	recoder, err := new(models.IdRecorder).GetByName("CardOrderNewUnfinish5H")
+	recoder, err := new(models.IdRecorder).GetByName("JthkFailNotify")
 	if err != nil {
 		ZapLog().Error("IdRecorder GetByName err", zap.Error(err))
 		return
 	}
 
 	if recoder == nil {
-		if recoder, err = new(models.IdRecorder).Add("CardOrderNewUnfinish5H", 0); err != nil {
-			ZapLog().Error("IdRecorder Add CardOrderNewUnfinish5H err", zap.Error(err))
+		if recoder, err = new(models.IdRecorder).Add("JthkFailNotify", 0); err != nil {
+			ZapLog().Error("IdRecorder Add JthkFailNotify err", zap.Error(err))
 			return
 		}
+	}
+
+	partnerIds := GetJtHkPartnerIds()
+	if len(partnerIds) <= 0 {
+		return
 	}
 
 	startId := int64(0)
@@ -41,7 +45,11 @@ func (this *Tasker) newUnFinishSmsWork5hour() {
 			&models.SqlPairCondition{"id > ?", startId},
 			&models.SqlPairCondition{"created_at <= ?", nowTime-5*3600},
 			&models.SqlPairCondition{"created_at >= ?", nowTime-7*3600},
-			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New_UnFinish},
+			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_Fail},
+		}
+
+		if len(partnerIds) > 0 {
+			conds = append(conds, &models.SqlPairCondition{"partner_id in (?)", partnerIds})
 		}
 
 		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds, nil)
@@ -56,25 +64,14 @@ func (this *Tasker) newUnFinishSmsWork5hour() {
 
 		//记录id, 倒叙
 		for i := len(orderArr) - 1; i >= 0; i-- {
-			if orderArr[i] == nil {
+			if orderArr[i] == nil || orderArr[i].OrderNo == nil{
 				continue
 			}
 			if *orderArr[i].Id > startId {
 				startId = *orderArr[i].Id
 			}
 
-			cc,err := new(models.PdPartnerGoods).GetByCode(*orderArr[i].PartnerGoodsCode)
-			if err != nil {
-				ZapLog().Error("Nofind CardClass ", zap.Error(err), zap.String("classTp", *orderArr[i].PartnerGoodsCode))
-				continue
-			}
-			if cc == nil || cc.ShortChain == nil ||orderArr[i].Phone == nil{
-				continue
-			}
-
-			//生成短链，发送短信
-
-			if err := sdk.GNotifySdk.SendSms([]string{*cc.ShortChain}, *orderArr[i].Phone, "new_unfinish",0, &platformTp); err != nil {
+			if err := sdk.GNotifySdk.SendSms(nil, *orderArr[i].Phone, "yd_jthk_fail",0, &platformTp); err != nil {
 				ZapLog().Error("GNotifySdk.SendSms err", zap.Error(err))
 				continue
 			}
@@ -96,18 +93,18 @@ func (this *Tasker) newUnFinishSmsWork5hour() {
 }
 
 //新未完成订单短信通知
-func (this *Tasker) newUnFinishSmsWork5min() {
+func (this *Tasker) jthkNewUnFinishNotify() {
 	defer models.PanicPrint()
 
-	recoder, err := new(models.IdRecorder).GetByName("CardOrderNewUnfinish5M")
+	recoder, err := new(models.IdRecorder).GetByName("JthkNewUnfinishNotify")
 	if err != nil {
 		ZapLog().Error("IdRecorder GetByName err", zap.Error(err))
 		return
 	}
 
 	if recoder == nil {
-		if recoder, err = new(models.IdRecorder).Add("CardOrderNewUnfinish5M", 0); err != nil {
-			ZapLog().Error("IdRecorder Add CardOrderNewUnfinish_5m err", zap.Error(err))
+		if recoder, err = new(models.IdRecorder).Add("JthkNewUnfinishNotify", 0); err != nil {
+			ZapLog().Error("IdRecorder Add JthkNewUnfinishNotify err", zap.Error(err))
 			return
 		}
 	}
@@ -117,15 +114,23 @@ func (this *Tasker) newUnFinishSmsWork5min() {
 		startId = *recoder.IdTag
 	}
 
+	partnerIds := GetJtHkPartnerIds()
+	if len(partnerIds) <= 0 {
+		return
+	}
+
 	nowTime := time.Now().Unix()
 	platformTp :=2
 
 	for true {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
-			&models.SqlPairCondition{"created_at <= ?", nowTime-5*60},
-			&models.SqlPairCondition{"created_at >= ?", nowTime-10*60},
+			&models.SqlPairCondition{"created_at <= ?", nowTime-15*60},
+			&models.SqlPairCondition{"created_at >= ?", nowTime-25*60},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New_UnFinish},
+		}
+		if len(partnerIds) > 0 {
+			conds = append(conds, &models.SqlPairCondition{"partner_id in (?)", partnerIds})
 		}
 
 		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds, nil)
@@ -140,34 +145,23 @@ func (this *Tasker) newUnFinishSmsWork5min() {
 
 		//记录id, 倒叙
 		for i := len(orderArr) - 1; i >= 0; i-- {
-			if orderArr[i] == nil {
+			if orderArr[i] == nil || orderArr[i].OrderNo == nil {
 				continue
 			}
 			if *orderArr[i].Id > startId {
 				startId = *orderArr[i].Id
 			}
 
-			cc,err := new(models.PdPartnerGoods).GetByCode(*orderArr[i].PartnerGoodsCode)
+			orderUrl,err := new(models.CardOrderUrl).GetByOrderNo(*orderArr[i].OrderNo)
 			if err != nil {
-				ZapLog().Error("Nofind CardClass ", zap.Error(err), zap.String("classTp", *orderArr[i].PartnerGoodsCode))
+				ZapLog().Error("CardOrderUrl GetByOrderNo err", zap.Error(err))
 				continue
 			}
-			if cc == nil || cc.ThirdLongChain == nil ||orderArr[i].Phone == nil{
+			if orderUrl == nil || orderUrl.Url == nil || len(*orderUrl.Url) < 3 {
 				continue
 			}
 
-			//生成短链，发送短信
-			reShortChain := &baidu_api.ReDwzCreate{
-				Url : *cc.ThirdLongChain, //这个还得改改
-				TermOfValidity: "1-year",
-			}
-			shortChain,err := reShortChain.Send()
-			if err != nil {
-				ZapLog().Error("baidu_api.ReDwzCreate ",zap.Error(err),  zap.String("classTp", *orderArr[i].PartnerGoodsCode))
-				continue
-			}
-
-			if err := sdk.GNotifySdk.SendSms([]string{shortChain}, *orderArr[i].Phone, "new_unfinish",0, &platformTp); err != nil {
+			if err := sdk.GNotifySdk.SendSms([]string{*orderUrl.Url}, *orderArr[i].Phone, "yd_jthk_new_unfinish",0, &platformTp); err != nil {
 				ZapLog().Error("GNotifySdk.SendSms err", zap.Error(err))
 				continue
 			}

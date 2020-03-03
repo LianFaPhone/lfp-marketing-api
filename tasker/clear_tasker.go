@@ -28,12 +28,15 @@ func (this *Tasker) clearWork() {
 	//	startId = *idRecord.IdTag
 	//}
 
-	beginTime := time.Now().Unix() - 6 * 30 * 24* 3600
+	beginTime := time.Now().Unix() - 3 * 30 * 24* 3600
+	conds := []*models.SqlPairCondition{
+		//&models.SqlPairCondition{"id > ?", startId},
+		&models.SqlPairCondition{"created_at <= ?", beginTime},
+	}
+
 	for i:=0; i<1000;i++ {
-		conds := []*models.SqlPairCondition{
-			//&models.SqlPairCondition{"id > ?", startId},
-			&models.SqlPairCondition{"created_at <= ?", beginTime},
-		}
+
+		new(models.CardOrderUrl).DelWithConds([]*models.SqlPairCondition{&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 2* 3600}}, 10)
 
 		delCount, err := new(models.CardOrderLog).DelWithConds(conds, 10)
 		if err != nil {

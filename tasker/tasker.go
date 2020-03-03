@@ -49,12 +49,16 @@ func (this *Tasker) run() {
 	cardOrderHistoryTicker := time.NewTicker(time.Hour * 6)
 	cardOrderHistoryTicker.Stop()
 
-	cardOrderUnFinishSms5MinTicker := time.NewTicker(time.Minute * 3)
-	cardOrderUnFinishSms5MinTicker.Stop()
-	cardOrderUnFinishSms1HourTicker := time.NewTicker(time.Minute * 60)
-	cardOrderUnFinishSms1HourTicker.Stop()
+	jthkNewUnfinishNotifyTicker := time.NewTicker(time.Minute * 3)
+	//cardOrderUnFinishSms5MinTicker.Stop()
+	jthkFailNotifyTicker := time.NewTicker(time.Minute * 60)
+	//cardOrderUnFinishSms1HourTicker.Stop()
 
-	ydhkUnFinishCheckTicker := time.NewTicker(time.Minute * 3)
+	ydhkUnFinishSmallCheckTicker := time.NewTicker(time.Minute * 3)
+	if !config.GConfig.Task.YdhkUnfinishFlag {
+		ydhkUnFinishSmallCheckTicker.Stop()
+	}
+	ydhkUnFinishCheckTicker := time.NewTicker(time.Minute * 20)
 	if !config.GConfig.Task.YdhkUnfinishFlag {
 		ydhkUnFinishCheckTicker.Stop()
 	}
@@ -86,10 +90,10 @@ func (this *Tasker) run() {
 		defer models.PanicPrint()
 		for {
 			select {
-			case <-cardOrderUnFinishSms5MinTicker.C:
-				//this.newUnFinishSmsWork5min()
-			case <-cardOrderUnFinishSms1HourTicker.C:
-				//this.newUnFinishSmsWork5hour()
+			case <-jthkNewUnfinishNotifyTicker.C:
+				this.jthkNewUnFinishNotify()
+			case <-jthkFailNotifyTicker.C:
+				this.jthkFailNotify()
 			}
 		}
 	}()
@@ -114,8 +118,10 @@ func (this *Tasker) run() {
 		defer models.PanicPrint()
 		for {
 			select {
-			case <-ydhkUnFinishCheckTicker.C:
-				this.ydhkOaoWork()
+			case <-ydhkUnFinishSmallCheckTicker.C:
+				this.ydhkOaoWork("ydhk_small_oao", 8*60, false)
+			case <- ydhkUnFinishCheckTicker.C:
+				this.ydhkOaoWork("ydhk_oao", 3600, true)
 			case <-ydhkExpressTicker.C:
 				this.ydhkExpressWork()
 			}

@@ -169,7 +169,8 @@ type(
 	}
 
 	FtIdCheckUrlGet struct {
-		OrderNo   string   `valid:"required"  json:"third_order_no,omitempty"`    //订单号
+		OrderId   *string   `valid:"required"  json:"order_no,omitempty"`
+		ThirdOrderNo   string   `valid:"required"  json:"third_order_no,omitempty"`    //订单号
 		NewPhone       string    `valid:"optional"  json:"new_phone,omitempty"`
 		Token  string    `valid:"optional"  json:"token,omitempty"`
 	}

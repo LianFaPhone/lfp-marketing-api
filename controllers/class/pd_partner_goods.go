@@ -57,14 +57,17 @@ func (this *PdPartnerGoods) Add(ctx iris.Context) {
 		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_NOT_FOUND.Desc())
 		return
 	}
-	param.LongChain = new(string)
-	if partner.Code !=nil {
-		*param.LongChain = config.GConfig.Server.LfcxHost
-		if partner.PrefixPath != nil {
-			*param.LongChain += *partner.PrefixPath
+	if param.LongChain == nil {
+		param.LongChain = new(string)
+		if partner.Code !=nil {
+			*param.LongChain = config.GConfig.Server.LfcxHost
+			if partner.PrefixPath != nil {
+				*param.LongChain += *partner.PrefixPath
+			}
+			*param.LongChain += "/"+ *partner.Code +"/"+ *param.Code
 		}
-		*param.LongChain += "/"+ *partner.Code +"/"+ *param.Code
 	}
+
 
 	modelParam := new(models.PdPartnerGoods).ParseAdd(param)
 	flag,err := modelParam.Unique()
@@ -178,6 +181,7 @@ func (this *PdPartnerGoods) Update(ctx iris.Context) {
 		return
 	}
 	this.Response(ctx, res)
+	return
 	if res != nil && res.PartnerId != nil {
 		partner,err := new(models.PdPartner).GetById(*res.PartnerId)
 		if err != nil {

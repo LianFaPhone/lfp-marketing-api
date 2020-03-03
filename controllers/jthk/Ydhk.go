@@ -424,13 +424,23 @@ func (this *Ydhk) FtIdCheckUrlGet(ctx iris.Context) {
 		return
 	}
 
-	url,err := new(ReIdCheckUrl).Send(isOao,channelId, param.OrderNo, param.NewPhone, param.Token)
+	url,err := new(ReIdCheckUrl).Send(isOao,channelId, param.ThirdOrderNo, param.NewPhone, param.Token)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Retoken send err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
 		return
 	}
-
-
 	this.Response(ctx, url)
+	if param.OrderId == nil {
+		return
+	}
+	go func(){
+		err = new(models.CardOrderUrl).FtParseAdd(nil, param.OrderId, &url).Add()
+		if err != nil {
+			ZapLog().With(zap.Error(err)).Error("CardOrderUrl FtParseAdd err")
+		}
+	}()
+
+
+
 }

@@ -11,17 +11,18 @@ import (
 	"time"
 )
 
-func (this *Tasker) ydhkOaoWork() {
+
+func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailFlag bool) {
 	defer models.PanicPrint()
 
-	recoder, err := new(models.IdRecorder).GetByName("ydhk_oao")
+	recoder, err := new(models.IdRecorder).GetByName(idRecorderName)
 	if err != nil {
 		ZapLog().Error("IdRecorder GetByName err", zap.Error(err))
 		return
 	}
 
 	if recoder == nil {
-		if recoder, err = new(models.IdRecorder).Add("ydhk_oao", 0); err != nil {
+		if recoder, err = new(models.IdRecorder).Add(idRecorderName, 0); err != nil {
 			ZapLog().Error("IdRecorder Add ydhk_oao err", zap.Error(err))
 			return
 		}
@@ -36,22 +37,7 @@ func (this *Tasker) ydhkOaoWork() {
 		return
 	}
 
-	partnerIds := make([]*int64, 0)
-	for i:=0; i< len(config.GConfig.Jthk.ParterCodeArr);i++ {
-		if len(config.GConfig.Jthk.ParterCodeArr[i]) <= 0 {
-			continue
-		}
-		parter,err := new(models.PdPartner).GetByCode(config.GConfig.Jthk.ParterCodeArr[i])
-		if err != nil {
-			ZapLog().Error("GetByCOde err", zap.Error(err))
-			continue
-		}
-		if parter == nil {
-			continue
-		}
-		partnerIds = append(partnerIds, parter.Id)
-	}
-
+	partnerIds := GetJtHkPartnerIds()
 	if len(partnerIds) <= 0 {
 		return
 	}
@@ -60,7 +46,7 @@ func (this *Tasker) ydhkOaoWork() {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 			//&models.SqlPairCondition{"class_big_tp = ?", 5},
-			&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 60*60},
+			&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - delayTime},
 			//条件还得处理下
 		}
 
@@ -111,6 +97,9 @@ func (this *Tasker) ydhkOaoWork() {
 			if resOrderShortSerach.Ret != 200 {
 				log:= fmt.Sprintf("OAO检测：%d-%s", resOrderShortSerach.Ret, resOrderShortSerach.Msg)
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				if !SetFailFlag {
+					continue
+				}
 				*mp.Status = models.CONST_OrderStatus_Fail
 				if err = mp.Update(); err != nil {
 					ZapLog().Error("CardOrder Update err", zap.Error(err))
@@ -127,6 +116,9 @@ func (this *Tasker) ydhkOaoWork() {
 			if resOrderSearch.Ret != 200 {
 				log:= fmt.Sprintf("OAO检测：%d-%s", resOrderSearch.Ret, resOrderSearch.Msg)
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				if !SetFailFlag {
+					continue
+				}
 				*mp.Status = models.CONST_OrderStatus_Fail
 				if err = mp.Update(); err != nil {
 					ZapLog().Error("CardOrder Update err", zap.Error(err))
@@ -149,7 +141,9 @@ func (this *Tasker) ydhkOaoWork() {
 			if chooseOne == nil {
 				log:= "OAO检测：oao未发现"
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
-				//continue
+				if !SetFailFlag {
+					continue
+				}
 				*mp.Status = models.CONST_OrderStatus_Fail
 			}else{
 				*mp.Status = models.CONST_OrderStatus_New
@@ -203,21 +197,7 @@ func (this *Tasker) ydhkExpressWork() {
 	if len(config.GConfig.Jthk.ParterCode) <= 0 || len(config.GConfig.Jthk.ParterCodeArr) <= 0{
 		return
 	}
-	partnerIds := make([]*int64, 0)
-	for i:=0; i< len(config.GConfig.Jthk.ParterCodeArr);i++ {
-		if len(config.GConfig.Jthk.ParterCodeArr[i]) <= 0 {
-			continue
-		}
-		parter,err := new(models.PdPartner).GetByCode(config.GConfig.Jthk.ParterCodeArr[i])
-		if err != nil {
-			ZapLog().Error("GetByCOde err", zap.Error(err))
-			continue
-		}
-		if parter == nil {
-			continue
-		}
-		partnerIds = append(partnerIds, parter.Id)
-	}
+	partnerIds := GetJtHkPartnerIds()
 
 	if len(partnerIds) <= 0 {
 		return
@@ -355,3 +335,26 @@ func (this *Tasker) ydhkExpressWork() {
 }
 
 
+func GetJtHkPartnerIds() []*int64{
+	if len(config.GConfig.Jthk.ParterCode) <= 0 || len(config.GConfig.Jthk.ParterCodeArr) <= 0 {
+		return nil
+	}
+
+	partnerIds := make([]*int64, 0)
+	for i:=0; i< len(config.GConfig.Jthk.ParterCodeArr);i++ {
+		if len(config.GConfig.Jthk.ParterCodeArr[i]) <= 0 {
+			continue
+		}
+		parter,err := new(models.PdPartner).GetByCode(config.GConfig.Jthk.ParterCodeArr[i])
+		if err != nil {
+			ZapLog().Error("GetByCOde err", zap.Error(err))
+			continue
+		}
+		if parter == nil {
+			continue
+		}
+		partnerIds = append(partnerIds, parter.Id)
+	}
+
+	return partnerIds
+}
