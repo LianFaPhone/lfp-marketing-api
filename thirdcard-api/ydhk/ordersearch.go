@@ -55,6 +55,7 @@ func (this *ReOrderSerach) Send(phone, idcard string) ([]*OrderInfo, error) {
 		"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
 		"Accept": "*/*",
 		//"Host": config.GConfig.Jthk.Host,
+		"X-Requested-With":"XMLHttpRequest",
 		"Origin": config.GConfig.Jthk.SearchUrl,
 		"Referer": config.GConfig.Jthk.SearchUrl+"/rwkgzh/views/youthCard/order/orderList.jsp?mobilephone="+phone+"&certificateNo="+idcard,
 	}
