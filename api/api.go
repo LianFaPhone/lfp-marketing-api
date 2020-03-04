@@ -164,12 +164,13 @@ type(
 	}
 
 	FtResYdhkApply struct{
-		OrderId string   `json:"third_order_no"`
+		ThirdOrderId string   `json:"third_order_no"`
+		//OrderId string   `json:"order_no"`
 		OaoModel  bool    `json:"oao_model"`
 	}
 
 	FtIdCheckUrlGet struct {
-		OrderId   *string   `valid:"required"  json:"order_no,omitempty"`
+		OrderId   *string   `valid:"optional"  json:"order_no,omitempty"`
 		ThirdOrderNo   string   `valid:"required"  json:"third_order_no,omitempty"`    //订单号
 		NewPhone       string    `valid:"optional"  json:"new_phone,omitempty"`
 		Token  string    `valid:"optional"  json:"token,omitempty"`
