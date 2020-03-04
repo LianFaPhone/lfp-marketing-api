@@ -4,6 +4,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/models"
 	"LianFaPhone/lfp-marketing-api/sdk"
 	"go.uber.org/zap"
+	"strings"
 	"time"
 )
 
@@ -44,7 +45,7 @@ func (this *Tasker) jthkFailNotify() {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 			&models.SqlPairCondition{"created_at <= ?", nowTime-5*3600},
-			&models.SqlPairCondition{"created_at >= ?", nowTime-7*3600},
+			&models.SqlPairCondition{"created_at >= ?", nowTime-10*3600},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_Fail},
 		}
 
@@ -70,13 +71,36 @@ func (this *Tasker) jthkFailNotify() {
 			if *orderArr[i].Id > startId {
 				startId = *orderArr[i].Id
 			}
+			logArr, err := new(models.CardOrderLog).GetsByOrderNoWithConds(*orderArr[i].OrderNo,10, []*models.SqlPairCondition{&models.SqlPairCondition{"created_at >= ?", nowTime - 2*24*3600}})
+			if err !=nil {
+				ZapLog().Error("GetsByOrderNoWithConds err", zap.Error(err))
+			}
+
+			if len(logArr) <=0 {
+				continue
+			}
+			oaoFlag := false
+			for m:=0; m < len(logArr);m++ {
+				orderlog := logArr[m]
+				if orderlog.Log == nil || len(*orderlog.Log) <= 0{
+					continue
+				}
+				if strings.Contains(*orderlog.Log, "OAO") {
+					oaoFlag = true
+					break
+				}
+			}
+
+			if !oaoFlag {
+				continue
+			}
 
 			if err := sdk.GNotifySdk.SendSms(nil, *orderArr[i].Phone, "yd_jthk_fail",0, &platformTp); err != nil {
 				ZapLog().Error("GNotifySdk.SendSms err", zap.Error(err))
 				continue
 			}
 
-			time.Sleep(time.Millisecond * 1)
+			time.Sleep(time.Millisecond * 1000)
 		}
 
 		err = recoder.Update(startId)

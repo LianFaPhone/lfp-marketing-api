@@ -51,7 +51,7 @@ func (this *Tasker) run() {
 
 	jthkNewUnfinishNotifyTicker := time.NewTicker(time.Minute * 3)
 	//cardOrderUnFinishSms5MinTicker.Stop()
-	jthkFailNotifyTicker := time.NewTicker(time.Minute * 90)
+	jthkFailNotifyTicker := time.NewTicker(time.Minute * 60)
 	//cardOrderUnFinishSms1HourTicker.Stop()
 
 	ydhkUnFinishSmallCheckTicker := time.NewTicker(time.Minute * 3)
@@ -138,7 +138,7 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-ydhkUnFinishSmallCheckTicker.C:
-				this.ydhkOaoWork("ydhk_small_oao", 8*60, false)
+				this.ydhkOaoWork("ydhk_small_oao", 10*60, false)
 			}
 		}
 	}()

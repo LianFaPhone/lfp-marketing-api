@@ -4,12 +4,14 @@ import (
 	"LianFaPhone/lfp-marketing-api/api"
 	"LianFaPhone/lfp-marketing-api/common"
 	"LianFaPhone/lfp-marketing-api/db"
+	"github.com/jinzhu/gorm"
 )
 
 type CardOrderLog struct{
 	Id         *int64  `json:"id,omitempty"       gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"`  //加上type:int(11)后AUTO_INCREMENT无效
 	OrderId    *int64 `json:"order_id,omitempty"  gorm:"column:order_id;type:bigint(20);"` //订单号
 	OrderNo    *string `json:"order_no,omitempty"   gorm:"column:order_no;type:varchar(30);"` //订单号
+	Tp         *int   `json:"tp,omitempty"   gorm:"column:tp;type:tinyint(6);default 0"` //类型
 	Log        *string `json:"log,omitempty"   gorm:"column:log;type:varchar(100);"`
 	Table
 }
@@ -73,4 +75,26 @@ func (this *CardOrderLog) ListWithConds(page, size int64, needFields []string, c
 	query = query.Order("valid desc").Order("created_at desc")
 
 	return new(common.Result).PageQuery(query, &CardOrderLog{}, &list, page, size, nil, "")
+}
+
+func (this *CardOrderLog) GetsByOrderNoWithConds(orderNo string,limit int, condPair []*SqlPairCondition) ([]*CardOrderLog, error) {
+	var list []*CardOrderLog
+
+	query := db.GDbMgr.Get().Where("order_no = ?", orderNo)
+
+	for i := 0; i < len(condPair); i++ {
+		if condPair[i] == nil {
+			continue
+		}
+		query = query.Where(condPair[i].Key, condPair[i].Value)
+	}
+
+
+	query = query.Order("id desc").Limit(limit)
+
+	err := query.Find(&list).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil,nil
+	}
+	return list,err
 }

@@ -28,7 +28,7 @@ func (this *Tasker) clearWork() {
 	//	startId = *idRecord.IdTag
 	//}
 
-	beginTime := time.Now().Unix() - 3 * 30 * 24* 3600
+	beginTime := time.Now().Unix() - 1 * 30 * 24* 3600
 	conds := []*models.SqlPairCondition{
 		//&models.SqlPairCondition{"id > ?", startId},
 		&models.SqlPairCondition{"created_at <= ?", beginTime},
