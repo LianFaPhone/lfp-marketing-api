@@ -300,7 +300,7 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 				}
 			}
 
-			if (mp.Express == nil) && (chooseOne.ShipmentNo !=nil) && (len(chooseOne.Tid) > 0) && (chooseOne.ShipmentCompanyCode != nil) {
+			if ((mp.Express == nil) || (len(*mp.Express) == 0)) && (chooseOne.ShipmentNo !=nil) && (len(chooseOne.Tid) > 0) && (chooseOne.ShipmentCompanyCode != nil) {
 				orderDetail,err := new(ydhk.ReOrderDetailSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard, chooseOne.Tid, *chooseOne.ShipmentCompanyCode, *chooseOne.ShipmentNo)
 				if err != nil {
 					log:= "快递详情查询:"+err.Error()
