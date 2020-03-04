@@ -34,8 +34,12 @@ const (
 	CONST_OrderStatus_Already_Activated      = 8     //已激活
 	CONST_OrderStatus_Already_Activated_Name = "已激活" //已激活
 
-	CONST_OrderStatus_Fail  = 11     //新订单
+	//11--19全是失败得
+	CONST_OrderStatus_Fail  = 11     //失败
 	CONST_OrderStatus_Fail_Name = "失败" //
+
+	CONST_OrderStatus_Fail_Retry  = 12     //失败
+	CONST_OrderStatus_Fail_Retry_Name = "失败可重试" //
 )
 
 var PathToOrderStatus = map[string] int {
@@ -50,6 +54,7 @@ var PathToOrderStatus = map[string] int {
 	"unmatch": CONST_OrderStatus_UnMatch ,
 	"activated": CONST_OrderStatus_Already_Activated ,
 	"fail":CONST_OrderStatus_Fail,
+	"fail-retry":CONST_OrderStatus_Fail_Retry,
 }
 
 var OrderStatusMap = map[int]string{
@@ -63,6 +68,7 @@ var OrderStatusMap = map[int]string{
 	CONST_OrderStatus_UnMatch:           CONST_OrderStatus_UnMatch_Name,
 	CONST_OrderStatus_Already_Activated: CONST_OrderStatus_Already_Activated_Name,
 	CONST_OrderStatus_Fail:              CONST_OrderStatus_Fail_Name,
+	CONST_OrderStatus_Fail_Retry:   CONST_OrderStatus_Fail_Retry_Name,
 }
 
 var OrderStatusArr = []*OrderStatus{
@@ -76,4 +82,5 @@ var OrderStatusArr = []*OrderStatus{
 	&OrderStatus{CONST_OrderStatus_UnMatch, CONST_OrderStatus_UnMatch_Name},
 	&OrderStatus{CONST_OrderStatus_Already_Activated, CONST_OrderStatus_Already_Activated_Name},
 	&OrderStatus{CONST_OrderStatus_Fail, CONST_OrderStatus_Fail_Name},
+	&OrderStatus{CONST_OrderStatus_Fail_Retry, CONST_OrderStatus_Fail_Retry_Name},
 }
