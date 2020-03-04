@@ -45,8 +45,8 @@ func (this *Tasker) jthkFailNotify() {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 			&models.SqlPairCondition{"created_at <= ?", nowTime-5*3600},
-			&models.SqlPairCondition{"created_at >= ?", nowTime-15*3600},
-			&models.SqlPairCondition{"status in (?)", []int{models.CONST_OrderStatus_Fail, models.CONST_OrderStatus_Fail_Retry}},
+			&models.SqlPairCondition{"created_at >= ?", nowTime-25*3600},
+			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_Fail_Retry},
 		}
 
 		if len(partnerIds) > 0 {
@@ -73,37 +73,40 @@ func (this *Tasker) jthkFailNotify() {
 			}
 
 			//fail_retry 直接放过
-			if orderArr[i].Status != nil && *orderArr[i].Status ==  models.CONST_OrderStatus_Fail{
-				logArr, err := new(models.CardOrderLog).GetsByOrderNoWithConds(*orderArr[i].OrderNo,10, []*models.SqlPairCondition{&models.SqlPairCondition{"created_at >= ?", nowTime - 2*24*3600}})
-				if err !=nil {
-					ZapLog().Error("GetsByOrderNoWithConds err", zap.Error(err))
-				}
-
-				if len(logArr) <=0 {
-					continue
-				}
-				oaoFlag := false
-				for m:=0; m < len(logArr);m++ {
-					orderlog := logArr[m]
-					if orderlog.Log == nil || len(*orderlog.Log) <= 0{
-						continue
-					}
-					if strings.Contains(*orderlog.Log, "OAO") {
-						oaoFlag = true
-						break
-					}
-				}
-
-				if !oaoFlag {
-					continue
-				}
-			}
-
-
+			//if orderArr[i].Status != nil && *orderArr[i].Status ==  models.CONST_OrderStatus_Fail{
+			//	logArr, err := new(models.CardOrderLog).GetsByOrderNoWithConds(*orderArr[i].OrderNo,10, []*models.SqlPairCondition{&models.SqlPairCondition{"created_at >= ?", nowTime - 2*24*3600}})
+			//	if err !=nil {
+			//		ZapLog().Error("GetsByOrderNoWithConds err", zap.Error(err))
+			//	}
+			//
+			//	if len(logArr) <=0 {
+			//		continue
+			//	}
+			//	oaoFlag := false
+			//	for m:=0; m < len(logArr);m++ {
+			//		orderlog := logArr[m]
+			//		if orderlog.Log == nil || len(*orderlog.Log) <= 0{
+			//			continue
+			//		}
+			//		if strings.Contains(*orderlog.Log, "OAO") {
+			//			oaoFlag = true
+			//			break
+			//		}
+			//	}
+			//
+			//	if !oaoFlag {
+			//		continue
+			//	}
+			//}
+			log := "短信发送：再次下单提醒, 成功"
 			if err := sdk.GNotifySdk.SendSms(nil, *orderArr[i].Phone, "yd_jthk_fail",0, &platformTp); err != nil {
 				ZapLog().Error("GNotifySdk.SendSms err", zap.Error(err))
-				continue
+				//continue
+				log = "短信发送：再次下单提醒, 失败"
 			}
+
+			new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+
 
 			time.Sleep(time.Millisecond * 1000)
 		}
@@ -185,19 +188,28 @@ func (this *Tasker) jthkNewUnFinishNotify() {
 			orderUrl,err := new(models.CardOrderUrl).GetByOrderNo(*orderArr[i].OrderNo)
 			if err != nil {
 				ZapLog().Error("CardOrderUrl GetByOrderNo err", zap.Error(err))
+				log:= "短信发送：照片上传提醒，未找到Url信息"
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 			if orderUrl == nil || orderUrl.Url == nil || len(*orderUrl.Url) < 3 {
+				log:= "短信发送：照片上传提醒，未找到Url信息"
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 			if !strings.HasPrefix(*orderUrl.Url, " ") {
 				*orderUrl.Url = " "+*orderUrl.Url+" " //可生成短链
 			}
 
+			log:= "短信发送：照片上传提醒，发送成功"
+
 			if err := sdk.GNotifySdk.SendSms([]string{*orderUrl.Url}, *orderArr[i].Phone, "yd_jthk_new_unfinish",0, &platformTp); err != nil {
 				ZapLog().Error("GNotifySdk.SendSms err", zap.Error(err))
-				continue
+				//continue
+				log= "短信发送：照片上传提醒，发送失败"
 			}
+			new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+
 
 			//time.Sleep(time.Millisecond * 1)
 		}

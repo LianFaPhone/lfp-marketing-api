@@ -86,7 +86,7 @@ func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailF
 			if orderArr[i].Phone == nil || orderArr[i].NewPhone == nil || orderArr[i].IdCard == nil {
 				log:= "OAO检测：信息不全"
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
-				*mp.Status = models.CONST_OrderStatus_Fail
+				*mp.Status = models.CONST_OrderStatus_Fail_Retry
 				if err = mp.Update(); err != nil {
 					ZapLog().Error("CardOrder Update err", zap.Error(err))
 				}
@@ -106,7 +106,7 @@ func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailF
 				if !SetFailFlag {
 					continue
 				}
-				*mp.Status = models.CONST_OrderStatus_Fail
+				*mp.Status = models.CONST_OrderStatus_Fail_Retry
 				if err = mp.Update(); err != nil {
 					ZapLog().Error("CardOrder Update err", zap.Error(err))
 				}
@@ -125,7 +125,7 @@ func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailF
 				if !SetFailFlag {
 					continue
 				}
-				*mp.Status = models.CONST_OrderStatus_Fail
+				*mp.Status = models.CONST_OrderStatus_Fail_Retry
 				if err = mp.Update(); err != nil {
 					ZapLog().Error("CardOrder Update err", zap.Error(err))
 				}
@@ -150,7 +150,7 @@ func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailF
 				if !SetFailFlag {
 					continue
 				}
-				*mp.Status = models.CONST_OrderStatus_Fail
+				*mp.Status = models.CONST_OrderStatus_Fail_Retry
 			}else{
 				*mp.Status = models.CONST_OrderStatus_New
 			}
@@ -284,6 +284,8 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 				}
 			}
 			if chooseOne == nil {
+				log:= "快递查询：未查到相关信息"
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 			haveExpreeFlag = true
@@ -335,7 +337,7 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 		if len(orderArr) < 10 {
 			break
 		}
-		time.Sleep(time.Second * 5)
+		time.Sleep(time.Second * 2)
 	}
 
 }

@@ -35,6 +35,8 @@ const (
 	CONST_OrderStatus_Already_Activated_Name = "已激活" //已激活
 
 	//11--19全是失败得
+	CONST_OrderStatus_MaxFail = 19
+	CONST_OrderStatus_MinFail = 11
 	CONST_OrderStatus_Fail  = 11     //失败
 	CONST_OrderStatus_Fail_Name = "失败" //
 

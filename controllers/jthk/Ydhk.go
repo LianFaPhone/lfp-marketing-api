@@ -291,7 +291,7 @@ func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thir
 
 	modelParam.Status = new(int)
 	if errCode != 0 {
-		*modelParam.Status =	models.CONST_OrderStatus_Fail
+		*modelParam.Status = this.ParseFailStatus(orderErr.Error())
 	}else{
 		if oaoFlag == true {
 			*modelParam.Status =	models.CONST_OrderStatus_New
@@ -320,14 +320,18 @@ func (this * Ydhk) recordOldOrder(oldOrder *models.CardOrder, errCode apibackend
 		}else{
 			newStatus =	models.CONST_OrderStatus_New_UnFinish
 		}
+	}else{
+		newStatus = this.ParseFailStatus(orderErr.Error())
 	}
-	if (oldOrder.Status!=nil) && (*oldOrder.Status == models.CONST_OrderStatus_Fail) {
+	if (oldOrder.Status!=nil) && (*oldOrder.Status >= models.CONST_OrderStatus_MinFail || *oldOrder.Status <= models.CONST_OrderStatus_MaxFail) {
 		if err := new(models.CardOrder).UpdateStatusByOrderNo(*oldOrder.OrderNo, newStatus); err != nil {
 			ZapLog().With(zap.Error(err)).Error("database err")
+			log := "老订单状态更新失败"
+			new(models.CardOrderLog).FtParseAdd(nil,oldOrder.OrderNo, &log).Add()
 		}
 	}
 
-	log := "订单申请成功"
+	log := "订单再次申请成功"
 	if errCode != 0 {
 		log = orderErr.Error()
 	}
@@ -451,9 +455,27 @@ func (this *Ydhk) FtIdCheckUrlGet(ctx iris.Context) {
 		err = new(models.CardOrderUrl).FtParseAdd(nil, param.OrderId, &url).Add()
 		if err != nil {
 			ZapLog().With(zap.Error(err)).Error("CardOrderUrl FtParseAdd err")
+			log := "上传照片网址存储失败："+err.Error()
+			new(models.CardOrderLog).FtParseAdd(nil, param.OrderId, &log).Add()
+
 		}
 	}()
 
 
 
+}
+
+func (this *Ydhk) ParseFailStatus(errMsg string) int {
+	if strings.Contains(errMsg, "欠费号码") {
+		return models.CONST_OrderStatus_Fail_Retry
+	}else if strings.Contains(errMsg, "已超时") {
+		return models.CONST_OrderStatus_Fail_Retry
+	}else if strings.Contains(errMsg, "系统错误") {
+		return models.CONST_OrderStatus_Fail_Retry
+	}else if strings.Contains(errMsg, "订购的号码不存在") {
+		return models.CONST_OrderStatus_Fail_Retry
+	}else if strings.Contains(errMsg, "号码已被占用") {
+		return models.CONST_OrderStatus_Fail_Retry
+	}
+	return models.CONST_OrderStatus_Fail
 }
