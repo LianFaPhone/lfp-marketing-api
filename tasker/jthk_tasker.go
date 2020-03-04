@@ -179,17 +179,17 @@ func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailF
 }
 
 
-func (this *Tasker) ydhkExpressWork() {
+func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 	defer models.PanicPrint()
 
-	recoder, err := new(models.IdRecorder).GetByName("ydhk_express")
+	recoder, err := new(models.IdRecorder).GetByName(idRecordName)
 	if err != nil {
 		ZapLog().Error("IdRecorder GetByName err", zap.Error(err))
 		return
 	}
 
 	if recoder == nil {
-		if recoder, err = new(models.IdRecorder).Add("ydhk_express", 0); err != nil {
+		if recoder, err = new(models.IdRecorder).Add(idRecordName, 0); err != nil {
 			ZapLog().Error("IdRecorder Add card_order_ips err", zap.Error(err))
 			return
 		}
@@ -213,7 +213,7 @@ func (this *Tasker) ydhkExpressWork() {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 			//&models.SqlPairCondition{"class_big_tp = ?", 5},
-			&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 24*3600},
+			&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - delay},
 			//条件还得处理下
 			//&models.SqlPairCondition{"partner_id in ?", parter.Id},
 		}

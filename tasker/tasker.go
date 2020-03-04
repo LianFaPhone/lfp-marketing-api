@@ -148,7 +148,17 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-ydhkExpressTicker.C:
-				this.ydhkExpressWork() //24小时
+				this.ydhkExpressWork("ydhk_express", 24*3600) //24小时
+			}
+		}
+	}()
+
+	go func() {
+		defer models.PanicPrint()
+		for {
+			select {
+			case <-ydhkExpressTicker.C:
+				this.ydhkExpressWork("ydhk_small_express", 8*3600) //24小时
 			}
 		}
 	}()

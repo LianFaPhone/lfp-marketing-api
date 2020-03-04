@@ -436,10 +436,18 @@ func (this *Ydhk) FtIdCheckUrlGet(ctx iris.Context) {
 		return
 	}
 	this.Response(ctx, url)
-	if param.OrderId == nil {
-		return
-	}
 	go func(){
+		if param.OrderId == nil {
+			cardOrder,err := new(models.CardOrder).GetByThirdOrderNo(param.ThirdOrderNo)
+			if err != nil {
+				ZapLog().With(zap.Error(err)).Error("CardOrderUrl FtParseAdd err")
+				return
+			}
+			param.OrderId = cardOrder.OrderNo
+		}
+		if param.OrderId == nil {
+			return
+		}
 		err = new(models.CardOrderUrl).FtParseAdd(nil, param.OrderId, &url).Add()
 		if err != nil {
 			ZapLog().With(zap.Error(err)).Error("CardOrderUrl FtParseAdd err")

@@ -185,6 +185,9 @@ func (this *Tasker) jthkNewUnFinishNotify() {
 			if orderUrl == nil || orderUrl.Url == nil || len(*orderUrl.Url) < 3 {
 				continue
 			}
+			if !strings.HasPrefix(*orderUrl.Url, " ") {
+				*orderUrl.Url = " "+*orderUrl.Url+" " //可生成短链
+			}
 
 			if err := sdk.GNotifySdk.SendSms([]string{*orderUrl.Url}, *orderArr[i].Phone, "yd_jthk_new_unfinish",0, &platformTp); err != nil {
 				ZapLog().Error("GNotifySdk.SendSms err", zap.Error(err))

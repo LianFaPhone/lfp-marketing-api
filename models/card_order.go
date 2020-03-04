@@ -408,6 +408,15 @@ func (this *CardOrder) GetByOrderNo(no string) (*CardOrder, error) {
 	return acty, err
 }
 
+func (this *CardOrder) GetByThirdOrderNo(no string) (*CardOrder, error) {
+	acty := new(CardOrder)
+	err := db.GDbMgr.Get().Where("third_order_no = ?", no).Last(acty).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return acty, err
+}
+
 func (this *CardOrder) GetById(id int64) (*CardOrder, error) {
 	acty := new(CardOrder)
 	err := db.GDbMgr.Get().Where("id = ?", id).Last(acty).Error
