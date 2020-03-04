@@ -77,16 +77,22 @@ func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailF
 			if  *orderArr[i].Status != models.CONST_OrderStatus_New_UnFinish {
 				continue
 			}
-			if orderArr[i].Phone == nil || orderArr[i].NewPhone == nil || orderArr[i].IdCard == nil {
-				log:= "OAO检测：信息不全"
-				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
-				continue
-			}
 
 			mp := &models.CardOrder{
 				Id: orderArr[i].Id,
 				Status: new(int),
 			}
+
+			if orderArr[i].Phone == nil || orderArr[i].NewPhone == nil || orderArr[i].IdCard == nil {
+				log:= "OAO检测：信息不全"
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				*mp.Status = models.CONST_OrderStatus_Fail
+				if err = mp.Update(); err != nil {
+					ZapLog().Error("CardOrder Update err", zap.Error(err))
+				}
+				continue
+			}
+
 
 			resOrderShortSerach,err := new(ydhk.ReOrderShortSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard);
 			if err != nil {

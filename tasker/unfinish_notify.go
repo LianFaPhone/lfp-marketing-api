@@ -64,7 +64,7 @@ func (this *Tasker) jthkFailNotify() {
 
 		//记录id, 倒叙
 		for i := len(orderArr) - 1; i >= 0; i-- {
-			if orderArr[i] == nil || orderArr[i].OrderNo == nil{
+			if orderArr[i] == nil || orderArr[i].OrderNo == nil || orderArr[i].Phone == nil{
 				continue
 			}
 			if *orderArr[i].Id > startId {
@@ -146,7 +146,7 @@ func (this *Tasker) jthkNewUnFinishNotify() {
 
 		//记录id, 倒叙
 		for i := len(orderArr) - 1; i >= 0; i-- {
-			if orderArr[i] == nil || orderArr[i].OrderNo == nil {
+			if orderArr[i] == nil || orderArr[i].OrderNo == nil || orderArr[i].Phone == nil{
 				continue
 			}
 			if *orderArr[i].Id > startId {
