@@ -146,16 +146,16 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 	channelId := ctx.URLParam("channelId")
 
 	param := new(api.FtYdhkApply) //不对过多参数做检测，提高性能，前端必须做好检测。
-	if err := ctx.ReadJSON(param); err != nil {
+	if err := Tools.ShouldBindJSON(ctx, param); err != nil {
 		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
 		ZapLog().Error("param err", zap.Error(err))
 		return
 	}
-	if len(param.CertificateNo) <=0 || len(param.Phone) <= 0 {
-		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
-		ZapLog().Error("param err")
-		return
-	}
+	//if len(param.CertificateNo) <=0 || len(param.Phone) <= 0 {
+	//	this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+	//	ZapLog().Error("param err")
+	//	return
+	//}
 
 	if (len(channelId) == 0) && (param.PartnerGoodsCode != nil) {
 		ppg,err := new(models.PdPartnerGoods).GetByCodeFromCache(*param.PartnerGoodsCode)

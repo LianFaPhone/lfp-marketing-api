@@ -135,27 +135,27 @@ type(
 	}
 
 	FtYdhkApply struct{
-		Phone   string  `json:"phone"`
-		NewPhone      string  `json:"new_phone"`
-		LeagalName    string    `json:"true_name"`
-		CertificateNo    string    `json:"idcard"`
+		Phone   string  `valid:"required" json:"phone"`
+		NewPhone      string  `valid:"required" json:"new_phone"`
+		LeagalName    string    `valid:"required" json:"true_name"`
+		CertificateNo    string    `valid:"required" json:"idcard"`
 
-		Province    string    `json:"province_code"`
-		City    string        `json:"city_code"`
+		Province    string    `valid:"optional" json:"province_code"`
+		City    string        `valid:"optional" json:"city_code"`
 
-		SendProvinceName    string    `json:"express_province"`
-		SendCityName    string    `json:"express_city"`
-		SendDistrictName    string    `json:"express_district"`
+		SendProvinceName    string    `valid:"optional" json:"express_province"`
+		SendCityName    string    `valid:"optional" json:"express_city"`
+		SendDistrictName    string    `valid:"optional" json:"express_district"`
 
-		SendProvince    string    `json:"express_province_code"`
-		SendCity    string    `json:"express_city_code"`
-		SendDistrict    string    `json:"express_district_code"`
-		Address    string     `json:"express_address"`
+		SendProvince    string    `valid:"optional" json:"express_province_code"`
+		SendCity    string    `valid:"optional" json:"express_city_code"`
+		SendDistrict    string    `valid:"optional" json:"express_district_code"`
+		Address    string     `valid:"optional" json:"express_address"`
 
-		AccessToken     string   `json:"token"`
+		AccessToken     string   `valid:"required" json:"token"`
 
 		PartnerId    *int64    `valid:"optional" json:"-"  `                 //手机卡套餐类型
-		PartnerGoodsCode    *string    `valid:"optional" json:"partner_goods_code,omitempty"   `                 //手机卡套餐类型
+		PartnerGoodsCode    *string    `valid:"required" json:"partner_goods_code,omitempty"   `                 //手机卡套餐类型
 
 		ClassISP     *int    `valid:"optional" json:"-"`
 		IP           *string  `valid:"optional" json:"ip,omitempty"` //从header

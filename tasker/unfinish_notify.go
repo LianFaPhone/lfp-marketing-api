@@ -145,7 +145,7 @@ func (this *Tasker) jthkNewUnFinishNotify() {
 	}
 
 	nowTime := time.Now().Unix()
-	platformTp :=2
+	platformTp :=2 //chuanglan
 
 	for true {
 		conds := []*models.SqlPairCondition{

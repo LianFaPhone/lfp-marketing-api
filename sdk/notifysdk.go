@@ -46,6 +46,7 @@ func (this *NotifySdk) SendSms(Params []string, phone, tempName string, PlayTp i
 		Params:   Params,
 		Phone:    []string{phone},
 		Author:   new(string),
+		PlatformTp: PlatformTp,
 	}
 	data, err := json.Marshal(param)
 	if err != nil {
