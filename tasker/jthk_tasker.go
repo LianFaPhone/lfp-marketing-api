@@ -329,9 +329,9 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 			time.Sleep(time.Second * 1)
 		}
 
-		//if ! haveExpreeFlag {
-		//	return
-		//}
+		if ! haveExpreeFlag {
+			//return
+		}
 
 		err = recoder.Update(startId)
 		if err != nil {
