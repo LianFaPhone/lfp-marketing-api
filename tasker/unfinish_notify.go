@@ -102,7 +102,7 @@ func (this *Tasker) jthkFailNotify() {
 			if err := sdk.GNotifySdk.SendSms(nil, *orderArr[i].Phone, "yd_jthk_fail",0, &platformTp); err != nil {
 				ZapLog().Error("GNotifySdk.SendSms err", zap.Error(err))
 				//continue
-				log = "短信发送：再次下单提醒, 失败"
+				log = "短信发送：再次下单提醒, 失败;"+err.Error()
 			}
 
 			new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
@@ -206,7 +206,7 @@ func (this *Tasker) jthkNewUnFinishNotify() {
 			if err := sdk.GNotifySdk.SendSms([]string{*orderUrl.Url}, *orderArr[i].Phone, "yd_jthk_new_unfinish",0, &platformTp); err != nil {
 				ZapLog().Error("GNotifySdk.SendSms err", zap.Error(err))
 				//continue
-				log= "短信发送：照片上传提醒，发送失败"
+				log= "短信发送：照片上传提醒，发送失败;"+err.Error()
 			}
 			new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 
