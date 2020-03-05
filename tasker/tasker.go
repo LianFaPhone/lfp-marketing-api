@@ -138,7 +138,7 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-ydhkUnFinishSmallCheckTicker.C:
-				this.ydhkOaoWork("ydhk_small_oao", 10*60, false)
+				this.ydhkOaoWork("ydhk_small_oao", 9*60, false)
 			}
 		}
 	}()
@@ -148,9 +148,15 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-ydhkExpressTicker.C:
-				this.ydhkExpressWork("ydhk_small_express", 8*3600) //24小时
-				this.ydhkExpressWork("ydhk_middle_express", 16*3600) //24小时
+				this.ydhkExpressWork("ydhk_small_express", 8*3600) //8小时
+				this.ydhkExpressWork("ydhk_middle_express", 16*3600) //16小时
 				this.ydhkExpressWork("ydhk_express", 24*3600) //24小时
+				hour := time.Now().Hour()
+				if hour >=2 && hour <= 6 {
+					this.ydhkExpressWork("ydhk_big_express", 36*3600) //2天
+					this.ydhkExpressWork("ydhk_large_express", 48*3600) //2天
+					this.ydhkExpressWork("ydhk_huge_express", 120*3600)//5天
+				}
 			}
 		}
 	}()
