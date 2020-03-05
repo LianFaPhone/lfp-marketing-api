@@ -245,7 +245,7 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 			if  *orderArr[i].Status != models.CONST_OrderStatus_New {
 				continue
 			}
-			if orderArr[i].ExpressNo != nil && len(*orderArr[i].ExpressNo) > 0 && orderArr[i].Express !=nil && len(*orderArr[i].Express) > 0{
+			if orderArr[i].ExpressNo != nil && len(*orderArr[i].ExpressNo) >= 2 && orderArr[i].Express !=nil && len(*orderArr[i].Express) >= 1{
 				haveExpreeFlag = true
 				continue
 			}
@@ -288,7 +288,7 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
-			if chooseOne.ShipmentNo == nil || len(*chooseOne.ShipmentNo) <= 1 {
+			if chooseOne.ShipmentNo == nil || len(*chooseOne.ShipmentNo) < 2 {
 				log:= "快递查询：未查到相关信息"
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
@@ -307,7 +307,7 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 				}
 			}
 
-			if ((mp.Express == nil) || (len(*mp.Express) == 0)) && (chooseOne.ShipmentNo !=nil) && (len(chooseOne.Tid) > 0) && (chooseOne.ShipmentCompanyCode != nil) {
+			if ((mp.Express == nil) || (len(*mp.Express) <= 1)) && (chooseOne.ShipmentNo !=nil) && (len(chooseOne.Tid) > 0) && (chooseOne.ShipmentCompanyCode != nil) {
 				orderDetail,err := new(ydhk.ReOrderDetailSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard, chooseOne.Tid, *chooseOne.ShipmentCompanyCode, *chooseOne.ShipmentNo)
 				if err != nil {
 					log:= "快递详情查询:网络问题，"+err.Error()
@@ -329,9 +329,9 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 			time.Sleep(time.Second * 1)
 		}
 
-		if ! haveExpreeFlag {
-			return
-		}
+		//if ! haveExpreeFlag {
+		//	return
+		//}
 
 		err = recoder.Update(startId)
 		if err != nil {
