@@ -156,6 +156,8 @@ func (this *PdPartnerGoods) FtGet(ctx iris.Context) {
 		IdcardDispplay: cc.IdcardDispplay,
 		BgColor: cc.BgColor,
 		Name: cc.Name,
+		HeadImgUrl: cc.HeadImgUrl,
+		TailImgUrl: cc.TailImgUrl,
 	}
 
 	this.Response(ctx, newCC)

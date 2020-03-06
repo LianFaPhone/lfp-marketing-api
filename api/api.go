@@ -89,6 +89,9 @@ type (
 		Code     *string  `json:"code,omitempty"     gorm:"column:code;type:varchar(10);unique" `
 		UrlParam *string  `json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
 		ImgUrl *string `json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
+		HeadImgUrl *string `json:"head_img_url,omitempty"     gorm:"column:head_img_url;type:varchar(250)"`
+		TailImgUrl *string `json:"tail_img_url,omitempty"     gorm:"column:tail_img_url;type:varchar(250)"`
+
 		NoExpAddr   *string      `json:"no_exp_addr,omitempty"     gorm:"column:no_exp_addr;type:varchar(200)"`
 		MinAge    *int    `json:"min_age,omitempty"     gorm:"column:min_age;type:int(11)"`
 		MaxAge    *int    `json:"max_age,omitempty"     gorm:"column:max_age;type:int(11)"`
