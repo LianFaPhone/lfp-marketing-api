@@ -165,6 +165,7 @@ type(
 		IP           *string  `valid:"optional" json:"ip,omitempty"` //从header
 		PhoneOSTp    *int    `valid:"optional" json:"device_os_tp,omitempty"` //从header
 		AdTp        *int `valid:"optional" json:"ad_tp,omitempty"`
+		UrlQueryString  *string `valid:"optional" json:"url_query_string,omitempty"`
 	}
 
 	FtResYdhkApply struct{

@@ -198,7 +198,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 	}
 
 	go func(){
-		adCallBack := ctx.URLParam("callback")
+		//adCallBack := ctx.URLParam("callback")
 		adTp,_ := ctx.URLParamInt("ad_tp")
 		orderNo := ""
 		oldOrder,_ := new(models.CardOrder).GetByIdcardAndNewPhone(param.CertificateNo, param.NewPhone, &models.SqlPairCondition{"created_at > ?", time.Now().Unix() - 300})
@@ -209,7 +209,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			orderNo = this.recordNewOrder(ctx, param, orderId, errCode, oaoFlag, orderErr)
 		}
 
-		if !oaoFlag ||  (len(adCallBack) <= 0) || (adTp <= 0){
+		if !oaoFlag || (adTp <= 0)|| param.UrlQueryString == nil {
 			return
 		}
 
@@ -217,6 +217,15 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		pushFlag :=1
 		succFlag := 1
 		if adTp == models.CONST_ADTRACK_Tp_KuaiShou {
+			urlValues,err := url.ParseQuery(*param.UrlQueryString)
+			if err != nil {
+				ZapLog().Error("kuaishou ParseQuery err", zap.Error(err))
+				return
+			}
+			adCallBack := urlValues.Get("callback")
+			if len(adCallBack) <= 0 {
+				return
+			}
 			if err := new(kuaishou.ReTracker).Send(adCallBack, "9", time.Now().UnixNano()/1000); err != nil {
 				ZapLog().Error("kuaishou send err", zap.Error(err), zap.String("callback", adCallBack))
 				log = "失败："+err.Error()
