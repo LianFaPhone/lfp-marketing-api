@@ -210,7 +210,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			orderNo = this.recordNewOrder(ctx, param, orderId, errCode, oaoFlag, orderErr)
 		}
 
-		if !oaoFlag || (adTp <= 0)|| param.UrlQueryString == nil {
+		if !oaoFlag ||(errCode != apibackend.BASERR_SUCCESS) || (param.UrlQueryString == nil) {
 			return
 		}
 		urlValues,err := url.ParseQuery(*param.UrlQueryString)
@@ -233,7 +233,10 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 
 			adCallBack := urlValues.Get("callback")
 			if len(adCallBack) <= 0 {
-				return
+				adCallBack = ctx.URLParam("callback")
+				if len(adCallBack) <= 0 {
+					return
+				}
 			}
 			if err := new(kuaishou.ReTracker).Send(adCallBack, "9", time.Now().UnixNano()/1000); err != nil {
 				ZapLog().Error("kuaishou send err", zap.Error(err), zap.String("callback", adCallBack))
