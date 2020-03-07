@@ -39,6 +39,7 @@ type PdPartnerGoods struct{
 	JdCode  *string  `json:"jd_code,omitempty"     gorm:"column:jd_code;type:varchar(15)" `
 //	MaxLimit    *int    `json:"max_limit,omitempty"       gorm:"column:max_limit;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 	Name  *string `json:"name,omitempty"     gorm:"column:name;type:varchar(15)" `
+	PageName  *string `json:"page_name,omitempty"     gorm:"column:page_name;type:varchar(20)" `
 	UrlParam *string  `json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
 	SellPoint *string `json:"sell_point,omitempty"     gorm:"column:sell_point;type:varchar(50)"`
 	BgColor *string `json:"bg_color,omitempty"     gorm:"column:bg_color;type:varchar(30)"` //
@@ -88,6 +89,7 @@ func (this * PdPartnerGoods) ParseAdd(p *api.BkPartnerGoodsAdd) *PdPartnerGoods 
 		SellPoint: p.SellPoint,
 		BgColor: p.BgColor,
 		AdTp: p.AdTp,
+		PageName: p.PageName,
 	}
 	cc.Valid = new(int)
 	*cc.Valid = 1
@@ -117,6 +119,7 @@ func (this * PdPartnerGoods) Parse(p *api.BkPartnerGoods) *PdPartnerGoods {
 
 		IdcardDispplay: p.IdcardDispplay,
 		UrlParam: p.UrlParam,
+		PageName: p.PageName,
 		//MaxLimit: p.MaxLimit,
 		//IdcardDispplay: p.IdcardDispplay,
 

@@ -355,6 +355,7 @@ type (
 		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		IdcardDispplay *int    `valid:"optional" json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3)"`
 		AdTp *int    `valid:"optional" json:"ad_tp,omitempty"      gorm:"column:ad_tp;type:int(11)"`
+		PageName  *string `valid:"optional" json:"page_name,omitempty"     gorm:"column:page_name;type:varchar(20)" `
 
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
@@ -380,6 +381,7 @@ type (
 		SellPoint *string `valid:"optional" json:"sell_point,omitempty"     gorm:"column:sell_point;type:varchar(50)"` //拼音首字母缩写
 		BgColor *string `valid:"optional" json:"bg_color,omitempty"     gorm:"column:bg_color;type:varchar(30)"` //
 		UrlParam *string  `valid:"optional" json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
+		PageName  *string `valid:"optional" json:"page_name,omitempty"     gorm:"column:page_name;type:varchar(20)" `
 
 		Name  *string `valid:"optional" json:"name,omitempty"     gorm:"column:name;type:varchar(50)" `
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`

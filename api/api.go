@@ -92,6 +92,7 @@ type (
 		HeadImgUrl *string `json:"head_img_url,omitempty"     gorm:"column:head_img_url;type:varchar(250)"`
 		TailImgUrl *string `json:"tail_img_url,omitempty"     gorm:"column:tail_img_url;type:varchar(250)"`
 		AdTp *int    `json:"ad_tp,omitempty"      gorm:"column:ad_tp;type:int(11)"`
+		PageName  *string `json:"page_name,omitempty"     gorm:"column:page_name;type:varchar(20)" `
 
 		NoExpAddr   *string      `json:"no_exp_addr,omitempty"     gorm:"column:no_exp_addr;type:varchar(200)"`
 		MinAge    *int    `json:"min_age,omitempty"     gorm:"column:min_age;type:int(11)"`

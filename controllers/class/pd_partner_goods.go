@@ -159,6 +159,7 @@ func (this *PdPartnerGoods) FtGet(ctx iris.Context) {
 		HeadImgUrl: cc.HeadImgUrl,
 		TailImgUrl: cc.TailImgUrl,
 		AdTp: cc.AdTp,
+		PageName: cc.PageName,
 	}
 
 	this.Response(ctx, newCC)
