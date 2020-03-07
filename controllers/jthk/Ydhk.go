@@ -198,6 +198,8 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 	}
 
 	go func(){
+		adCallBack := ctx.URLParam("callback")
+		adTp,_ := ctx.URLParamInt("ad_tp")
 		orderNo := ""
 		oldOrder,_ := new(models.CardOrder).GetByIdcardAndNewPhone(param.CertificateNo, param.NewPhone, &models.SqlPairCondition{"created_at > ?", time.Now().Unix() - 300})
 		if oldOrder != nil { // 老订单
@@ -206,22 +208,27 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		}else{
 			orderNo = this.recordNewOrder(ctx, param, orderId, errCode, oaoFlag, orderErr)
 		}
-		if !oaoFlag ||  (param.AdCallback == nil) || (param.AdTp == nil){
+
+		if !oaoFlag ||  (len(adCallBack) <= 0) || (adTp <= 0){
 			return
 		}
+
 		log:="成功"
 		pushFlag :=1
 		succFlag := 1
-		if err := new(kuaishou.ReTracker).Send(*param.AdCallback, "9", time.Now().UnixNano()/1000); err != nil {
-			ZapLog().Error("kuaishou send err", zap.Error(err), zap.String("callback", *param.AdCallback))
-			log = "失败："+err.Error()
-			pushFlag =0
-			succFlag = 0
+		if adTp == models.CONST_ADTRACK_Tp_KuaiShou {
+			if err := new(kuaishou.ReTracker).Send(adCallBack, "9", time.Now().UnixNano()/1000); err != nil {
+				ZapLog().Error("kuaishou send err", zap.Error(err), zap.String("callback", adCallBack))
+				log = "失败："+err.Error()
+				pushFlag =0
+				succFlag = 0
+			}
+
+			if err := new(models.AdTrack).FtParseAdd(&orderNo, &adCallBack,&log,  &adTp, &pushFlag, &succFlag).Add(); err != nil {
+				ZapLog().Error("AdTrack err", zap.Error(err), zap.String("callback", adCallBack))
+			}
 		}
 
-		if err := new(models.AdTrack).FtParseAdd(&orderNo, param.AdCallback,&log,  param.AdTp, &pushFlag, &succFlag).Add(); err != nil {
-			ZapLog().Error("AdTrack err", zap.Error(err), zap.String("callback", *param.AdCallback))
-		}
 
 	}()
 

@@ -164,7 +164,6 @@ type(
 		ClassISP     *int    `valid:"optional" json:"-"`
 		IP           *string  `valid:"optional" json:"ip,omitempty"` //从header
 		PhoneOSTp    *int    `valid:"optional" json:"device_os_tp,omitempty"` //从header
-		AdCallback  *string   `valid:"optional" json:"ad_callback,omitempty"`
 		AdTp        *int `valid:"optional" json:"ad_tp,omitempty"`
 	}
 

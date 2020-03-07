@@ -37,7 +37,7 @@ func (this *Tasker) clearWork() {
 	for i:=0; i<1000;i++ {
 
 		new(models.CardOrderUrl).DelWithConds([]*models.SqlPairCondition{&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 2* 3600}}, 10)
-		new(models.AdTrack).DelWithConds([]*models.SqlPairCondition{&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 24* 3600}}, 10)
+		new(models.AdTrack).DelWithConds([]*models.SqlPairCondition{&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 24*30* 3600}}, 10)
 
 		delCount, err := new(models.CardOrderLog).DelWithConds(conds, 10)
 		if err != nil {

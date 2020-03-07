@@ -13,7 +13,7 @@ type AdTrack struct{
 	Id         *int64  `json:"id,omitempty"       gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"`  //加上type:int(11)后AUTO_INCREMENT无效
 	Tp         *int `json:"tp,omitempty"  gorm:"column:tp;type:int(11);"` //订单号
 	OrderNo    *string `json:"order_no,omitempty"   gorm:"column:order_no;type:varchar(30);"` //订单号
-	Extra      *string `json:"extra,omitempty"   gorm:"column:extra;type:varchar(10000);"`
+	Extra      *string `json:"extra,omitempty"   gorm:"column:extra;type:varchar(200);"`
 	PushFlag   *int     `json:"push_flag,omitempty"  gorm:"column:push_flag;type:tinyint(3);"`
 	SuccFlag   *int     `json:"succ_flag,omitempty"  gorm:"column:succ_flag;type:tinyint(3);"`
 	Log        *string  `json:"log,omitempty"   gorm:"column:log;type:varchar(100);"`
