@@ -158,6 +158,7 @@ func (this *PdPartnerGoods) FtGet(ctx iris.Context) {
 		Name: cc.Name,
 		HeadImgUrl: cc.HeadImgUrl,
 		TailImgUrl: cc.TailImgUrl,
+		AdTp: cc.AdTp,
 	}
 
 	this.Response(ctx, newCC)

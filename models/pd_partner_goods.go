@@ -44,6 +44,7 @@ type PdPartnerGoods struct{
 	BgColor *string `json:"bg_color,omitempty"     gorm:"column:bg_color;type:varchar(30)"` //
 	SmsFlag *int    `json:"sms_flag,omitempty"      gorm:"column:sms_flag;type:tinyint(4)"`
 	IdcardDispplay *int    `json:"idcard_display,omitempty"      gorm:"column:idcard_display;type:tinyint(3);default 0"`
+	AdTp *int    `json:"ad_tp,omitempty"      gorm:"column:ad_tp;type:int(11)"`
 
 	Detail *string `json:"detail,omitempty"     gorm:"column:detail;type:varchar(20)"`
 	ShortChain *string `json:"short_chain,omitempty"     gorm:"column:short_chain;type:varchar(50)"`
@@ -86,6 +87,7 @@ func (this * PdPartnerGoods) ParseAdd(p *api.BkPartnerGoodsAdd) *PdPartnerGoods 
 		JdCode: p.JdCode,
 		SellPoint: p.SellPoint,
 		BgColor: p.BgColor,
+		AdTp: p.AdTp,
 	}
 	cc.Valid = new(int)
 	*cc.Valid = 1
@@ -102,7 +104,9 @@ func (this * PdPartnerGoods) Parse(p *api.BkPartnerGoods) *PdPartnerGoods {
 		ImgUrl: p.ImgUrl,
 		HeadImgUrl: p.HeadImgUrl,
 		TailImgUrl: p.TailImgUrl,
-//		FileUrl: p.FileUrl,
+		AdTp: p.AdTp,
+
+		//		FileUrl: p.FileUrl,
 		SmsFlag: p.SmsFlag,
 		PartnerId: p.PartnerId,
 		ShortChain: p.ShortChain,
@@ -128,6 +132,8 @@ func (this * PdPartnerGoods) ParseList(p *api.BkPartnerGoodsList) *PdPartnerGood
 //		FileUrl: p.FileUrl,
 	//	SmsFlag: p.SmsFlag,
 		PartnerId: p.PartnerId,
+		AdTp: p.AdTp,
+
 		//Valid: p.Valid,
 	//	IdcardDispplay: p.IdcardDispplay,
 	}

@@ -5,6 +5,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/common"
 	"LianFaPhone/lfp-marketing-api/config"
 	"LianFaPhone/lfp-marketing-api/models"
+	"LianFaPhone/lfp-marketing-api/thirdcard-api/kuaishou"
 	. "LianFaPhone/lfp-marketing-api/thirdcard-api/ydhk"
 	"fmt"
 	"go.uber.org/zap"
@@ -197,18 +198,36 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 	}
 
 	go func(){
+		orderNo := ""
 		oldOrder,_ := new(models.CardOrder).GetByIdcardAndNewPhone(param.CertificateNo, param.NewPhone, &models.SqlPairCondition{"created_at > ?", time.Now().Unix() - 300})
 		if oldOrder != nil { // 老订单
 			this.recordOldOrder(oldOrder, errCode, oaoFlag, orderErr)
+			orderNo = *oldOrder.OrderNo
 		}else{
-			this.recordNewOrder(ctx, param, orderId, errCode, oaoFlag, orderErr)
+			orderNo = this.recordNewOrder(ctx, param, orderId, errCode, oaoFlag, orderErr)
+		}
+		if !oaoFlag ||  (param.AdCallback == nil) || (param.AdTp == nil){
+			return
+		}
+		log:="成功"
+		pushFlag :=1
+		succFlag := 1
+		if err := new(kuaishou.ReTracker).Send(*param.AdCallback, "9", time.Now().UnixNano()/1000); err != nil {
+			ZapLog().Error("kuaishou send err", zap.Error(err), zap.String("callback", *param.AdCallback))
+			log = "失败："+err.Error()
+			pushFlag =0
+			succFlag = 0
+		}
+
+		if err := new(models.AdTrack).FtParseAdd(&orderNo, param.AdCallback,&log,  param.AdTp, &pushFlag, &succFlag).Add(); err != nil {
+			ZapLog().Error("AdTrack err", zap.Error(err), zap.String("callback", *param.AdCallback))
 		}
 
 	}()
 
 }
 
-func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thirdOrderId string, errCode apibackend.EnumBasErr, oaoFlag bool, orderErr error) {
+func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thirdOrderId string, errCode apibackend.EnumBasErr, oaoFlag bool, orderErr error) string {
 	orderNo := fmt.Sprintf("D%s%s%03d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
 	modelParam := &models.CardOrder{
 		OrderNo:  &orderNo,
@@ -302,7 +321,7 @@ func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thir
 
 	if err := modelParam.Add(); err != nil {
 		ZapLog().With(zap.Error(err)).Error("database err")
-		return
+		return orderNo
 	}
 	if errCode != 0 {
 		log := orderErr.Error()
@@ -310,6 +329,7 @@ func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thir
 			ZapLog().With(zap.Error(err)).Error("database err")
 		}
 	}
+	return orderNo
 }
 
 func (this * Ydhk) recordOldOrder(oldOrder *models.CardOrder, errCode apibackend.EnumBasErr, oaoFlag bool, orderErr error) {
