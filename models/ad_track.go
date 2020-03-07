@@ -24,10 +24,10 @@ func (this * AdTrack) TableName() string {
 	return "ad_track"
 }
 
-func (this *AdTrack) FtParseAdd(orderNo, Extra, Log *string, tp, pushFlag, succFlag *int) *AdTrack {
+func (this *AdTrack) FtParseAdd(orderNo, Extra, Log *string, tp int, pushFlag, succFlag *int) *AdTrack {
 	this.Extra = Extra
 	this.OrderNo = orderNo
-	this.Tp = tp
+	this.Tp = &tp
 	this.Log = Log
 	this.PushFlag = pushFlag
 	this.SuccFlag = succFlag

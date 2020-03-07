@@ -158,6 +158,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 	//	return
 	//}
 
+	adTp := int64(0)
 	if (len(channelId) == 0) && (param.PartnerGoodsCode != nil) {
 		ppg,err := new(models.PdPartnerGoods).GetByCodeFromCache(*param.PartnerGoodsCode)
 		if err != nil {
@@ -178,6 +179,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		vv, _ := url.ParseQuery(*ppg.UrlParam)
 		channelId = vv.Get("channelId")
 		productId = vv.Get("productId")
+		adTp,_  = strconv.ParseInt(vv.Get("ad_tp"), 10, 32)
 		isoao,_ = strconv.ParseBool(vv.Get("isOao"))
 		if len(channelId) ==0 || len(productId) == 0 {
 			this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Desc())
@@ -199,7 +201,6 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 
 	go func(){
 		//adCallBack := ctx.URLParam("callback")
-		adTp,_ := ctx.URLParamInt("ad_tp")
 		orderNo := ""
 		oldOrder,_ := new(models.CardOrder).GetByIdcardAndNewPhone(param.CertificateNo, param.NewPhone, &models.SqlPairCondition{"created_at > ?", time.Now().Unix() - 300})
 		if oldOrder != nil { // 老订单
@@ -212,16 +213,24 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		if !oaoFlag || (adTp <= 0)|| param.UrlQueryString == nil {
 			return
 		}
+		urlValues,err := url.ParseQuery(*param.UrlQueryString)
+		if err != nil {
+			ZapLog().Error("kuaishou ParseQuery err", zap.Error(err))
+			return
+		}
+
+		if adTp <= 0 {
+			adTp = ctx.URLParamInt64Default("ad_tp", 0)
+			if adTp <=0 {
+				adTp,_ = strconv.ParseInt(urlValues.Get("ad_tp"), 10, 32)
+			}
+		}
 
 		log:="成功"
 		pushFlag :=1
 		succFlag := 1
 		if adTp == models.CONST_ADTRACK_Tp_KuaiShou {
-			urlValues,err := url.ParseQuery(*param.UrlQueryString)
-			if err != nil {
-				ZapLog().Error("kuaishou ParseQuery err", zap.Error(err))
-				return
-			}
+
 			adCallBack := urlValues.Get("callback")
 			if len(adCallBack) <= 0 {
 				return
@@ -233,7 +242,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 				succFlag = 0
 			}
 
-			if err := new(models.AdTrack).FtParseAdd(&orderNo, &adCallBack,&log,  &adTp, &pushFlag, &succFlag).Add(); err != nil {
+			if err := new(models.AdTrack).FtParseAdd(&orderNo, &adCallBack,&log,  int(adTp), &pushFlag, &succFlag).Add(); err != nil {
 				ZapLog().Error("AdTrack err", zap.Error(err), zap.String("callback", adCallBack))
 			}
 		}
