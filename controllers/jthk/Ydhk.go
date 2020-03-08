@@ -211,12 +211,12 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		}
 
 		if !oaoFlag ||(errCode != apibackend.BASERR_SUCCESS) || (param.UrlQueryString == nil) {
-			ZapLog().Error("kuaishou  noneed kuaishousend ", zap.String("orderNo", orderNo), zap.Bool("oao", isoao), zap.Int("code", errCode.Code()), zap.Any("param.UrlQueryString", param.UrlQueryString))
+			//ZapLog().Error("kuaishou  noneed kuaishousend ", zap.String("orderNo", orderNo), zap.Bool("oao", isoao), zap.Int("code", errCode.Code()), zap.Any("param.UrlQueryString", param.UrlQueryString))
 			return
 		}
 		urlValues,err := url.ParseQuery(*param.UrlQueryString)
 		if err != nil {
-			ZapLog().Error("kuaishou ParseQuery err", zap.Error(err))
+			//ZapLog().Error("kuaishou ParseQuery err", zap.Error(err))
 			return
 		}
 
@@ -236,7 +236,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			if len(adCallBack) <= 0 {
 				adCallBack = ctx.URLParam("callback")
 				if len(adCallBack) <= 0 {
-					ZapLog().Error("kuaishou nofind callback", zap.Any("urlparam", param.UrlQueryString))
+					//ZapLog().Error("kuaishou nofind callback", zap.Any("urlparam", param.UrlQueryString))
 					return
 				}
 			}
@@ -251,7 +251,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 				ZapLog().Error("AdTrack err", zap.Error(err), zap.String("callback", adCallBack))
 			}
 		}else{
-			ZapLog().Error("kuaishou nofind ad_tp", zap.Any("urlparam", param.UrlQueryString), zap.Int64("ad_tp", adTp))
+			//ZapLog().Error("kuaishou nofind ad_tp", zap.Any("urlparam", param.UrlQueryString), zap.Int64("ad_tp", adTp))
 
 		}
 

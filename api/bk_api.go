@@ -430,6 +430,8 @@ type (
 		GsdCityCode *string       `valid:"optional" json:"gsd_city_code,omitempty"  `
 		MadeIn      *string       `valid:"optional" json:"made_in,omitempty" `
 		NoExpAddr   *string      `valid:"optional" json:"no_exp_addr,omitempty"  `
+		UrlParam *string  `valid:"optional" json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
+
 		MinAge    *int    `valid:"optional" json:"min_age,omitempty"     `
 		MaxAge    *int    `valid:"optional" json:"max_age,omitempty" `
 		LimitCardCount  *int         `valid:"optional" json:"limit_card_count,omitempty" `
@@ -460,6 +462,8 @@ type (
 		GsdCityCode *string       `valid:"optional" json:"gsd_city_code,omitempty"  `
 		MadeIn      *string       `valid:"optional" json:"made_in,omitempty" `
 		NoExpAddr   *string      `valid:"optional" json:"no_exp_addr,omitempty"  `
+		UrlParam *string  `valid:"optional" json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
+
 		MinAge    *int    `valid:"optional" json:"min_age,omitempty"     `
 		MaxAge    *int    `valid:"optional" json:"max_age,omitempty" `
 		LimitCardCount  *int         `valid:"optional" json:"limit_card_count,omitempty" `

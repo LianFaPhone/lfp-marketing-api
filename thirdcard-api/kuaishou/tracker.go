@@ -4,8 +4,6 @@ import (
 	"LianFaPhone/lfp-marketing-api/common"
 	"encoding/json"
 	"fmt"
-	. "LianFaPhone/lfp-base/log/zap"
-	"go.uber.org/zap"
 )
 
 type(
@@ -15,6 +13,8 @@ type(
 
 	ResTracker struct{
 		Ret   int    `json:"result"`
+		ErrMsg *string `json:"error_msg"`
+		HostName *string `json:"host-name"`
 	}
 
 
@@ -32,9 +32,12 @@ func (this *ReTracker) Send(callback, eventTp string, eventTime int64) ( error) 
 	if err = json.Unmarshal(resData, res); err != nil {
 		return   err
 	}
-	ZapLog().Info("kuaishou res",zap.String("res", string(resData)))
+	//ZapLog().Info("kuaishou res",zap.String("res", string(resData)))
 	if res.Ret != 1 {
-		return fmt.Errorf("err%d-%s", res.Ret, string(resData))
+		if res.ErrMsg != nil {
+			return fmt.Errorf("%d-%s", res.Ret, *res.ErrMsg)
+		}
+		return fmt.Errorf("%d-%s", res.Ret, string(resData))
 	}
 	return nil
 }

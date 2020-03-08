@@ -26,6 +26,8 @@ type PdPartner struct{
 	GsdCityCode *string       `json:"gsd_city_code,omitempty"     gorm:"column:gsd_city_code;type:varchar(15)"`
 	MadeIn      *string       `json:"made_in,omitempty"     gorm:"column:made_in;type:varchar(15)"`
 	NoExpAddr   *string      `json:"no_exp_addr,omitempty"     gorm:"column:no_exp_addr;type:varchar(200)"`
+	UrlParam *string  `json:"url_param,omitempty"     gorm:"column:url_param;type:varchar(200)" `
+
 	MinAge    *int    `json:"min_age,omitempty"     gorm:"column:min_age;type:int(11)"`
 	MaxAge    *int    `json:"max_age,omitempty"     gorm:"column:max_age;type:int(11)"`
 	LimitCardCount  *int         `json:"limit_card_count,omitempty"     gorm:"column:limit_card_count;type:int(11)"`
@@ -75,6 +77,7 @@ func (this * PdPartner) ParseAdd(p *api.BkPartnerAdd) *PdPartner {
 		IdcardDispplay: p.IdcardDispplay,
 		Stock: p.Stock,
 		ProductionNotes: p.ProductionNotes,
+		UrlParam: p.UrlParam,
 	}
 	cc.Valid = new(int)
 	*cc.Valid = 1
@@ -111,6 +114,7 @@ func (this * PdPartner) Parse(p *api.BkPartner) *PdPartner {
 		IdcardDispplay: p.IdcardDispplay,
 		Stock: p.Stock,
 		ProductionNotes: p.ProductionNotes,
+		UrlParam: p.UrlParam,
 	}
 	d.Valid = p.Valid
 	return d
