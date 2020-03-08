@@ -500,6 +500,9 @@ func (this *Ydhk) FtIdCheckUrlGet(ctx iris.Context) {
 				ZapLog().With(zap.Error(err)).Error("CardOrderUrl FtParseAdd err")
 				return
 			}
+			if cardOrder == nil {
+				return
+			}
 			param.OrderId = cardOrder.OrderNo
 		}
 		if param.OrderId == nil {
