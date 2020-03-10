@@ -3,6 +3,7 @@ package models
 import (
 	"LianFaPhone/lfp-marketing-api/common"
 	"LianFaPhone/lfp-marketing-api/db"
+	"github.com/jinzhu/gorm"
 )
 
 type CardIdcardPic struct {
@@ -49,6 +50,9 @@ func (this *CardIdcardPic) UpdateByOrderNo( orderNo, pic1, pic2, pic3 *string) e
 
 func (this *CardIdcardPic) GetByOrderNo(order_no *string) (*CardIdcardPic, error) {
 	err := db.GDbMgr.Get().Model(this).Where("order_no = ? ", order_no).Last(this).Error
+	if err == gorm.ErrRecordNotFound{
+		return nil,nil
+	}
 	if err != nil {
 		return nil,err
 	}

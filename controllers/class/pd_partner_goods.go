@@ -161,6 +161,7 @@ func (this *PdPartnerGoods) FtGet(ctx iris.Context) {
 		TailImgUrl: cc.TailImgUrl,
 		AdTp: cc.AdTp,
 		PageName: cc.PageName,
+		IcpFlag: cc.IcpFlag,
 	}
 
 	if partner.UrlParam != nil {

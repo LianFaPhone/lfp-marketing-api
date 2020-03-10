@@ -98,3 +98,19 @@ func (this *CardOrderLog) GetsByOrderNoWithConds(orderNo string,limit int, condP
 	}
 	return list,err
 }
+
+func (this *CardOrderLog) GetsByOrderNo(orderNo string) ([]*CardOrderLog, error) {
+	var list []*CardOrderLog
+
+	query := db.GDbMgr.Get().Where("order_no = ?", orderNo)
+
+
+
+	query = query.Order("id desc")
+
+	err := query.Find(&list).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil,nil
+	}
+	return list,err
+}

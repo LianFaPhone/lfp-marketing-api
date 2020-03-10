@@ -34,3 +34,22 @@ func (this *CardOrderLog) BkList(ctx iris.Context) {
 	}
 	this.Response(ctx, ll)
 }
+
+func (this *CardOrderLog) BkGets(ctx iris.Context) {
+	param := new(api.BkCardOrderLogGets)
+
+	err := Tools.ShouldBindJSON(ctx, param)
+	if err != nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		ZapLog().Error("param err", zap.Error(err))
+		return
+	}
+
+	ll,err :=new(models.CardOrderLog).GetsByOrderNo(*param.OrderNo)
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("database err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		return
+	}
+	this.Response(ctx, ll)
+}

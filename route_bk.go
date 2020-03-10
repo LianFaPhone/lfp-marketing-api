@@ -72,6 +72,7 @@ func (this *WebServer) bkroutes() {
 			ac := new(CardOrderLog)
 
 			cardOrderLogPy.Post("/list", ac.BkList)
+			cardOrderLogPy.Post("/gets", ac.BkGets)
 		}
 		//CardIdcardPic
 		cardOrderPicPy := v1bk.Party("/card_order_idcardpic")
