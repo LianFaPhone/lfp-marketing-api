@@ -148,7 +148,7 @@ func (this *PdPartnerGoods) FtGet(ctx iris.Context) {
 
 	newCC := &api.FtResPdPartnerGoodsGet{
 		Code   : cc.Code,
-		UrlParam : cc.UrlParam,
+		UrlParam : new(string),
 		ImgUrl :cc.ImgUrl,
 		NoExpAddr: partner.NoExpAddr,
 		MinAge: partner.MinAge,
@@ -164,12 +164,13 @@ func (this *PdPartnerGoods) FtGet(ctx iris.Context) {
 		IcpFlag: cc.IcpFlag,
 	}
 
-	if partner.UrlParam != nil {
-		if newCC.UrlParam == nil {
-			newCC.UrlParam = partner.UrlParam
-		}else{
+	if cc.UrlParam != nil && len(*cc.UrlParam) > 0{
+		*newCC.UrlParam = *cc.UrlParam
+		if partner.UrlParam != nil && len(*partner.UrlParam) > 0 {
 			*newCC.UrlParam = *partner.UrlParam + "&"+*newCC.UrlParam
 		}
+	}else{
+		newCC.UrlParam = partner.UrlParam
 	}
 
 	this.Response(ctx, newCC)
