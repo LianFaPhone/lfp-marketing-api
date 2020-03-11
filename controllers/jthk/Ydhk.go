@@ -575,6 +575,12 @@ func (this *Ydhk) ParseFailStatus(errMsg string) int {
 		return models.CONST_OrderStatus_Fail_Retry
 	}else if strings.Contains(errMsg, "号码已被占用") {
 		return models.CONST_OrderStatus_Fail_Retry
+	}else if strings.Contains(errMsg, "系统忙") {
+		return models.CONST_OrderStatus_Fail_Retry
+	}else if strings.Contains(errMsg, "无法申请新号卡") {
+		return models.CONST_OrderStatus_Fail_Retry
+	}else if strings.Contains(errMsg, "锁定号码失败") {
+		return models.CONST_OrderStatus_Fail_Retry
 	}
 	return models.CONST_OrderStatus_Fail
 }

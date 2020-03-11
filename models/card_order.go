@@ -30,7 +30,7 @@ type CardOrder struct {
 	Area          *string `json:"area,omitempty"     gorm:"column:area;type:varchar(20)"`                   //区
 	AreaCode      *string `json:"area_code,omitempty"     gorm:"column:area_code;type:varchar(15)"`         //区
 	Town          *string `json:"town,omitempty"     gorm:"column:town;type:varchar(20)"`                   //镇街道
-	Address       *string `json:"address,omitempty"     gorm:"column:address;type:varchar(50)"`             //剩余地址
+	Address       *string `json:"address,omitempty"     gorm:"column:address;type:varchar(70)"`             //剩余地址
 
 	//快递信息
 	Express       *string `json:"express,omitempty"     gorm:"column:express;type:varchar(20)"`             //快递名称
