@@ -213,7 +213,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			this.recordOldOrder(oldOrder, errCode, oaoFlag, orderErr)
 			orderNo = *oldOrder.OrderNo
 		}else{
-			orderNo = this.recordNewOrder(ctx, param, orderId, errCode, oaoFlag, orderErr)
+			orderNo = this.recordNewOrder(ctx, param, orderId, errCode, oaoFlag, orderErr, int(adTp))
 		}
 
 		if !oaoFlag ||(errCode != apibackend.BASERR_SUCCESS) || (param.UrlQueryString == nil) {
@@ -226,12 +226,14 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			return
 		}
 
-		if adTp <= 0 {
-			adTp = ctx.URLParamInt64Default("ad_tp", 0)
-			if adTp <=0 {
-				adTp,_ = strconv.ParseInt(urlValues.Get("ad_tp"), 10, 32)
-			}
-		}
+		/*******这段代码 没意义了***************/
+		//if adTp <= 0 {
+		//	adTp = ctx.URLParamInt64Default("ad_tp", 0)
+		//	if adTp <=0 {
+		//		adTp,_ = strconv.ParseInt(urlValues.Get("ad_tp"), 10, 32)
+		//	}
+		//}
+		/*************************/
 
 		log:="成功"
 		pushFlag :=1
@@ -266,7 +268,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 
 }
 
-func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thirdOrderId string, errCode apibackend.EnumBasErr, oaoFlag bool, orderErr error) string {
+func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thirdOrderId string, errCode apibackend.EnumBasErr, oaoFlag bool, orderErr error, adTp int) string {
 	orderNo := fmt.Sprintf("D%s%s%03d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
 	modelParam := &models.CardOrder{
 		OrderNo:  &orderNo,
@@ -296,6 +298,9 @@ func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thir
 	modelParam.Valid = new(int)
 	*modelParam.Valid = 1
 
+	if adTp > 0 {
+		modelParam.AdTp = &adTp
+	}
 
 
 	if modelParam.PartnerId == nil || modelParam.Isp == nil {
