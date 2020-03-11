@@ -28,28 +28,49 @@ func (this *Tasker) clearWork() {
 	//	startId = *idRecord.IdTag
 	//}
 
-	beginTime := time.Now().Unix() - 3 * 30 * 24* 3600
-	conds := []*models.SqlPairCondition{
-		//&models.SqlPairCondition{"id > ?", startId},
-		&models.SqlPairCondition{"created_at <= ?", beginTime},
-	}
-
-	for i:=0; i<1000;i++ {
-
-		new(models.CardOrderUrl).DelWithConds([]*models.SqlPairCondition{&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 2* 3600}}, 10)
-		new(models.AdTrack).DelWithConds([]*models.SqlPairCondition{&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 24* 3600}}, 10)
-
-		delCount, err := new(models.CardOrderLog).DelWithConds(conds, 10)
-		if err != nil {
-			ZapLog().Error("CardOrderLog DelWithConds err", zap.Error(err))
-			return
-		}
-		if  delCount <= 10 {
-			break
+	go func(){
+		defer models.PanicPrint()
+		beginTime := time.Now().Unix() - 3 * 30 * 24* 3600
+		conds := []*models.SqlPairCondition{
+			//&models.SqlPairCondition{"id > ?", startId},
+			&models.SqlPairCondition{"created_at <= ?", beginTime},
 		}
 
-		time.Sleep(time.Second * 15)
-	}
+		for i:=0; i<1000;i++ {
+			delCount, err := new(models.CardOrderLog).DelWithConds(conds, 10)
+			if err != nil {
+				ZapLog().Error("CardOrderLog DelWithConds err", zap.Error(err))
+				return
+			}
+			if  delCount < 10 {
+				break
+			}
+
+			time.Sleep(time.Second * 3)
+		}
+	}()
+
+	go func(){
+		defer models.PanicPrint()
+		for i:=0; i< 1000; i++ {
+			delCount,_ := new(models.CardOrderUrl).DelWithConds([]*models.SqlPairCondition{&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 2* 3600}}, 10)
+			if delCount < 10 {
+				break
+			}
+			time.Sleep(time.Second * 10)
+		}
+	}()
+
+	go func(){
+		defer models.PanicPrint()
+		for i:=0; i< 1000; i++ {
+			delCount,_ := new(models.AdTrack).DelWithConds([]*models.SqlPairCondition{&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 24* 3600}}, 10)
+			if delCount < 10 {
+				break
+			}
+			time.Sleep(time.Second * 5)
+		}
+	}()
 
 	return
 }

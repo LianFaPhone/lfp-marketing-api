@@ -154,6 +154,12 @@ func (this *WebServer) bkroutes() {
 
 			statusPy.Post("/gets", ac.Gets)
 		}
+		adTpPy := v1bk.Party("/ad-tp")
+		{
+			ac := new(controllers.AdTp)
+
+			adTpPy.Post("/gets", ac.Gets)
+		}
 		photoPy := v1bk.Party("/photo")
 		{
 			ac := new(controllers.UploadFile)

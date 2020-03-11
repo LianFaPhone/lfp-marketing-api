@@ -179,12 +179,18 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		vv, _ := url.ParseQuery(*ppg.UrlParam)
 		channelId = vv.Get("channelId")
 		productId = vv.Get("productId")
-		adTp,_  = strconv.ParseInt(vv.Get("ad_tp"), 10, 32)
+
 		isoao,_ = strconv.ParseBool(vv.Get("isOao"))
 		if len(channelId) ==0 || len(productId) == 0 {
 			this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Desc())
 			ZapLog().Error("nofind urlparam err")
 			return
+		}
+		if ppg.AdTp != nil {
+			adTp = int64(*ppg.AdTp)
+		}
+		if adTp <= 0  {
+			adTp,_  = strconv.ParseInt(vv.Get("ad_tp"), 10, 32)
 		}
 	}
 

@@ -320,7 +320,8 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 
 			mp.Status = new(int)
 			*mp.Status = models.CONST_OrderStatus_Already_Delivered
-
+			mp.DeliverAt = new(int64)
+			*mp.DeliverAt = time.Now().Unix()
 
 			if err = mp.Update(); err != nil {
 				ZapLog().Error("CardOrder Update err", zap.Error(err))

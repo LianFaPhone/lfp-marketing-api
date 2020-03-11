@@ -252,6 +252,13 @@ func (this *CardOrder) bkSubList(ctx iris.Context, status *int) {
 			this.CheckBlack(temp)
 		}
 
+		if temp.AdTp != nil {
+			v,ok := models.AdTpMap[*temp.AdTp]
+			if ok {
+				temp.AdTpName = &v
+			}
+		}
+
 	}
 	this.Response(ctx, results)
 }
@@ -346,8 +353,30 @@ func (this *CardOrder) BkGet(ctx iris.Context) {
 		return
 	}
 	if res != nil {
+		if res.AdTp != nil {
+			v,ok := models.AdTpMap[*res.AdTp]
+			if ok {
+				res.AdTpName = &v
+			}
+		}
 		res.CardOrderLog, _ = new(models.CardOrderLog).GetsByOrderNo(*param.OrderNo)
 		res.CardIdcardPic, _ = new(models.CardIdcardPic).GetByOrderNo(param.OrderNo)
+		if res.PartnerGoodsCode != nil {
+			cc,err := new(models.PdPartnerGoods).GetByCodeFromCache(*res.PartnerGoodsCode)
+			if err == nil && cc != nil{
+				res.PartnerGoodsName = cc.Name
+			}
+		}
+		if res.PhoneOSTp != nil {
+			m, _ := models.PhoneOsMap[*res.PhoneOSTp]
+			if m != nil {
+				res.PhoneOSName = &m.Name
+			}
+		}
+		if res.Status != nil {
+			m := models.OrderStatusMap[*res.Status]
+			res.StatusName = &m
+		}
 	}
 	this.Response(ctx, res)
 

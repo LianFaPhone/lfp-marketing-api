@@ -4,11 +4,6 @@ import (
 	"LianFaPhone/lfp-marketing-api/db"
 )
 
-const(
-	CONST_ADTRACK_Tp_KuaiShou = 1
-	CONST_ADTRACK_Tp_DouYin = 2
-)
-
 type AdTrack struct{
 	Id         *int64  `json:"id,omitempty"       gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"`  //加上type:int(11)后AUTO_INCREMENT无效
 	Tp         *int `json:"tp,omitempty"  gorm:"column:tp;type:int(11);"` //订单号

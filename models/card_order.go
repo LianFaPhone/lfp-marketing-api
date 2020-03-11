@@ -41,6 +41,8 @@ type CardOrder struct {
 	ICCID         *string `json:"ICCID,omitempty"     gorm:"column:ICCID;type:varchar(22)"`                 //手机卡唯一识别码
 	NewPhone      *string `json:"new_phone,omitempty"     gorm:"column:new_phone;type:varchar(20)"`         //新手机号
 	Guishudi      *string `json:"guishudi,omitempty"     gorm:"column:guishudi;type:varchar(30)"`           //归属于哪个门店
+	AdTp *int    `json:"ad_tp,omitempty"      gorm:"column:ad_tp;type:int(11)"`
+	AdTpName *string    `json:"ad_tp_name,omitempty"      gorm:"-"`
 
 	IP            *string `json:"ip,omitempty"     gorm:"column:ip;type:varchar(40)"`                       //ip地址
 	Ips           *int    `json:"min_ips,omitempty"     gorm:"column:min_ips;type:int(10)"`                         //同一个ip下单次数
@@ -89,6 +91,7 @@ func (this *CardOrder) FtParseAdd(p *api.CardOrderApply, OrderId string) *CardOr
 		NewPhone: p.Number,
 		Status:   p.Status,
 		ThirdOrderNo: p.ThirdOrderNo,
+		AdTp: p.AdTp,
 	}
 
 	if acty.Valid == nil {
@@ -125,6 +128,7 @@ func (this *CardOrder) BkParse(p *api.BkCardOrder) *CardOrder {
 		ExpressNo:     p.ExpressNo,
 		ExpressRemark: p.ExpressRemark,
 		ICCID:         p.ICCID,
+		AdTp: p.AdTp,
 		//ThirdOrderNo: p.ThirdOrderNo,
 	}
 
@@ -169,6 +173,7 @@ func (this *CardOrder) BkParseList(p *api.BkCardOrderList) *CardOrder {
 		PhoneOSTp: p.PhoneOSTp,
 		IP:        p.IP,
 		IdCardPicFlag: p.IdCardPicFlag,
+		AdTp: p.AdTp,
 	}
 	acty.Valid = p.Valid
 	return acty

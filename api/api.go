@@ -32,6 +32,7 @@ type (
 		SessionId string    `valid:"optional" json:"session_id,omitempty"`
 		ThirdOrderNo    *string `valid:"optional"  json:"third_order_no,omitempty" ` //订单号
 		Log            *string  `valid:"optional"  json:"log,omitempty" `
+		AdTp *int    `valid:"optional" json:"ad_tp,omitempty"`
 	}
 
 	ResCardOrderApply struct {
