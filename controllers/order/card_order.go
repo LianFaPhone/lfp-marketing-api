@@ -329,6 +329,30 @@ func (this *CardOrder) BkUpdate(ctx iris.Context) {
 
 }
 
+func (this *CardOrder) BkGet(ctx iris.Context) {
+	param := new(api.BkCardOrder)
+
+	err := Tools.ShouldBindJSON(ctx, param)
+	if err != nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		ZapLog().Error("param err", zap.Error(err))
+		return
+	}
+
+	res, err := new(models.CardOrder).BkParse(param).GetByOrderNo(*param.OrderNo)
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("Update err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		return
+	}
+	if res != nil {
+		res.CardOrderLog, _ = new(models.CardOrderLog).GetsByOrderNo(*param.OrderNo)
+		res.CardIdcardPic, _ = new(models.CardIdcardPic).GetByOrderNo(param.OrderNo)
+	}
+	this.Response(ctx, res)
+
+}
+
 func (this *CardOrder) BkUpdatesStatus(ctx iris.Context) {
 	param := new(api.BkCardOrderStatusUpdates)
 

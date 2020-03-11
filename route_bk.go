@@ -85,6 +85,7 @@ func (this *WebServer) bkroutes() {
 		{
 			ac := new(CardOrder)
 
+			simPy.Post("/Get", ac.BkGet)
 			simPy.Post("/list", ac.BkList)
 			simPy.Post("/list-all", ac.BkListAll)
 			simPy.Post("/list-new", ac.BkListNew)
