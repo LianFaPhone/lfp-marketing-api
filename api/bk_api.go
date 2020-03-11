@@ -51,6 +51,7 @@ type (
 		Express       *string `valid:"optional" json:"express,omitempty"  `    //快递名称
 		ExpressNo     *string `valid:"optional" json:"express_no,omitempty"  ` //快递单号
 		ExpressRemark *string `valid:"optional" json:"remark,omitempty"  `     //备注
+		AdTp *int    `valid:"optional" json:"ad_tp,omitempty"`
 
 	}
 
@@ -98,7 +99,7 @@ type (
 		LikeStr        *string `valid:"optional" json:"like_str,omitempty"`
 		IdCardPicFlag   *int    `valid:"optional" json:"idcard_pic_flag,omitempty"`
 		BlackSwitch *int `valid:"optional" json:"black_switch,omitempty"`
-
+		AdTp *int    `valid:"optional" json:"ad_tp,omitempty"`
 		Valid *int  `valid:"optional"  json:"valid,omitempty"`
 		Page  int64 `valid:"optional" json:"page,omitempty"`
 		Size  int64 `valid:"optional" json:"size,omitempty"`
