@@ -166,17 +166,39 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			ZapLog().Error("datebase err", zap.Error(err))
 			return
 		}
-		if ppg == nil {
+		if ppg == nil || (ppg.Valid!=nil && *ppg.Valid == 0){
 			this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_NOT_FOUND.Desc())
 			ZapLog().Error("nofind ppg err")
 			return
 		}
-		if ppg.UrlParam == nil {
+		partner ,err := new(models.PdPartner).GetByIdFromCache(*ppg.PartnerId)
+		if err != nil {
+			ZapLog().With(zap.Error(err)).Error("Update err")
+			this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+			return
+		}
+		if partner == nil || (partner.Valid!=nil && *partner.Valid == 0) {
+			ZapLog().Error("nofind ppg err")
+			this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_NOT_FOUND.Desc())
+			return
+		}
+		urlParam := ""
+		if partner.UrlParam != nil  {
+			urlParam = *partner.UrlParam
+		}
+
+		if len(urlParam) <= 0 {
+			urlParam = *ppg.UrlParam
+		}else{
+			urlParam = urlParam + "&"+*ppg.UrlParam
+		}
+
+		if len(urlParam) <= 0 {
 			this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Code(), apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Desc())
 			ZapLog().Error("nofind urlparam err")
 			return
 		}
-		vv, _ := url.ParseQuery(*ppg.UrlParam)
+		vv, _ := url.ParseQuery(urlParam)
 		channelId = vv.Get("channelId")
 		productId = vv.Get("productId")
 
@@ -206,7 +228,17 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 	}
 
 	go func(){
-		//adCallBack := ctx.URLParam("callback")
+		var  urlValues url.Values
+		if param.UrlQueryString != nil {
+			urlValues,_ = url.ParseQuery(*param.UrlQueryString)
+		}
+		if adTp <= 0 {
+			adTp = ctx.URLParamInt64Default("ad_tp", 0)
+			if adTp <=0 {
+				adTp,_ = strconv.ParseInt(urlValues.Get("ad_tp"), 10, 32)
+			}
+		}
+
 		orderNo := ""
 		oldOrder,_ := new(models.CardOrder).GetByIdcardAndNewPhone(param.CertificateNo, param.NewPhone, &models.SqlPairCondition{"created_at > ?", time.Now().Unix() - 300})
 		if oldOrder != nil { // 老订单
@@ -220,19 +252,19 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			//ZapLog().Error("kuaishou  noneed kuaishousend ", zap.String("orderNo", orderNo), zap.Bool("oao", isoao), zap.Int("code", errCode.Code()), zap.Any("param.UrlQueryString", param.UrlQueryString))
 			return
 		}
-		urlValues,err := url.ParseQuery(*param.UrlQueryString)
-		if err != nil {
-			//ZapLog().Error("kuaishou ParseQuery err", zap.Error(err))
-			return
-		}
+		//urlValues,err := url.ParseQuery(*param.UrlQueryString)
+		//if err != nil {
+		//	//ZapLog().Error("kuaishou ParseQuery err", zap.Error(err))
+		//	return
+		//}
 
-		/*******这段代码 没意义了***************/
-		if adTp <= 0 {
-			adTp = ctx.URLParamInt64Default("ad_tp", 0)
-			if adTp <=0 {
-				adTp,_ = strconv.ParseInt(urlValues.Get("ad_tp"), 10, 32)
-			}
-		}
+		/**********************/
+		//if adTp <= 0 {
+		//	adTp = ctx.URLParamInt64Default("ad_tp", 0)
+		//	if adTp <=0 {
+		//		adTp,_ = strconv.ParseInt(urlValues.Get("ad_tp"), 10, 32)
+		//	}
+		//}
 		/*************************/
 
 		log:="成功"
