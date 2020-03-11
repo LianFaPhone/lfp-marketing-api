@@ -227,12 +227,12 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		}
 
 		/*******这段代码 没意义了***************/
-		//if adTp <= 0 {
-		//	adTp = ctx.URLParamInt64Default("ad_tp", 0)
-		//	if adTp <=0 {
-		//		adTp,_ = strconv.ParseInt(urlValues.Get("ad_tp"), 10, 32)
-		//	}
-		//}
+		if adTp <= 0 {
+			adTp = ctx.URLParamInt64Default("ad_tp", 0)
+			if adTp <=0 {
+				adTp,_ = strconv.ParseInt(urlValues.Get("ad_tp"), 10, 32)
+			}
+		}
 		/*************************/
 
 		log:="成功"
@@ -259,7 +259,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 				ZapLog().Error("AdTrack err", zap.Error(err), zap.String("callback", adCallBack))
 			}
 		}else{
-			//ZapLog().Error("kuaishou nofind ad_tp", zap.Any("urlparam", param.UrlQueryString), zap.Int64("ad_tp", adTp))
+			ZapLog().Error("kuaishou nofind ad_tp", zap.Any("urlparam", param.UrlQueryString), zap.Int64("ad_tp", adTp))
 
 		}
 
@@ -298,9 +298,9 @@ func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thir
 	modelParam.Valid = new(int)
 	*modelParam.Valid = 1
 
-	if adTp > 0 {
+	//if adTp > 0 {
 		modelParam.AdTp = &adTp
-	}
+	//}
 
 
 	if modelParam.PartnerId == nil || modelParam.Isp == nil {
