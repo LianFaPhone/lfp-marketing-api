@@ -418,7 +418,7 @@ func (this *CardOrder) GetsByIdcardAndPartnerGoods(idcard, partnerGoodsCode stri
 	if limit == 0 {
 		limit = 20
 	}
-	err := query.Limit(limit).Order("id DESC").Find(acty).Error
+	err := query.Limit(limit).Order("id DESC").Find(&acty).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	}
