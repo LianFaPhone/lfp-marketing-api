@@ -57,6 +57,7 @@ type CardOrder struct {
 	ThirdResp    *string `json:"third_resp,omitempty"     gorm:"column:third_resp;type:varchar(30);"` //订单号
 	CardOrderLog []*CardOrderLog `json:"order_logs"     gorm:"-"`
 	CardIdcardPic *CardIdcardPic  `json:"idcard_pic"     gorm:"-"`
+	RelateCardOrder []*CardOrder  `json:"relate_card_order" gorm:"-"`
 	Table
 }
 
@@ -399,6 +400,25 @@ func (this *CardOrder) GetByIdcardAndNewPhone(idcard, newPhone string, conds *Sq
 		query = query.Where(conds.Key, conds.Value)
 	}
 	err := query.Last(acty).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return acty, err
+}
+
+func (this *CardOrder) GetsByIdcardAndPartnerGoods(idcard, partnerGoodsCode string, needs []string, limit int, conds *SqlPairCondition) ([]*CardOrder, error) {
+	var acty []*CardOrder
+	query := db.GDbMgr.Get().Where("idcard = ? and partner_goods_code = ?", idcard, partnerGoodsCode)
+	if needs != nil {
+		query = query.Select(needs)
+	}
+	if conds != nil {
+		query = query.Where(conds.Key, conds.Value)
+	}
+	if limit == 0 {
+		limit = 20
+	}
+	err := query.Limit(limit).Order("id DESC").Find(acty).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	}

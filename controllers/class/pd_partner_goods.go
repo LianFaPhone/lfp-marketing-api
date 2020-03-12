@@ -19,8 +19,16 @@ type PdPartnerGoods struct {
 }
 
 func (this *PdPartnerGoods) Gets(ctx iris.Context) {
+	param := new(api.BkPartnerGoodsGet)
 
-	ll, err := new(models.PdPartnerGoods).Gets()
+	err := controllers.Tools.ShouldBindJSON(ctx, param)
+	if err != nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		ZapLog().Error("param err", zap.Error(err))
+		return
+	}
+
+	ll, err := new(models.PdPartnerGoods).ParseGet(param).Gets()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())

@@ -200,6 +200,7 @@ func (this *Tasker) jthkNewUnFinishNotify() {
 			if !strings.HasPrefix(*orderUrl.Url, " ") {
 				*orderUrl.Url = " "+*orderUrl.Url+" " //可生成短链
 			}
+			*orderUrl.Url = strings.Replace(*orderUrl.Url, "%", "%25", -1)
 
 			log:= "短信发送：照片上传提醒，发送成功"
 

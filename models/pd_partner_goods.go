@@ -146,6 +146,14 @@ func (this * PdPartnerGoods) ParseList(p *api.BkPartnerGoodsList) *PdPartnerGood
 	return ppg
 }
 
+func (this * PdPartnerGoods) ParseGet(p *api.BkPartnerGoodsGet) *PdPartnerGoods {
+	ppg:= &PdPartnerGoods{
+		PartnerId: p.PartnerId,
+	}
+	ppg.Valid = p.Valid
+	return ppg
+}
+
 func (this *PdPartnerGoods) Get() (*PdPartnerGoods, error) {
 	err := db.GDbMgr.Get().Model(this).Where("id = ? ", this.Id).Last(this).Error
 	if err != nil {

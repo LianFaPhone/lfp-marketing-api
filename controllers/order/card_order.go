@@ -225,38 +225,10 @@ func (this *CardOrder) bkSubList(ctx iris.Context, status *int) {
 	coArr := results.List.(*[]*models.CardOrder)
 	for i := 0; i < len(*coArr); i++ {
 		temp := (*coArr)[i]
-		if temp.PartnerGoodsCode != nil {
-			//ZapLog().Info("cardclass 1")
-			cc,err := new(models.PdPartnerGoods).GetByCodeFromCache(*temp.PartnerGoodsCode)
-			//ZapLog().Info("cardclass 2", zap.Error(err), zap.Any("cc",cc))
-			if err == nil && cc != nil{
-				temp.PartnerGoodsName = cc.Name
-			}
-		}
-		if temp.PhoneOSTp != nil {
-			m, _ := models.PhoneOsMap[*temp.PhoneOSTp]
-			if m != nil {
-				temp.PhoneOSName = &m.Name
-			}
-		}
-		if temp.Status != nil {
-			m := models.OrderStatusMap[*temp.Status]
-			temp.StatusName = &m
-		}
-		//if temp.BspStatus != nil {
-		//	m := models.OrderStatusMap[*temp.BspStatus]
-		//	temp.BspStatusName = &m
-		//}
+		this.AttachName(temp)
 
 		if param.BlackSwitch == nil || *param.BlackSwitch == 0 {
 			this.CheckBlack(temp)
-		}
-
-		if temp.AdTp != nil {
-			v,ok := models.AdTpMap[*temp.AdTp]
-			if ok {
-				temp.AdTpName = &v
-			}
 		}
 
 	}
@@ -353,29 +325,17 @@ func (this *CardOrder) BkGet(ctx iris.Context) {
 		return
 	}
 	if res != nil {
-		if res.AdTp != nil {
-			v,ok := models.AdTpMap[*res.AdTp]
-			if ok {
-				res.AdTpName = &v
-			}
-		}
+		this.AttachName(res)
+
 		res.CardOrderLog, _ = new(models.CardOrderLog).GetsByOrderNo(*param.OrderNo)
 		res.CardIdcardPic, _ = new(models.CardIdcardPic).GetByOrderNo(param.OrderNo)
-		if res.PartnerGoodsCode != nil {
-			cc,err := new(models.PdPartnerGoods).GetByCodeFromCache(*res.PartnerGoodsCode)
-			if err == nil && cc != nil{
-				res.PartnerGoodsName = cc.Name
+
+		if res.IdCard != nil && res.PartnerGoodsCode != nil{
+			relateOrders, _ := new(models.CardOrder).GetsByIdcardAndPartnerGoods(*res.IdCard, *res.PartnerGoodsCode, nil, 50, &models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 30*24*3600})
+			for i:=0; i< len(relateOrders);i++{
+				this.AttachName(relateOrders[i])
 			}
-		}
-		if res.PhoneOSTp != nil {
-			m, _ := models.PhoneOsMap[*res.PhoneOSTp]
-			if m != nil {
-				res.PhoneOSName = &m.Name
-			}
-		}
-		if res.Status != nil {
-			m := models.OrderStatusMap[*res.Status]
-			res.StatusName = &m
+			res.RelateCardOrder = relateOrders
 		}
 	}
 	this.Response(ctx, res)
@@ -558,5 +518,34 @@ func (this *CardOrder) CheckBlack(temp *models.CardOrder)  {
 			*temp.IsBacklist = 1
 			return
 		}
+	}
+}
+
+func (this *CardOrder) AttachName(temp *models.CardOrder)  {
+	if temp == nil {
+		return
+	}
+	if temp.AdTp != nil {
+		v,ok := models.AdTpMap[*temp.AdTp]
+		if ok {
+			temp.AdTpName = &v
+		}
+	}
+
+	if temp.PartnerGoodsCode != nil {
+		cc,err := new(models.PdPartnerGoods).GetByCodeFromCache(*temp.PartnerGoodsCode)
+		if err == nil && cc != nil{
+			temp.PartnerGoodsName = cc.Name
+		}
+	}
+	if temp.PhoneOSTp != nil {
+		m, _ := models.PhoneOsMap[*temp.PhoneOSTp]
+		if m != nil {
+			temp.PhoneOSName = &m.Name
+		}
+	}
+	if temp.Status != nil {
+		m := models.OrderStatusMap[*temp.Status]
+		temp.StatusName = &m
 	}
 }

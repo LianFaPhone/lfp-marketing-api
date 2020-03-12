@@ -420,6 +420,11 @@ type (
 		Page         int64   `valid:"required" json:"page,omitempty"`
 		Size         int64   `valid:"optional" json:"size,omitempty"`
 	}
+
+	BkPartnerGoodsGet struct {
+		PartnerId *int64  `valid:"optional" json:"partner_id,omitempty" `
+		Valid    *int    `valid:"optional" json:"valid,omitempty"      `
+	}
 	//
 
 	BkPartnerAdd struct{
