@@ -5,6 +5,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/common"
 	"LianFaPhone/lfp-marketing-api/config"
 	"LianFaPhone/lfp-marketing-api/models"
+	"LianFaPhone/lfp-marketing-api/thirdcard-api/douyin"
 	"LianFaPhone/lfp-marketing-api/thirdcard-api/kuaishou"
 	. "LianFaPhone/lfp-marketing-api/thirdcard-api/ydhk"
 	"fmt"
@@ -234,7 +235,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		}
 		if adTp <= 0 {
 			adTp = ctx.URLParamInt64Default("ad_tp", 0)
-			if adTp <=0 {
+			if adTp <=0 {//这个好像 没必要
 				adTp,_ = strconv.ParseInt(urlValues.Get("ad_tp"), 10, 32)
 			}
 		}
@@ -290,9 +291,21 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			if err := new(models.AdTrack).FtParseAdd(&orderNo, &adCallBack,&log,  int(adTp), &pushFlag, &succFlag).Add(); err != nil {
 				ZapLog().Error("AdTrack err", zap.Error(err), zap.String("callback", adCallBack))
 			}
-		}else{
-			ZapLog().Error("kuaishou nofind ad_tp", zap.Any("urlparam", param.UrlQueryString), zap.Int64("ad_tp", adTp))
+		}else if adTp == models.CONST_ADTRACK_Tp_DouYin{
+			link := ctx.GetHeader("Origin")
+			link = link+"/?"+ *param.UrlQueryString
+			if err := new(douyin.ReTracker).Send(link, "TD", time.Now().Unix(), 3); err != nil {
+				ZapLog().Error("douyin send err", zap.Error(err), zap.String("link", link))
+				log = "失败："+err.Error()
+				pushFlag =0
+				succFlag = 0
+			}
 
+			if err := new(models.AdTrack).FtParseAdd(&orderNo, &link,&log,  int(adTp), &pushFlag, &succFlag).Add(); err != nil {
+				ZapLog().Error("AdTrack err", zap.Error(err), zap.String("link", link))
+			}
+		}else{
+			ZapLog().Error("nofind ad_tp", zap.Any("urlparam", param.UrlQueryString), zap.Int64("ad_tp", adTp))
 		}
 
 

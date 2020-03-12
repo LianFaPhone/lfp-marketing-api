@@ -165,7 +165,7 @@ func (this *PdPartnerGoods) Get() (*PdPartnerGoods, error) {
 
 func (this *PdPartnerGoods) Gets() ([]*PdPartnerGoods, error) {
 	var arr []*PdPartnerGoods
-	err := db.GDbMgr.Get().Model(this).Find(&arr).Error
+	err := db.GDbMgr.Get().Model(this).Where(this).Find(&arr).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil,nil
 	}

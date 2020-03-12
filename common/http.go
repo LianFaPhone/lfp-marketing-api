@@ -22,7 +22,7 @@ func HttpSend(url string, body io.Reader, method string, headers map[string]stri
 
 	req.Header.Set("Content-Type", "application/json")
 	for k, v := range headers {
-		fmt.Println(k, v)
+		//fmt.Println(k, v)
 		req.Header.Set(k, v)
 	}
 	resp, err := http.DefaultClient.Do(req)
@@ -57,7 +57,7 @@ func HttpSend2(url string, body io.Reader, method string, headers map[string]str
 
 	//req.Header.Set("Content-Type", "application/json")
 	for k, v := range headers {
-		fmt.Println(k, v)
+		//fmt.Println(k, v)
 		req.Header.Set(k, v)
 	}
 	resp, err := http.DefaultClient.Do(req)
