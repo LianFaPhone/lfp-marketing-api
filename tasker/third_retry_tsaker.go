@@ -67,7 +67,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 		}
 	}
 
-	for true {
+	for q:=0;q<500;q++ {
 		conds := []*models.SqlPairCondition{
 			//&models.SqlPairCondition{"id > ?", startId},
 			//&models.SqlPairCondition{"class_big_tp = ?", 5},
@@ -226,7 +226,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				ZapLog().Error("CardOrder Update err", zap.Error(err))
 				return
 			}
-			time.Sleep(time.Millisecond * 100)
+			time.Sleep(time.Second * 1)
 		}
 
 		if len(orderArr) < 10 {

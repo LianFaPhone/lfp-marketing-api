@@ -46,7 +46,7 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New_UnFinish},
-			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - delayTime},
+			&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - delayTime},
 			//条件还得处理下
 		}
 
@@ -213,7 +213,7 @@ func (this *Tasker) ydjthkExpressWork(idRecordName string, delay int64) {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New},
-			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - delay},
+			&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - delay},
 			//条件还得处理下
 			//&models.SqlPairCondition{"partner_id in ?", parter.Id},
 		}
