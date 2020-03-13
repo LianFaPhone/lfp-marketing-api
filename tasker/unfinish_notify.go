@@ -43,7 +43,7 @@ func (this *Tasker) ydjthkFailNotify(idRecordName string) {
 
 	for true {
 		conds := []*models.SqlPairCondition{
-			&models.SqlPairCondition{"third_order_at > ?", startId},
+			&models.SqlPairCondition{"id > ?", startId},
 			&models.SqlPairCondition{"third_order_at <= ?", nowTime-5*3600},
 			&models.SqlPairCondition{"third_order_at >= ?", nowTime-25*3600},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_Fail_Retry},
@@ -68,8 +68,8 @@ func (this *Tasker) ydjthkFailNotify(idRecordName string) {
 			if orderArr[i] == nil || orderArr[i].OrderNo == nil || orderArr[i].Phone == nil{
 				continue
 			}
-			if *orderArr[i].ThirdOrderAt > startId {
-				startId = *orderArr[i].ThirdOrderAt
+			if *orderArr[i].Id > startId {
+				startId = *orderArr[i].Id
 			}
 
 			//fail_retry 直接放过
@@ -157,7 +157,7 @@ func (this *Tasker) ydjthkNewUnFinishNotify(idRecordName string) {
 
 	for true {
 		conds := []*models.SqlPairCondition{
-			&models.SqlPairCondition{"third_order_at > ?", startId},
+			&models.SqlPairCondition{"Id > ?", startId},
 			&models.SqlPairCondition{"third_order_at <= ?", nowTime-16*60},
 			&models.SqlPairCondition{"third_order_at >= ?", nowTime-35*60},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New_UnFinish},
@@ -181,8 +181,8 @@ func (this *Tasker) ydjthkNewUnFinishNotify(idRecordName string) {
 			if orderArr[i] == nil || orderArr[i].OrderNo == nil || orderArr[i].Phone == nil{
 				continue
 			}
-			if *orderArr[i].ThirdOrderAt > startId {
-				startId = *orderArr[i].ThirdOrderAt
+			if *orderArr[i].Id > startId {
+				startId = *orderArr[i].Id
 			}
 
 			orderUrl,err := new(models.CardOrderUrl).GetByOrderNo(*orderArr[i].OrderNo)

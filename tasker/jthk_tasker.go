@@ -44,7 +44,7 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 
 	for true {
 		conds := []*models.SqlPairCondition{
-			&models.SqlPairCondition{"third_order_at > ?", startId},
+			&models.SqlPairCondition{"id > ?", startId},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New_UnFinish},
 			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - delayTime},
 			//条件还得处理下
@@ -68,8 +68,8 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 
 		//记录id, 倒叙
 		for i := len(orderArr) - 1; i >= 0; i-- {
-			if *orderArr[i].ThirdOrderAt > startId {
-				startId = *orderArr[i].ThirdOrderAt
+			if *orderArr[i].Id > startId {
+				startId = *orderArr[i].Id
 			}
 			if orderArr[i] == nil || orderArr[i].Status == nil{
 				continue
@@ -211,7 +211,7 @@ func (this *Tasker) ydjthkExpressWork(idRecordName string, delay int64) {
 
 	for true {
 		conds := []*models.SqlPairCondition{
-			&models.SqlPairCondition{"third_order_at > ?", startId},
+			&models.SqlPairCondition{"id > ?", startId},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New},
 			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - delay},
 			//条件还得处理下
@@ -236,8 +236,8 @@ func (this *Tasker) ydjthkExpressWork(idRecordName string, delay int64) {
 		//记录id, 倒叙
 		haveExpreeFlag := false
 		for i := len(orderArr) - 1; i >= 0; i-- {
-			if *orderArr[i].ThirdOrderAt > startId {
-				startId = *orderArr[i].ThirdOrderAt
+			if *orderArr[i].Id > startId {
+				startId = *orderArr[i].Id
 			}
 			if orderArr[i] == nil || orderArr[i].Status == nil {
 				continue

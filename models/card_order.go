@@ -55,7 +55,7 @@ type CardOrder struct {
 
 	ThirdOrderNo    *string `json:"third_order_no,omitempty"     gorm:"column:third_order_no;type:varchar(30);"` //订单号
 	ThirdResp    *string `json:"third_resp,omitempty"     gorm:"column:third_resp;type:varchar(30);"` //订单号
-	ThirdOrderAt *int64 `json:"third_order_at,omitempty" gorm:"column:third_order_at;type:bigint(11);default 0"`
+	ThirdOrderAt *int64 `json:"third_order_at,omitempty" gorm:"column:third_order_at;type:bigint(20);default 0;not null"`
 	CardOrderLog []*CardOrderLog `json:"order_logs"     gorm:"-"`
 	CardIdcardPic *CardIdcardPic  `json:"idcard_pic"     gorm:"-"`
 	RelateCardOrder []*CardOrder  `json:"relate_card_order" gorm:"-"`
