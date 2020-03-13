@@ -92,7 +92,12 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-jthkNewUnfinishNotifyTicker.C:
-				this.jthkNewUnFinishNotify()
+				uT:= time.Now()
+				hour := uT.Hour()
+				min := uT.Minute()
+				if (hour >= 8) && ((hour < 21) || ( (hour == 21) && (min <=50)) ){
+					this.ydjthkNewUnFinishNotify("yd_jt_huaka_NewUnfinishNotify")
+				}
 			}
 		}
 	}()
@@ -102,7 +107,7 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-jthkFailNotifyTicker.C:
-				 this.jthkFailNotify()
+				 this.ydjthkFailNotify("yd_jt_huaka_FailNotify")
 			}
 		}
 	}()
@@ -128,7 +133,7 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <- ydhkUnFinishCheckTicker.C:
-				this.ydhkOaoWork("ydhk_oao", 3610, true)
+				this.ydjthkOaoWork("yd_jt_huaka_oao", 3610, true)
 			}
 		}
 	}()
@@ -138,7 +143,7 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-ydhkUnFinishSmallCheckTicker.C:
-				this.ydhkOaoWork("ydhk_small_oao", 9*60, false)
+				this.ydjthkOaoWork("yd_jt_huaka_small_oao", 9*60, false)
 			}
 		}
 	}()
@@ -148,14 +153,14 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-ydhkExpressTicker.C:
-				this.ydhkExpressWork("ydhk_small_express", 8*3600) //8小时
-				this.ydhkExpressWork("ydhk_middle_express", 16*3600) //16小时
-				this.ydhkExpressWork("ydhk_express", 24*3600) //24小时
+				this.ydjthkExpressWork("yd_jt_huaka_small_express", 8*3600) //8小时
+				this.ydjthkExpressWork("yd_jt_huaka_middle_express", 16*3600) //16小时
+				this.ydjthkExpressWork("yd_jt_huaka_express", 24*3600) //24小时
 				hour := time.Now().Hour()
 				if hour >=2 && hour <= 6 {
-					this.ydhkExpressWork("ydhk_big_express", 36*3600) //2天
-					this.ydhkExpressWork("ydhk_large_express", 48*3600) //2天
-					this.ydhkExpressWork("ydhk_huge_express", 120*3600)//5天
+					this.ydjthkExpressWork("yd_jt_huaka_big_express", 36*3600) //2天
+					this.ydjthkExpressWork("yd_jt_huaka_large_express", 48*3600) //2天
+					this.ydjthkExpressWork("yd_jt_huaka_huge_express", 120*3600)//5天
 				}
 			}
 		}
@@ -176,6 +181,18 @@ func (this *Tasker) run() {
 			time.Sleep(time.Hour)
 		}
 	}()
+
+	go func() {//以后加chan实时通知
+		defer models.PanicPrint()
+		for {
+			hour := time.Now().Hour()
+			if hour >=8 && hour < 22 {
+				this.jtyhhkThirdRetryWork()
+			}
+			time.Sleep(time.Minute* 10)
+		}
+	}()
+
 }
 
 func (this *Tasker) activeCodeWork() {

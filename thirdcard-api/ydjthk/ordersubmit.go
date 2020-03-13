@@ -1,4 +1,4 @@
-package ydhk
+package ydjthk
 
 import (
 	apibackend "LianFaPhone/lfp-api/errdef"
@@ -55,6 +55,7 @@ func (this *ReOrderSubmit) Parse(channelId , productId string, OaoModel *string)
 	return this
 }
 
+//最后三个是码
 func (this *ReOrderSubmit) Send(isOao bool, token, inPhone, newPhone, LegalName,IdCard, address, province, city,  sendprovince, sendcity, sendqu string) (apibackend.EnumBasErr,string,bool, error) {
 	//return apibackend.BASERR_SUCCESS, "TestOrder112",true, nil
 	this.MsgType = "LiveHKCardTemporaryOrderReq"

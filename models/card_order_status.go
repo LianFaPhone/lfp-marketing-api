@@ -34,14 +34,27 @@ const (
 	CONST_OrderStatus_Already_Activated      = 8     //已激活
 	CONST_OrderStatus_Already_Activated_Name = "已激活" //已激活
 
-	//11--19全是失败得
-	CONST_OrderStatus_MaxFail = 19
+	//11--100全是失败得
+	CONST_OrderStatus_MaxFail = 100
 	CONST_OrderStatus_MinFail = 11
 	CONST_OrderStatus_Fail  = 11     //失败
 	CONST_OrderStatus_Fail_Name = "失败" //
 
 	CONST_OrderStatus_Fail_Retry  = 12     //失败
 	CONST_OrderStatus_Fail_Retry_Name = "失败可重试" //
+
+	CONST_OrderStatus_Fail_Already_Retry  = 13     //失败
+	CONST_OrderStatus_Fail_Already_Retry_Name = "失败已重试" //
+
+	//100-110自动下单
+	CONST_OrderStatus_Retry_Apply_Doing  = 101     //
+	CONST_OrderStatus_Retry_Apply_Doing_Name = "重试下单中" //
+
+	CONST_OrderStatus_New_Apply_Doing  = 102     //新订单
+	CONST_OrderStatus_New_Apply_Doing_Name = "新订单下单中" //
+
+
+
 )
 
 var PathToOrderStatus = map[string] int {
@@ -71,6 +84,9 @@ var OrderStatusMap = map[int]string{
 	CONST_OrderStatus_Already_Activated: CONST_OrderStatus_Already_Activated_Name,
 	CONST_OrderStatus_Fail:              CONST_OrderStatus_Fail_Name,
 	CONST_OrderStatus_Fail_Retry:   CONST_OrderStatus_Fail_Retry_Name,
+	CONST_OrderStatus_Fail_Already_Retry: CONST_OrderStatus_Fail_Already_Retry_Name,
+	CONST_OrderStatus_Retry_Apply_Doing: CONST_OrderStatus_Retry_Apply_Doing_Name,
+	CONST_OrderStatus_New_Apply_Doing: CONST_OrderStatus_New_Apply_Doing_Name,
 }
 
 var OrderStatusArr = []*OrderStatus{
@@ -85,4 +101,10 @@ var OrderStatusArr = []*OrderStatus{
 	&OrderStatus{CONST_OrderStatus_Already_Activated, CONST_OrderStatus_Already_Activated_Name},
 	&OrderStatus{CONST_OrderStatus_Fail, CONST_OrderStatus_Fail_Name},
 	&OrderStatus{CONST_OrderStatus_Fail_Retry, CONST_OrderStatus_Fail_Retry_Name},
+
+	&OrderStatus{CONST_OrderStatus_Fail_Already_Retry, CONST_OrderStatus_Fail_Already_Retry_Name},
+	&OrderStatus{CONST_OrderStatus_Retry_Apply_Doing, CONST_OrderStatus_Retry_Apply_Doing_Name},
+	//&OrderStatus{CONST_OrderStatus_Retry_UnFinish, CONST_OrderStatus_Retry_UnFinish_Name},
+	//&OrderStatus{CONST_OrderStatus_Retry_Finish,CONST_OrderStatus_Retry_Finish_Name},
+	&OrderStatus{CONST_OrderStatus_New_Apply_Doing, CONST_OrderStatus_New_Apply_Doing_Name},
 }

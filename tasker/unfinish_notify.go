@@ -12,17 +12,17 @@ import (
 	. "LianFaPhone/lfp-base/log/zap"
 )
 
-func (this *Tasker) jthkFailNotify() {
+func (this *Tasker) ydjthkFailNotify(idRecordName string) {
 	defer models.PanicPrint()
 
-	recoder, err := new(models.IdRecorder).GetByName("JthkFailNotify")
+	recoder, err := new(models.IdRecorder).GetByName(idRecordName)
 	if err != nil {
 		ZapLog().Error("IdRecorder GetByName err", zap.Error(err))
 		return
 	}
 
 	if recoder == nil {
-		if recoder, err = new(models.IdRecorder).Add("JthkFailNotify", 0); err != nil {
+		if recoder, err = new(models.IdRecorder).Add(idRecordName, 0); err != nil {
 			ZapLog().Error("IdRecorder Add JthkFailNotify err", zap.Error(err))
 			return
 		}
@@ -43,9 +43,9 @@ func (this *Tasker) jthkFailNotify() {
 
 	for true {
 		conds := []*models.SqlPairCondition{
-			&models.SqlPairCondition{"id > ?", startId},
-			&models.SqlPairCondition{"created_at <= ?", nowTime-5*3600},
-			&models.SqlPairCondition{"created_at >= ?", nowTime-25*3600},
+			&models.SqlPairCondition{"third_order_at > ?", startId},
+			&models.SqlPairCondition{"third_order_at <= ?", nowTime-5*3600},
+			&models.SqlPairCondition{"third_order_at >= ?", nowTime-25*3600},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_Fail_Retry},
 		}
 
@@ -68,8 +68,8 @@ func (this *Tasker) jthkFailNotify() {
 			if orderArr[i] == nil || orderArr[i].OrderNo == nil || orderArr[i].Phone == nil{
 				continue
 			}
-			if *orderArr[i].Id > startId {
-				startId = *orderArr[i].Id
+			if *orderArr[i].ThirdOrderAt > startId {
+				startId = *orderArr[i].ThirdOrderAt
 			}
 
 			//fail_retry 直接放过
@@ -126,18 +126,18 @@ func (this *Tasker) jthkFailNotify() {
 }
 
 //新未完成订单短信通知
-func (this *Tasker) jthkNewUnFinishNotify() {
+func (this *Tasker) ydjthkNewUnFinishNotify(idRecordName string) {
 	defer models.PanicPrint()
 
-	recoder, err := new(models.IdRecorder).GetByName("JthkNewUnfinishNotify")
+	recoder, err := new(models.IdRecorder).GetByName(idRecordName)
 	if err != nil {
 		ZapLog().Error("IdRecorder GetByName err", zap.Error(err))
 		return
 	}
 
 	if recoder == nil {
-		if recoder, err = new(models.IdRecorder).Add("JthkNewUnfinishNotify", 0); err != nil {
-			ZapLog().Error("IdRecorder Add JthkNewUnfinishNotify err", zap.Error(err))
+		if recoder, err = new(models.IdRecorder).Add(idRecordName, 0); err != nil {
+			ZapLog().Error("IdRecorder Add  err", zap.Error(err))
 			return
 		}
 	}
@@ -157,9 +157,9 @@ func (this *Tasker) jthkNewUnFinishNotify() {
 
 	for true {
 		conds := []*models.SqlPairCondition{
-			&models.SqlPairCondition{"id > ?", startId},
-			&models.SqlPairCondition{"created_at <= ?", nowTime-20*60},
-			&models.SqlPairCondition{"created_at >= ?", nowTime-35*60},
+			&models.SqlPairCondition{"third_order_at > ?", startId},
+			&models.SqlPairCondition{"third_order_at <= ?", nowTime-16*60},
+			&models.SqlPairCondition{"third_order_at >= ?", nowTime-35*60},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New_UnFinish},
 		}
 		if len(partnerIds) > 0 {
@@ -181,8 +181,8 @@ func (this *Tasker) jthkNewUnFinishNotify() {
 			if orderArr[i] == nil || orderArr[i].OrderNo == nil || orderArr[i].Phone == nil{
 				continue
 			}
-			if *orderArr[i].Id > startId {
-				startId = *orderArr[i].Id
+			if *orderArr[i].ThirdOrderAt > startId {
+				startId = *orderArr[i].ThirdOrderAt
 			}
 
 			orderUrl,err := new(models.CardOrderUrl).GetByOrderNo(*orderArr[i].OrderNo)

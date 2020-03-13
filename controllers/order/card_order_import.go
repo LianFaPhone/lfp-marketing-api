@@ -112,6 +112,7 @@ func (this *CardOrder) BkOrderNewInport(ctx iris.Context) {
 		ZapLog().Error("param err", zap.Error(err))
 		return
 	}
+	//用new_doing状态
 
 	res := new(api.BkResCardOrderExtraImprot)
 	//	notifyTp := models.CONST_OrderNotifyTp_Express

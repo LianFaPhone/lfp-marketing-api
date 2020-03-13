@@ -17,7 +17,7 @@ type CardOrder struct {
 
 	PartnerGoodsName  *string `json:"partner_goods_name,omitempty"     gorm:"-"`
 	ClassDetail  *string `json:"class_detail,omitempty"     gorm:"-"`
-	Status     *int    `json:"status,omitempty"     gorm:"column:status;type:int(11);"` //订单状态
+	Status     *int    `json:"status,omitempty"     gorm:"column:status;type:int(11);index"` //订单状态
 	StatusName *string `json:"status_name,omitempty"     gorm:"-"`
 	TrueName   *string `json:"true_name,omitempty"     gorm:"column:true_name;type:varchar(10)"` //姓名
 	IdCard     *string `json:"idcard,omitempty"     gorm:"column:idcard;type:varchar(25)"`       //身份证
@@ -55,6 +55,7 @@ type CardOrder struct {
 
 	ThirdOrderNo    *string `json:"third_order_no,omitempty"     gorm:"column:third_order_no;type:varchar(30);"` //订单号
 	ThirdResp    *string `json:"third_resp,omitempty"     gorm:"column:third_resp;type:varchar(30);"` //订单号
+	ThirdOrderAt *int64 `json:"third_order_at,omitempty" gorm:"column:third_order_at;type:bigint(11);default 0"`
 	CardOrderLog []*CardOrderLog `json:"order_logs"     gorm:"-"`
 	CardIdcardPic *CardIdcardPic  `json:"idcard_pic"     gorm:"-"`
 	RelateCardOrder []*CardOrder  `json:"relate_card_order" gorm:"-"`
@@ -336,7 +337,6 @@ func (this *CardOrder) UpdatesStatusByOrderNo(nos []*string, Status int) error {
 	err := db.GDbMgr.Get().Model(this).Where("order_no IN (?)", nos).Update("status", Status).Error
 	if err != nil {
 		return err
-
 	}
 	return nil
 }

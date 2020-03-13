@@ -181,7 +181,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 					appendData[16] = *temp.ExpressNo
 				}
 				if temp.DeliverAt != nil {
-					str := time.Unix(*temp.DeliverAt, 0).Format("2006/01/02_15-04-05")
+					str := time.Unix(*temp.DeliverAt, 0).Format("2006-01-02 15:04")
 					appendData[17] = str
 				}
 				if temp.IdCardPicFlag != nil {
@@ -192,7 +192,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 					appendData[18] = str
 				}
 				if temp.CreatedAt != nil {
-					str := time.Unix(*temp.CreatedAt, 0).Format("2006/01/02_15-04-05")
+					str := time.Unix(*temp.CreatedAt, 0).Format("2006-01-02 15:04")//"2006-01-02 15:04-05"
 					appendData[20] = str
 				}
 

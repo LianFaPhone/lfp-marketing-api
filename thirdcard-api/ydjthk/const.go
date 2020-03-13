@@ -1,4 +1,4 @@
-package ydhk
+package ydjthk
 
 const(
 	//Const_ChannelId = "C10000032277"

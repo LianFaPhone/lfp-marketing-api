@@ -177,7 +177,7 @@ func (this *PdPartnerGoods) FtGet(ctx iris.Context) {
 		if partner.UrlParam != nil && len(*partner.UrlParam) > 0 {
 			*newCC.UrlParam = *partner.UrlParam + "&"+*newCC.UrlParam
 		}
-	}else{
+	}else {
 		newCC.UrlParam = partner.UrlParam
 	}
 

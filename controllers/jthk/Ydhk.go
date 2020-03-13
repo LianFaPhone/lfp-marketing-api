@@ -7,7 +7,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/models"
 	"LianFaPhone/lfp-marketing-api/thirdcard-api/douyin"
 	"LianFaPhone/lfp-marketing-api/thirdcard-api/kuaishou"
-	. "LianFaPhone/lfp-marketing-api/thirdcard-api/ydhk"
+	. "LianFaPhone/lfp-marketing-api/thirdcard-api/ydjthk"
 	"fmt"
 	"go.uber.org/zap"
 	"net/url"
@@ -338,6 +338,7 @@ func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thir
 
 		NewPhone: &param.NewPhone,
 		ThirdOrderNo: &thirdOrderId,
+		ThirdOrderAt: new(int64),
 	}
 
 	modelParam.Valid = new(int)
@@ -345,6 +346,7 @@ func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thir
 
 	//if adTp > 0 {
 		modelParam.AdTp = &adTp
+	*modelParam.ThirdOrderAt = time.Now().Unix()
 	//}
 
 
@@ -422,22 +424,29 @@ func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thir
 }
 
 func (this * Ydhk) recordOldOrder(oldOrder *models.CardOrder, errCode apibackend.EnumBasErr, oaoFlag bool, orderErr error) {
-	newStatus := models.CONST_OrderStatus_Fail
+	modelParam := &models.CardOrder{
+		OrderNo: oldOrder.OrderNo,
+		Status : new(int),
+		ThirdOrderAt: new(int64),
+	}
+	*modelParam.Status = models.CONST_OrderStatus_Fail
+	*modelParam.ThirdOrderAt = time.Now().Unix()
 	if errCode == 0 {
 		if oaoFlag == true {
-			newStatus =	models.CONST_OrderStatus_New
+			*modelParam.Status =	models.CONST_OrderStatus_New
 		}else{
-			newStatus =	models.CONST_OrderStatus_New_UnFinish
+			*modelParam.Status =	models.CONST_OrderStatus_New_UnFinish
 		}
 	}else{
-		newStatus = this.ParseFailStatus(orderErr.Error())
+		*modelParam.Status = this.ParseFailStatus(orderErr.Error())
 	}
 	if (oldOrder.Status!=nil) && (*oldOrder.Status >= models.CONST_OrderStatus_MinFail || *oldOrder.Status <= models.CONST_OrderStatus_MaxFail) {
-		if err := new(models.CardOrder).UpdateStatusByOrderNo(*oldOrder.OrderNo, newStatus); err != nil {
+		if err := modelParam.UpdateByOrderNo(); err != nil {
 			ZapLog().With(zap.Error(err)).Error("database err")
 			log := "老订单状态更新失败"
 			new(models.CardOrderLog).FtParseAdd(nil,oldOrder.OrderNo, &log).Add()
 		}
+
 	}
 
 	log := "订单再次申请成功"

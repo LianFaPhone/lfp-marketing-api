@@ -4,7 +4,7 @@ import (
 	. "LianFaPhone/lfp-base/log/zap"
 	"LianFaPhone/lfp-marketing-api/config"
 	"LianFaPhone/lfp-marketing-api/models"
-	"LianFaPhone/lfp-marketing-api/thirdcard-api/ydhk"
+	"LianFaPhone/lfp-marketing-api/thirdcard-api/ydjthk"
 	"fmt"
 	"go.uber.org/zap"
 	"strings"
@@ -12,7 +12,7 @@ import (
 )
 
 
-func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailFlag bool) {
+func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFailFlag bool) {
 	defer models.PanicPrint()
 
 	recoder, err := new(models.IdRecorder).GetByName(idRecorderName)
@@ -44,9 +44,9 @@ func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailF
 
 	for true {
 		conds := []*models.SqlPairCondition{
-			&models.SqlPairCondition{"id > ?", startId},
-			//&models.SqlPairCondition{"class_big_tp = ?", 5},
-			&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - delayTime},
+			&models.SqlPairCondition{"third_order_at > ?", startId},
+			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New_UnFinish},
+			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - delayTime},
 			//条件还得处理下
 		}
 
@@ -68,8 +68,8 @@ func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailF
 
 		//记录id, 倒叙
 		for i := len(orderArr) - 1; i >= 0; i-- {
-			if *orderArr[i].Id > startId {
-				startId = *orderArr[i].Id
+			if *orderArr[i].ThirdOrderAt > startId {
+				startId = *orderArr[i].ThirdOrderAt
 			}
 			if orderArr[i] == nil || orderArr[i].Status == nil{
 				continue
@@ -94,7 +94,7 @@ func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailF
 			}
 
 
-			resOrderShortSerach,err := new(ydhk.ReOrderShortSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard);
+			resOrderShortSerach,err := new(ydjthk.ReOrderShortSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard);
 			if err != nil {
 				log:= "OAO检测：网络错误，"+err.Error()
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
@@ -113,7 +113,7 @@ func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailF
 				continue
 			}
 
-			resOrderSearch,err := new(ydhk.ReOrderSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard)
+			resOrderSearch,err := new(ydjthk.ReOrderSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard)
 			if err != nil {
 				log:= "OAO检测：网络错误，"+err.Error()
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
@@ -132,7 +132,7 @@ func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailF
 				continue
 			}
 
-			var chooseOne *ydhk.OrderInfo
+			var chooseOne *ydjthk.OrderInfo
 			yidongArr := resOrderSearch.Datas
 			for j:=0; j< len(yidongArr); j++ {
 				if yidongArr[j].Number == nil || orderArr[i].NewPhone == nil{
@@ -173,13 +173,13 @@ func (this *Tasker) ydhkOaoWork(idRecorderName string, delayTime int64, SetFailF
 		if len(orderArr) < 10 {
 			break
 		}
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Millisecond * 100)
 	}
 
 }
 
 
-func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
+func (this *Tasker) ydjthkExpressWork(idRecordName string, delay int64) {
 	defer models.PanicPrint()
 
 	recoder, err := new(models.IdRecorder).GetByName(idRecordName)
@@ -211,9 +211,9 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 
 	for true {
 		conds := []*models.SqlPairCondition{
-			&models.SqlPairCondition{"id > ?", startId},
-			//&models.SqlPairCondition{"class_big_tp = ?", 5},
-			&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - delay},
+			&models.SqlPairCondition{"third_order_at > ?", startId},
+			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New},
+			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - delay},
 			//条件还得处理下
 			//&models.SqlPairCondition{"partner_id in ?", parter.Id},
 		}
@@ -236,8 +236,8 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 		//记录id, 倒叙
 		haveExpreeFlag := false
 		for i := len(orderArr) - 1; i >= 0; i-- {
-			if *orderArr[i].Id > startId {
-				startId = *orderArr[i].Id
+			if *orderArr[i].ThirdOrderAt > startId {
+				startId = *orderArr[i].ThirdOrderAt
 			}
 			if orderArr[i] == nil || orderArr[i].Status == nil {
 				continue
@@ -260,7 +260,7 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 				Id: orderArr[i].Id,
 			}
 
-			resOrderSearch,err := new(ydhk.ReOrderSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard)
+			resOrderSearch,err := new(ydjthk.ReOrderSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard)
 			if err != nil {
 				log:= "快递查询：网络问题，"+err.Error()
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
@@ -272,7 +272,7 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 				continue
 			}
 
-			var chooseOne *ydhk.OrderInfo
+			var chooseOne *ydjthk.OrderInfo
 			yidongArr := resOrderSearch.Datas
 			for j:=0; j< len(yidongArr); j++ {
 				if yidongArr[j].Number == nil || orderArr[i].NewPhone == nil {
@@ -308,7 +308,7 @@ func (this *Tasker) ydhkExpressWork(idRecordName string, delay int64) {
 			}
 
 			if ((mp.Express == nil) || (len(*mp.Express) <= 1)) && (chooseOne.ShipmentNo !=nil) && (len(chooseOne.Tid) > 0) && (chooseOne.ShipmentCompanyCode != nil) {
-				orderDetail,err := new(ydhk.ReOrderDetailSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard, chooseOne.Tid, *chooseOne.ShipmentCompanyCode, *chooseOne.ShipmentNo)
+				orderDetail,err := new(ydjthk.ReOrderDetailSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard, chooseOne.Tid, *chooseOne.ShipmentCompanyCode, *chooseOne.ShipmentNo)
 				if err != nil {
 					log:= "快递详情查询:网络问题，"+err.Error()
 					new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
