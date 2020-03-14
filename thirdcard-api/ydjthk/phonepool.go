@@ -96,7 +96,7 @@ func (this *ReCardSearch) Send(isOao bool, proCode, proName, cityCode, cityName,
 	return res.Numbers, nil
 }
 
-func (this *ReCloseNumber) Send(isOao bool, proCode, cityCode, number, token string) (bool, error) {
+func (this *ReCloseNumber) Send(isOao bool, proCode, cityCode, number, token string) (bool,string, error) {
 	this.MsgType = "LiveHKLockNumberReq"
 	this.Version = Const_Version
 	this.ProvCode = proCode
@@ -119,20 +119,20 @@ func (this *ReCloseNumber) Send(isOao bool, proCode, cityCode, number, token str
 
 	reqData,err := json.Marshal(this)
 	if err != nil {
-		return false, err
+		return false,"", err
 	}
 
 	resData, err := common.HttpSend(config.GConfig.Jthk.Url+"/rwx/rwkweb/livehk/livehkMobile/lockNumber", bytes.NewReader(reqData),"POST", heads)
 	if err != nil {
-		return false, err
+		return false,"", err
 	}
 	res := new(ResCloseNumber)
 	if err = json.Unmarshal(resData, res); err != nil {
-		return false, err
+		return false,"", err
 	}
 	if res.Ret != "0" {
-		return false, fmt.Errorf("%s",  res.Msg)
+		return false,"", fmt.Errorf("%s",  res.Msg)
 	}
 
-	return true, nil
+	return true,res.UnLockTime, nil
 }

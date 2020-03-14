@@ -99,7 +99,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 	//这个函数的错误码处理的不好
 	errCode, orderId,oaoFlag,orderErr := new(ReOrderSubmit).Parse(channelId, productId, nil).Send(isoao, param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
 	if orderErr != nil {
-		ZapLog().With(zap.Error(orderErr)).Error("Retoken send err")
+		ZapLog().With(zap.Error(orderErr)).Error("order submit send err")
 		if errCode != apibackend.BASERR_CARDMARKET_PHONECARD_APPLY_FAID_AND_SHOW {
 			this.ExceptionSerive(ctx, errCode.Code(), orderErr.Error())
 			return
@@ -409,7 +409,7 @@ func (this * Ydhk) OfflineActive(ctx iris.Context) {
 	*oaoModel = "2"
 	errCode, orderId, oaoFlag, err := new(ReOrderSubmit).Parse(channelId, productId, oaoModel).OfflineActiveSend(param.AccessToken, param.Phone, param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity, param.SendDistrict)
 	if err != nil {
-		ZapLog().With(zap.Error(err)).Error("Retoken send err")
+		ZapLog().With(zap.Error(err)).Error("order submit send err")
 		this.ExceptionSerive(ctx, errCode.Code(), err.Error())
 		return
 	}

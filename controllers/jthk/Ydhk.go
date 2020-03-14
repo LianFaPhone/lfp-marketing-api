@@ -27,7 +27,7 @@ func (this * Ydhk) GetProtocal(ctx iris.Context) {
 	pCode := ctx.FormValue("province_code")
 	token,err := new(ReProtocal).Send(isoao, pCode)
 	if err != nil {
-		ZapLog().With(zap.Error(err)).Error("Retoken send err")
+		ZapLog().With(zap.Error(err)).Error("Protocal send err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
 		return
 	}
@@ -72,7 +72,7 @@ func (this * Ydhk) GetToken(ctx iris.Context) {
 
 	token,err := new(ReToken).Send(isoao, channelId)
 	if err != nil {
-		ZapLog().With(zap.Error(err)).Error("Retoken send err")
+		ZapLog().With(zap.Error(err)).Error("ReToken send err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
 		return
 	}
@@ -84,7 +84,7 @@ func (this * Ydhk) GetsAddr(ctx iris.Context) {
 	//channelTp := ctx.URLParam("channelType")
 	ll, err := new(ReAddr).Send(isoao)
 	if err != nil {
-		ZapLog().With(zap.Error(err)).Error("Update err")
+		ZapLog().With(zap.Error(err)).Error("GetAddr err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
 		return
 	}

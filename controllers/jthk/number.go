@@ -7,6 +7,7 @@ import (
 	"github.com/kataras/iris"
 	apibackend "LianFaPhone/lfp-api/errdef"
 	. "LianFaPhone/lfp-base/log/zap"
+	"time"
 )
 
 func (this * Ydhk) ListNumberPool(ctx iris.Context) {
@@ -23,7 +24,7 @@ func (this * Ydhk) ListNumberPool(ctx iris.Context) {
 
 	ll,err := new(ReCardSearch).Send(isoao, param.ProviceCode, param.Provice, param.CityCode, param.City, param.Searchkey, param.Page, param.Size)
 	if err != nil {
-		ZapLog().With(zap.Error(err)).Error("Retoken send err")
+		ZapLog().With(zap.Error(err)).Error("List NUmberPool send err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), err.Error())
 		return
 	}
@@ -39,9 +40,9 @@ func (this * Ydhk) LockNumber(ctx iris.Context) {
 		return
 	}
 
-	flag,err := new(ReCloseNumber).Send(isoao, param.ProviceCode, param.CityCode,  param.Number, param.Token)
+	flag,unlockTime, err := new(ReCloseNumber).Send(isoao, param.ProviceCode, param.CityCode,  param.Number, param.Token)
 	if err != nil {
-		ZapLog().With(zap.Error(err)).Error("Retoken send err")
+		ZapLog().With(zap.Error(err)).Error("lockNumber send err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.Code(), err.Error())
 		return
 	}
@@ -49,5 +50,10 @@ func (this * Ydhk) LockNumber(ctx iris.Context) {
 		this.ExceptionSerive(ctx, apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.Code(), apibackend.BASERR_CARDMARKET_PHONEPOOL_LOCK_FAIL.OriginDesc())
 		return
 	}
-	this.Response(ctx, nil)
+
+	timeLayout := "2006-01-02 15:04:05"                             //转化所需模板
+	loc, _ := time.LoadLocation("Local")                            //重要：获取时区
+	theTime, _ := time.ParseInLocation(timeLayout, unlockTime, loc) //使用模板在对应时区转化为time.time类型
+
+	this.Response(ctx, map[string]int64{"unlock_at":theTime.Unix()})
 }
