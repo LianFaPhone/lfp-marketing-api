@@ -172,7 +172,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 
 			chooseNumber := ""
 			for j:=0; j < len(numbers);j++ {
-				flag,err := new(ydjthk.ReCloseNumber).Send(isOao, province.ProvinceId,  city.CityId, numbers[j], token)
+				flag,_,err := new(ydjthk.ReCloseNumber).Send(isOao, province.ProvinceId,  city.CityId, numbers[j], token)
 				if err != nil {
 					continue
 				}
