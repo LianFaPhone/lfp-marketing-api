@@ -138,7 +138,7 @@ func (this *Tasker) run() {
 		}
 	}()
 
-	go func() { //超过 1分钟500笔oao订单后需要调整
+	go func() {
 		defer models.PanicPrint()
 		for {
 			select {
@@ -158,6 +158,7 @@ func (this *Tasker) run() {
 				this.ydjthkExpressWork("yd_jt_huaka_express", 24*3600) //24小时
 				hour := time.Now().Hour()
 				if hour >=2 && hour <= 6 {
+					this.ydjthkOaoWork("yd_jt_huaka_big_oao", 7210, true)
 					this.ydjthkExpressWork("yd_jt_huaka_big_express", 36*3600) //2天
 					this.ydjthkExpressWork("yd_jt_huaka_large_express", 48*3600) //2天
 					this.ydjthkExpressWork("yd_jt_huaka_huge_express", 120*3600)//5天

@@ -161,7 +161,7 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 				ZapLog().Error("CardOrder Update err", zap.Error(err))
 				return
 			}
-			time.Sleep(time.Millisecond * 100)
+			time.Sleep(time.Millisecond * 10)
 		}
 
 		err = recoder.Update(startId)
@@ -173,7 +173,11 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 		if len(orderArr) < 10 {
 			break
 		}
-		time.Sleep(time.Second * 3)
+		if !SetFailFlag {
+			time.Sleep(time.Millisecond * 100)
+		}else{
+			time.Sleep(time.Second * 2)
+		}
 	}
 
 }

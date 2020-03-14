@@ -29,6 +29,7 @@ func (this *Tasker) clearWork() {
 	//}
 
 	go func(){
+		return
 		defer models.PanicPrint()
 		beginTime := time.Now().Unix() - 3 * 30 * 24* 3600
 		conds := []*models.SqlPairCondition{

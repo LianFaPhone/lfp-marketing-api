@@ -212,7 +212,7 @@ func (this *Tasker) ydjthkNewUnFinishNotify(idRecordName string) {
 			new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 
 
-			time.Sleep(time.Millisecond * 100)
+			time.Sleep(time.Millisecond * 10)
 		}
 
 		err = recoder.Update(startId)
@@ -224,7 +224,7 @@ func (this *Tasker) ydjthkNewUnFinishNotify(idRecordName string) {
 		if len(orderArr) < 10 {
 			break
 		}
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Millisecond * 100)
 	}
 
 }
