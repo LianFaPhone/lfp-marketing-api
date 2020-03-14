@@ -170,6 +170,7 @@ type(
 		PhoneOSTp    *int    `valid:"optional" json:"device_os_tp,omitempty"` //从header
 		AdTp        *int `valid:"optional" json:"ad_tp,omitempty"`
 		UrlQueryString  *string `valid:"optional" json:"url_query_string,omitempty"`
+		IsRetry        *int `valid:"optional" json:"is_retry,omitempty"`
 	}
 
 	FtResYdhkApply struct{

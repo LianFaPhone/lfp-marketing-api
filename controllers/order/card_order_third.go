@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (this *CardOrder) BkThirdApply(ctx iris.Context) {
+func (this *CardOrder) BkRetryApply(ctx iris.Context) {
 	param := new(api.BkCardOrderThirdApply)
 
 	err := Tools.ShouldBindJSON(ctx, param)
@@ -29,7 +29,7 @@ func (this *CardOrder) BkThirdApply(ctx iris.Context) {
 	}
 	go func(){
 		for i:=0; i< len(param.OrderNo);i++{
-			log := "重试下单开始"
+			log := "管理员|重试下单开始"
 			new(models.CardOrderLog).FtParseAdd(nil, param.OrderNo[i], &log)
 		}
 	}()

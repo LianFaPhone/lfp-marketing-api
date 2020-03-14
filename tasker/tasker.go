@@ -187,7 +187,7 @@ func (this *Tasker) run() {
 		defer models.PanicPrint()
 		for {
 			hour := time.Now().Hour()
-			if hour >=8 && hour < 22 {
+			if hour >=8 && hour < 21 {
 				this.jtyhhkThirdRetryWork()
 			}
 			time.Sleep(time.Minute* 10)

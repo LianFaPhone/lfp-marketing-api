@@ -106,6 +106,7 @@ func (this *WebServer) bkroutes() {
 			simPy.Post("/idcard-check", ac.BkIdCardCheck)
 			simPy.Post("/active-import", ac.BkOrderActiveInport)
 			simPy.Post("/new-import", ac.BkOrderNewInport)
+			simPy.Post("/retry-apply", ac.BkRetryApply)
 		}
 
 		classsheetPy := v1bk.Party("/classsheet")

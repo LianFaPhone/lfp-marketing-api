@@ -105,7 +105,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			if orderArr[i].PartnerGoodsCode == nil || orderArr[i].Province == nil || orderArr[i].City == nil || orderArr[i].Area == nil || orderArr[i].Address == nil || orderArr[i].Phone == nil || orderArr[i].TrueName == nil || orderArr[i].IdCard == nil{
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
-				log := "自动下单失败：表中数据缺失"
+				log := "管理员|重试下单失败|表中数据缺失"
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
 				continue
 			}
@@ -114,7 +114,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			if err != nil {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
-				log := "自动下单失败：额外参数缺失"
+				log := "管理员|重试下单失败|额外参数缺失"
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
 				continue
 			}
@@ -125,7 +125,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			if len(channelId) <= 0 || len(productId) <= 0 {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
-				log := "自动下单失败：额外参数缺失"
+				log := "管理员|重试下单失败|额外参数缺失"
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
 				continue
 			}
@@ -133,7 +133,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			if err != nil {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
-				log := "自动下单失败：请求token失败，"+err.Error()
+				log := "管理员|重试下单失败|请求token失败，"+err.Error()
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
 				continue
 			}
@@ -141,7 +141,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			if !ok {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
-				log := "自动下单失败：省份匹配不上"
+				log := "管理员|重试下单失败|省份匹配不上"
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
 				continue
 			}
@@ -149,7 +149,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			if !ok {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
-				log := "自动下单失败：城市匹配不上"
+				log := "管理员|重试下单失败|城市匹配不上"
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
 				continue
 			}
@@ -157,7 +157,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			if !ok {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
-				log := "自动下单失败：区（县）匹配不上"
+				log := "管理员|重试下单失败|区（县）匹配不上"
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
 				continue
 			}
@@ -165,7 +165,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			if err != nil {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
-				log := "自动下单失败：获取新号码失败，"+err.Error()
+				log := "管理员|重试下单失败|获取新号码失败，"+err.Error()
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
 				continue
 			}
@@ -185,7 +185,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			if len(chooseNumber) <= 0 {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
-				log := "自动下单失败：锁定新号码"
+				log := "管理员|重试下单失败|无法锁定新号码"
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
 				continue
 			}
@@ -194,23 +194,23 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			if orderErr != nil {
 				*mp.Status = GenFailStatus(orderArr[i], orderErr.Error())
 				mp.Update()
-				log := "自动下单失败：下单失败，"+orderErr.Error()
+				log := "管理员|重试下单失败|下单失败，"+orderErr.Error()
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
 				continue
 			}
 
-			log := "重试成功：新订单已完成"
+			log := "管理员|重试下单成功|新订单已完成"
 			if !oaoFlag {
 				*mp.Status = models.CONST_OrderStatus_New_UnFinish
 
 				newUrl,err := new(ydjthk.ReIdCheckUrl).Send(isOao, channelId, thirdOrderNo, chooseNumber, token)
 				if err != nil {
 					ZapLog().Error("ReIdCheckUrl send err", zap.Error(err))
-					log = "重试失败：获取上传照片网址失败，"+err.Error()
+					log = "管理员|重试下单失败|获取上传照片网址失败，"+err.Error()
 					*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				}else{
 					//sendUnFinishNotify(newUrl, orderArr[i])
-					log = "重试成功：新订单未完成，等待上传照片"
+					log = "管理员|重试下的那成功|新订单未完成，等待上传照片"
 				}
 				new(models.CardOrderUrl).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &newUrl).Add()
 			}else{
@@ -226,13 +226,14 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				ZapLog().Error("CardOrder Update err", zap.Error(err))
 				return
 			}
-			time.Sleep(time.Second * 1)
+			mp.MaxIdByOrderNo(*orderArr[i].OrderNo) // 这一步是关键，让它重新被检测
+			time.Sleep(time.Second * 2)
 		}
 
 		if len(orderArr) < 10 {
 			break
 		}
-		time.Sleep(time.Second * 2)
+		time.Sleep(time.Second * 5)
 	}
 
 }
