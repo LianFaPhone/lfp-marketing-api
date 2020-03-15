@@ -45,7 +45,7 @@ func (this *Tasker) ydjthkFailNotify(idRecordName string) {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
 			&models.SqlPairCondition{"created_at <= ?", nowTime-5*3600},
-			&models.SqlPairCondition{"created_at >= ?", nowTime-25*3600},
+			&models.SqlPairCondition{"created_at >= ?", nowTime-30*3600},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_Fail_Retry},
 		}
 
@@ -120,7 +120,7 @@ func (this *Tasker) ydjthkFailNotify(idRecordName string) {
 		if len(orderArr) < 10 {
 			break
 		}
-		time.Sleep(time.Second * 30)
+		time.Sleep(time.Second * 5)
 	}
 
 }

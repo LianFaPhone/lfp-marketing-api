@@ -51,7 +51,7 @@ func (this *Tasker) run() {
 
 	jthkNewUnfinishNotifyTicker := time.NewTicker(time.Minute * 3)
 	//cardOrderUnFinishSms5MinTicker.Stop()
-	jthkFailNotifyTicker := time.NewTicker(time.Minute * 60)
+	jthkFailNotifyTicker := time.NewTicker(time.Minute * 25)
 	//cardOrderUnFinishSms1HourTicker.Stop()
 
 	ydhkUnFinishSmallCheckTicker := time.NewTicker(time.Minute * 3)
@@ -107,7 +107,12 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-jthkFailNotifyTicker.C:
-				 this.ydjthkFailNotify("yd_jt_huaka_FailNotify")
+				uT:= time.Now()
+				hour := uT.Hour()
+				min := uT.Minute()
+				if (hour >= 8) && ((hour < 21) || ( (hour == 21) && (min <=30)) ) {
+					this.ydjthkFailNotify("yd_jt_huaka_FailNotify")
+				}
 			}
 		}
 	}()
@@ -184,7 +189,7 @@ func (this *Tasker) run() {
 	}()
 
 	go func() {//以后加chan实时通知
-	   // return
+	    return
 		defer models.PanicPrint()
 		for {
 			hour := time.Now().Hour()
