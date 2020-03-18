@@ -196,7 +196,7 @@ type(
 	}
 )
 
-dxnbhk
+
 type (
 	FtDxnbhkFastApply struct {
 		OrderNo   string   `valid:"required"  json:"order_no,omitempty"`    //订单号
