@@ -29,6 +29,15 @@ func (this *CardOrderLog) FtParseAdd(orderId *int64, orderNo *string, log *strin
 	return this
 }
 
+func (this *CardOrderLog) FtParseAdd2(orderId *int64, orderNo *string, log string) *CardOrderLog {
+	this.OrderId = orderId
+	this.OrderNo = orderNo
+	this.Log = &log
+	this.Valid = new(int)
+	*this.Valid = 1
+	return this
+}
+
 func (this *CardOrderLog) BkParseList(p *api.BkCardOrderLogList) *CardOrderLog {
 	this.OrderId = p.OrderId
 	this.OrderNo = p.OrderNo

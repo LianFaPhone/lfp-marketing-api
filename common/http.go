@@ -2,7 +2,6 @@ package common
 
 import (
 	"errors"
-	"fmt"
 	//smartisanData "github.com/princeyuaner/smartisan/Data"
 	"io"
 	"io/ioutil"
@@ -86,7 +85,7 @@ func HttpFormSend(url string, formBody url.Values, method string, headers map[st
 		method = "GET"
 	}
 	body := strings.NewReader(formBody.Encode())
-	fmt.Println("form", url, method, formBody.Encode())
+	//fmt.Println("form", url, method, formBody.Encode())
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err

@@ -53,6 +53,15 @@ type (
 		SuccFlag  *int   `valid:"optional"  json:"succ_flag,omitempty"`
 	}
 
+	FtHelpUserApply struct {
+		OrderNo   string   `valid:"required"  json:"order_no,omitempty"`    //订单号
+	}
+
+	ResFtHelpUserApply struct {
+		OrderNo   string   `json:"order_no,omitempty"`    //订单号
+
+	}
+
 	ResChinaAddrCode struct {
 		Code       string              `json:"code,omitempty"`
 		Region     string              `json:"region,omitempty"`
@@ -184,5 +193,12 @@ type(
 		ThirdOrderNo   string   `valid:"required"  json:"third_order_no,omitempty"`    //订单号
 		NewPhone       string    `valid:"optional"  json:"new_phone,omitempty"`
 		Token  string    `valid:"optional"  json:"token,omitempty"`
+	}
+)
+
+dxnbhk
+type (
+	FtDxnbhkFastApply struct {
+		OrderNo   string   `valid:"required"  json:"order_no,omitempty"`    //订单号
 	}
 )

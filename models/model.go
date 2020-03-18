@@ -36,7 +36,7 @@ func InitDbTable() {
 	if err != nil {
 		log.ZapLog().Error("AutoMigrate err", zap.Error(err))
 	}
-	err = db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate(&BsProvice{}, &BsCity{}, &BsArea{}, &PdPartner{}).Error
+	err = db.GDbMgr.Get().Set("gorm:table_options", "ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1;").AutoMigrate(&BsProvice{}, &BsCity{}, &BsArea{}, &PdPartner{},&DxnbhkProvice{},&DxnbhkCity{},&DxnbhkArea{}).Error
 	if err != nil {
 		log.ZapLog().Error("AutoMigrate err", zap.Error(err))
 	}

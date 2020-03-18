@@ -4,6 +4,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/controllers"
 	. "LianFaPhone/lfp-marketing-api/controllers/area"
 	"LianFaPhone/lfp-marketing-api/controllers/class"
+	"LianFaPhone/lfp-marketing-api/controllers/dxnbhk"
 	"LianFaPhone/lfp-marketing-api/controllers/jthk"
 	. "LianFaPhone/lfp-marketing-api/controllers/order"
 	"LianFaPhone/lfp-marketing-api/controllers/phonepool"
@@ -146,6 +147,14 @@ func (this *WebServer) routes() {
 			ydhkParty.Post("/order-confirm", ac.FtConfirm)
 			ydhkParty.Post("/idcheckurl-get", ac.FtIdCheckUrlGet)
 			ydhkParty.Post("/offline-active", ac.OfflineActive)
+			ydhkParty.Post("/helpuser-apply", ac.FtHelpUserApply)
+		}
+
+		dxnbhkParty := v1.Party("/dxnbhk")
+		{
+			ac := new(dxnbhk.Dxnbhk)
+
+			dxnbhkParty.Post("/fast-apply", ac.FastApply)
 		}
 
 		//jthkParty := v1.Party("/jthk")

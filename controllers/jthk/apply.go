@@ -473,3 +473,43 @@ func (this *Ydhk) FtConfirm(ctx iris.Context) {
 	}
 	this.Response(ctx, nil)
 }
+
+func (this *Ydhk) FtHelpUserApply(ctx iris.Context) {
+	param := new(api.FtHelpUserApply)
+
+	err := Tools.ShouldBindJSON(ctx, param)
+	if err != nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		ZapLog().Error("param err", zap.Error(err))
+		return
+	}
+
+	order,err := new(models.CardOrder).GetByOrderNo(param.OrderNo)
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("database err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		return
+	}
+	if order == nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_NOT_FOUND.Code(), "订单未找到")
+		return
+	}
+
+	if order.Status == nil {
+		this.ExceptionSerive(ctx, apibackend.BASERR_UNKNOWN_BUG.Code(), "系统错误")
+		return
+	}
+
+	if (*order.Status < models.CONST_OrderStatus_MinFail) && (*order.Status > models.CONST_OrderStatus_MaxFail) {
+		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_EXISTS.Code(), "订单已完成")
+		return
+	}
+
+	err = new(models.CardOrder).UpdateStatusByOrderNo(param.OrderNo, models.CONST_OrderStatus_HelpUser_Apply_Doing)
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("UpdateStatusByOrderNo err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		return
+	}
+	this.Response(ctx, nil)
+}

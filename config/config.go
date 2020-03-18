@@ -106,6 +106,7 @@ type Config struct {
 	Baidu           Baidu          `yaml:"baidu"`
 	Task            Task           `yaml:"task"`
 	Jthk            Jthk           `yaml:"jthk"`
+	Dxnbhk          Dxnbhk          `yaml:"dxnbhk"`
 }
 
 type System struct {
@@ -243,4 +244,19 @@ type Jthk struct{
 	Referer_path_oao  string   `yaml:"referer_path_oao"`
 	ParterCode    string      `yaml:"partner_code"`
 	ParterCodeArr []string   `yaml:"-"`
+}
+
+type Dxnbhk struct{
+	Url string                `yaml:"url"`
+	Partners []DxnbhkReseller     `yaml:"reseller"`
+	PartnerIndex int     `yaml:"-"`
+}
+
+type DxnbhkReseller struct{
+	Name string              `yaml:"name"`
+	ResellerId string              `yaml:"reseller_id"`
+	ProductId string         `yaml:"product_id"`
+	MaxNum int                  `yaml:"max_num"`
+	PartnerGoodsCode string                  `yaml:"partnergoods_code"`
+	Count     int   `yaml:"-"`
 }

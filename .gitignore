@@ -17,3 +17,5 @@ bin/
 Jenkinsfile*
 /vendor/*/
 vendor/*/
+nginx/
+/nginx

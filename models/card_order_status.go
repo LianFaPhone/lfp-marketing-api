@@ -53,6 +53,9 @@ const (
 	CONST_OrderStatus_New_Apply_Doing  = 102     //新订单
 	CONST_OrderStatus_New_Apply_Doing_Name = "新订单下单中" //
 
+	CONST_OrderStatus_HelpUser_Apply_Doing  = 103     //新订单
+	CONST_OrderStatus_HelpUser_Apply_Doing_Name = "帮助用户下单中" //
+
 
 
 )
@@ -87,6 +90,7 @@ var OrderStatusMap = map[int]string{
 	CONST_OrderStatus_Fail_Already_Retry: CONST_OrderStatus_Fail_Already_Retry_Name,
 	CONST_OrderStatus_Retry_Apply_Doing: CONST_OrderStatus_Retry_Apply_Doing_Name,
 	CONST_OrderStatus_New_Apply_Doing: CONST_OrderStatus_New_Apply_Doing_Name,
+	CONST_OrderStatus_HelpUser_Apply_Doing: CONST_OrderStatus_HelpUser_Apply_Doing_Name,
 }
 
 var OrderStatusArr = []*OrderStatus{
@@ -107,4 +111,5 @@ var OrderStatusArr = []*OrderStatus{
 	//&OrderStatus{CONST_OrderStatus_Retry_UnFinish, CONST_OrderStatus_Retry_UnFinish_Name},
 	//&OrderStatus{CONST_OrderStatus_Retry_Finish,CONST_OrderStatus_Retry_Finish_Name},
 	&OrderStatus{CONST_OrderStatus_New_Apply_Doing, CONST_OrderStatus_New_Apply_Doing_Name},
+	&OrderStatus{CONST_OrderStatus_HelpUser_Apply_Doing,CONST_OrderStatus_HelpUser_Apply_Doing_Name},
 }
