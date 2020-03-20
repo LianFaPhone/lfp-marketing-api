@@ -189,11 +189,11 @@ func (this *Tasker) run() {
 	}()
 
 	go func() {//以后加chan实时通知
-	    return
+	    //return
 		defer models.PanicPrint()
 		for {
 			hour := time.Now().Hour()
-			if hour >=8 && hour < 21 {
+			if hour >=8 && hour <= 21 {
 				this.jtyhhkThirdRetryWork()
 			}
 			time.Sleep(time.Minute* 10)
@@ -201,7 +201,7 @@ func (this *Tasker) run() {
 	}()
 
 	go func() {//以后加chan实时通知
-		return
+		//return
 		defer models.PanicPrint()
 		for {
 			hour := time.Now().Hour()
