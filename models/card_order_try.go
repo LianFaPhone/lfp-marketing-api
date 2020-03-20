@@ -47,7 +47,7 @@ func (this * CardOrderRetry) Add() error {
 
 func (this * CardOrderRetry) Incr(orderNo string) (int, error) {
 	this.OrderNo = &orderNo
-	err := db.GDbMgr.Get().Model(this).Where(this).Attrs(CardOrderRetry{TryCount: new(int)}).FirstOrCreate(&this).Update("try_count", gorm.Expr("try_count+1")).Error
+	err := db.GDbMgr.Get().Model(this).Where("order_no = ?", orderNo).Attrs(CardOrderRetry{TryCount: new(int)}).FirstOrCreate(&this).Update("try_count", gorm.Expr("try_count+1")).Error
 	if err != nil {
 		return 0,err
 	}
