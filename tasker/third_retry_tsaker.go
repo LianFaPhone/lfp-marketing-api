@@ -211,8 +211,8 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				}else{
 					//sendUnFinishNotify(newUrl, orderArr[i])
 					log = "管理员|重试下的那成功|新订单未完成，等待上传照片"
+					new(models.CardOrderUrl).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &newUrl).Add()
 				}
-				new(models.CardOrderUrl).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &newUrl).Add()
 			}else{
 				*mp.Status = models.CONST_OrderStatus_New
 			}

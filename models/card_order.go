@@ -523,3 +523,27 @@ func (this *CardOrder) GetLimitByCond2(limit int, condPair []*SqlPairCondition) 
 	return arr, err
 }
 
+func (this *CardOrder) GetJoinLimitByCond(joinStr string, limit int, condPair []*SqlPairCondition, needFields []string) ([]*CardOrder, error) {
+	var arr []*CardOrder
+	query := db.GDbMgr.Get().Model(this).Where(this)
+
+	for i := 0; i < len(condPair); i++ {
+		if condPair[i] == nil {
+			continue
+		}
+		query = query.Where(condPair[i].Key, condPair[i].Value)
+	}
+	if len(needFields) > 0 {
+		query = query.Select(needFields)
+	}
+	if len(joinStr) > 0 {
+		query = query.Joins(joinStr)
+	}
+
+
+	err := query.Order("id DESC").Find(&arr).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return arr, err
+}

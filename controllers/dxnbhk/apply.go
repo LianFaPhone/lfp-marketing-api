@@ -173,6 +173,7 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 		}
 		*newOrder.ThirdOrderAt = time.Now().Unix()
 		*newOrder.Isp = models.CONST_ISP_Dianxin
+		*newOrder.Status = models.CONST_OrderStatus_New
 
 		if _,err := newOrder.UpdatesByOrderNo(); err != nil {
 			ZapLog().With(zap.Error(err)).Error("database err")
