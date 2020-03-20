@@ -7,6 +7,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/thirdcard-api/ydjthk"
 	"go.uber.org/zap"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -170,7 +171,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 
 			_, thirdOrderNo,oaoFlag,orderErr := new(ydjthk.ReOrderSubmit).Parse(channelId, productId, nil).Send(isOao, token,  *orderArr[i].Phone, chooseNumber, *orderArr[i].TrueName, *orderArr[i].IdCard, *orderArr[i].Address, *orderArr[i].Province, *orderArr[i].City, province.ProvinceId, city.CityId, area.AreaId)
 			if orderErr != nil {
-				*mp.Status = GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status)
+				*mp.Status = GenHelpUserFailStatus(GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status), orderErr.Error())
 				mp.Update()
 				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|下单失败，"+orderErr.Error())
 				continue
@@ -227,17 +228,20 @@ func GethelpUserStatus(orderNo string, oldstatus int) int {
 	return oldstatus
 }
 
-func GenHelpUserFailStatus(temp *models.CardOrder, errMsg string) int {
-	if temp.Status == nil {
-		return models.CONST_OrderStatus_Fail
-	}
-
-	if *temp.Status == models.CONST_OrderStatus_New_Apply_Doing {
-		return ParseFailStatus(errMsg)
-	}
-	if *temp.Status == models.CONST_OrderStatus_Retry_Apply_Doing {
+func GenHelpUserFailStatus(oldStatus int, errMsg string) int {
+	if oldStatus == models.CONST_OrderStatus_Fail_Already_Retry {
 		return models.CONST_OrderStatus_Fail_Already_Retry
 	}
-	return models.CONST_OrderStatus_Fail
+
+	 if strings.Contains(errMsg, "系统错误") {
+			return oldStatus
+	 }else if strings.Contains(errMsg, "订购的号码不存在") {
+			return oldStatus
+	 }else if strings.Contains(errMsg, "号码已被占用") {
+			return oldStatus
+	 }else if strings.Contains(errMsg, "系统忙") {
+			return oldStatus
+	 }
+	return models.CONST_OrderStatus_Fail_Already_Retry
 }
 

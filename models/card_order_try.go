@@ -12,7 +12,7 @@ type CardOrderRetry struct{
 	OrderId    *int64 `json:"order_id,omitempty"  gorm:"column:order_id;type:bigint(20);"` //订单号
 	OrderNo    *string `json:"order_no,omitempty"   gorm:"column:order_no;type:varchar(30);"` //订单号
 	PushFlag   *int      `json:"push_flag,omitempty"   gorm:"column:push_flag;type:tinyint(4)"`
-	TryCount   *int      `json:"try_count,omitempty"   gorm:"column:try_count;type:int(11);not null; default 0"`
+	TryCount   *int      `json:"try_count,omitempty"   gorm:"column:try_count;type:int(11); default 0"`
 	LastPushAt *int64 	 `json:"last_push_at,omitempty" gorm:"column:last_push_at;type:bigint(11)"`
 	Table
 }
@@ -47,7 +47,7 @@ func (this * CardOrderRetry) Add() error {
 
 func (this * CardOrderRetry) Incr(orderNo string) (int, error) {
 	this.OrderNo = &orderNo
-	err := db.GDbMgr.Get().Where(this).FirstOrCreate(&this).Update("try_count", gorm.Expr("try_count+1")).Error
+	err := db.GDbMgr.Get().Where(this).Attrs(CardOrderRetry{TryCount: new(int)}).FirstOrCreate(&this).Update("try_count", gorm.Expr("try_count+1")).Error
 	if err != nil {
 		return 0,err
 	}
