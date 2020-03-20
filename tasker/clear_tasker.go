@@ -73,5 +73,16 @@ func (this *Tasker) clearWork() {
 		}
 	}()
 
+	go func(){
+		defer models.PanicPrint()
+		for i:=0; i< 1000; i++ {
+			delCount,_ := new(models.CardOrderRetry).DelWithConds([]*models.SqlPairCondition{&models.SqlPairCondition{"created_at <= ?", time.Now().Unix() - 50* 3600}}, 10)
+			if delCount < 10 {
+				break
+			}
+			time.Sleep(time.Second * 15)
+		}
+	}()
+
 	return
 }
