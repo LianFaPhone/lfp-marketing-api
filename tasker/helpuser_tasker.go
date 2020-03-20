@@ -85,9 +85,9 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			mp := &models.CardOrder{
 				Id: orderArr[i].Id,
 				Status : new(int),
-				//ThirdOrderAt: new(int64),
+				ThirdOrderAt: new(int64),
 			}
-			//*mp.ThirdOrderAt = time.Now().Unix()
+			*mp.ThirdOrderAt = time.Now().Unix()
 
 			if orderArr[i].PartnerGoodsCode == nil || orderArr[i].Province == nil || orderArr[i].City == nil || orderArr[i].Area == nil || orderArr[i].Address == nil || orderArr[i].Phone == nil || orderArr[i].TrueName == nil || orderArr[i].IdCard == nil{
 				*mp.Status = models.CONST_OrderStatus_Fail_Already_Retry
