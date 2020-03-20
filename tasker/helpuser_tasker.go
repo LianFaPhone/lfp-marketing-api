@@ -92,7 +92,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			if orderArr[i].PartnerGoodsCode == nil || orderArr[i].Province == nil || orderArr[i].City == nil || orderArr[i].Area == nil || orderArr[i].Address == nil || orderArr[i].Phone == nil || orderArr[i].TrueName == nil || orderArr[i].IdCard == nil{
 				*mp.Status = models.CONST_OrderStatus_Fail_Already_Retry
 				mp.Update()
-				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,"帮助用户下单失败|表中数据缺失")
+				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,"帮助用户下单失败|表中数据缺失").Add()
 				continue
 			}
 
@@ -100,7 +100,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			if err != nil {
 				*mp.Status = models.CONST_OrderStatus_Fail_Already_Retry
 				mp.Update()
-				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|额外参数缺失")
+				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|额外参数缺失").Add()
 				continue
 			}
 			channelId := queryValues.Get("channelId")
@@ -110,7 +110,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			if len(channelId) <= 0 || len(productId) <= 0 {
 				*mp.Status = models.CONST_OrderStatus_Fail_Already_Retry
 				mp.Update()
-				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,  "帮助用户下单失败|额外参数缺失")
+				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,  "帮助用户下单失败|额外参数缺失").Add()
 				continue
 			}
 
@@ -118,35 +118,35 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			if err != nil {
 				*mp.Status = GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status)
 				mp.Update()
-				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|请求token失败，"+err.Error())
+				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|请求token失败，"+err.Error()).Add()
 				continue
 			}
 			province,ok := ProvinceMap[*orderArr[i].Province]
 			if !ok {
 				*mp.Status = models.CONST_OrderStatus_Fail_Already_Retry
 				mp.Update()
-				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,  "帮助用户下单失败|省份匹配不上")
+				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,  "帮助用户下单失败|省份匹配不上").Add()
 				continue
 			}
 			city, ok := province.CityMap[*orderArr[i].City]
 			if !ok {
 				*mp.Status = models.CONST_OrderStatus_Fail_Already_Retry
 				mp.Update()
-				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|城市匹配不上")
+				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|城市匹配不上").Add()
 				continue
 			}
 			area,ok := city.AreaMap[*orderArr[i].Area]
 			if !ok {
 				*mp.Status = models.CONST_OrderStatus_Fail_Already_Retry
 				mp.Update()
-				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|区（县）匹配不上")
+				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|区（县）匹配不上").Add()
 				continue
 			}
 			numbers,err := new(ydjthk.ReCardSearch).Send(isOao, province.ProvinceId, province.ProvinceName, city.CityId, city.CityName, "", 1, 10)
 			if err != nil {
 				*mp.Status = GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status)
 				mp.Update()
-				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|获取新号码失败，"+err.Error())
+				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|获取新号码失败，"+err.Error()).Add()
 				continue
 			}
 
@@ -165,7 +165,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			if len(chooseNumber) <= 0 {
 				*mp.Status = GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status)
 				mp.Update()
-				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,  "帮助用户下单失败|无法锁定新号码")
+				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,  "帮助用户下单失败|无法锁定新号码").Add()
 				continue
 			}
 
@@ -173,7 +173,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			if orderErr != nil {
 				*mp.Status = GenHelpUserFailStatus(GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status), orderErr.Error())
 				mp.Update()
-				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|下单失败，"+orderErr.Error())
+				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|下单失败，"+orderErr.Error()).Add()
 				continue
 			}
 
@@ -194,7 +194,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			}else{
 				*mp.Status = models.CONST_OrderStatus_New
 			}
-			new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
+			new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 
 			mp.NewPhone = &chooseNumber
 			mp.ThirdOrderNo = &thirdOrderNo

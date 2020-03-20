@@ -106,7 +106,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
 				log := "管理员|重试下单失败|表中数据缺失"
-				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
+				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 
@@ -115,7 +115,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
 				log := "管理员|重试下单失败|额外参数缺失"
-				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
+				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 			channelId := queryValues.Get("channelId")
@@ -126,7 +126,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
 				log := "管理员|重试下单失败|额外参数缺失"
-				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
+				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 			token,err := new(ydjthk.ReToken).Send(isOao, channelId)
@@ -134,7 +134,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
 				log := "管理员|重试下单失败|请求token失败，"+err.Error()
-				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
+				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 			province,ok := ProvinceMap[*orderArr[i].Province]
@@ -142,7 +142,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
 				log := "管理员|重试下单失败|省份匹配不上"
-				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
+				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 			city, ok := province.CityMap[*orderArr[i].City]
@@ -150,7 +150,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
 				log := "管理员|重试下单失败|城市匹配不上"
-				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
+				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 			area,ok := city.AreaMap[*orderArr[i].Area]
@@ -158,7 +158,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
 				log := "管理员|重试下单失败|区（县）匹配不上"
-				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
+				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 			numbers,err := new(ydjthk.ReCardSearch).Send(isOao, province.ProvinceId, province.ProvinceName, city.CityId, city.CityName, "", 1, 10)
@@ -166,7 +166,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
 				log := "管理员|重试下单失败|获取新号码失败，"+err.Error()
-				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
+				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 
@@ -186,7 +186,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
 				mp.Update()
 				log := "管理员|重试下单失败|无法锁定新号码"
-				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
+				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 
@@ -195,7 +195,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				*mp.Status = GenFailStatus(orderArr[i], orderErr.Error())
 				mp.Update()
 				log := "管理员|重试下单失败|下单失败，"+orderErr.Error()
-				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
+				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
 
@@ -216,7 +216,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			}else{
 				*mp.Status = models.CONST_OrderStatus_New
 			}
-			new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log)
+			new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 
 			mp.NewPhone = &chooseNumber
 			mp.ThirdOrderNo = &thirdOrderNo
