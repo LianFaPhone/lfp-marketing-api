@@ -74,7 +74,7 @@ func (this *ReAddr) Send(isOao bool) ([]Provice, error) {
 		return  nil, err
 	}
 	if res.Ret != "0" {
-		return nil, fmt.Errorf("%s",res.Msg)
+		return nil, fmt.Errorf("%s-%s",res.Ret, res.Msg)
 	}
 
 	return res.AllProvinceInfo, nil

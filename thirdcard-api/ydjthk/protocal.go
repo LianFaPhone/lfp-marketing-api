@@ -55,7 +55,7 @@ func (this *ReProtocal) Send(isOao bool, ProviceCode string) (string, error) {
 		return  "", err
 	}
 	if !(res.Ret == "0" || res.Ret == "000") {
-		return "", fmt.Errorf("%s",res.Msg)
+		return "", fmt.Errorf("%s-%s",res.Ret, res.Msg)
 	}
 
 	return res.ResTest, nil

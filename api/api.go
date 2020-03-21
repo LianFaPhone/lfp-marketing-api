@@ -184,7 +184,7 @@ type(
 
 	FtResYdhkApply struct{
 		ThirdOrderId string   `json:"third_order_no"`
-		//OrderId string   `json:"order_no"`
+		OrderNo string   `json:"order_no"`
 		OaoModel  bool    `json:"oao_model"`
 	}
 

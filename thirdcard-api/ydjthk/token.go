@@ -53,7 +53,7 @@ func (this *ReToken) Send(isOao bool, channelId string) (string, error) {
 		return  "", err
 	}
 	if res.Ret != "0" {
-		return "", fmt.Errorf("%s", res.Msg)
+		return "", fmt.Errorf("%s-%s", res.Ret,res.Msg)
 	}
 	if len(res.AccessToken) <= 5 {
 		return "", fmt.Errorf("get wrong token [%s]",res.AccessToken)

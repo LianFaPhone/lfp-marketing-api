@@ -96,6 +96,17 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		}
 	}
 
+	orderNo := ""
+	oldOrderFlag := false
+	oldOrder,_ := new(models.CardOrder).GetByIdcardAndNewPhone(param.CertificateNo, param.NewPhone, &models.SqlPairCondition{"created_at > ?", time.Now().Unix() - 300})
+	if oldOrder != nil { // 老订单
+		orderNo = *oldOrder.OrderNo
+		oldOrderFlag = true
+	}else{
+		orderNo = fmt.Sprintf("D%s%s%03d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
+		oldOrderFlag = false
+	}
+
 	//这个函数的错误码处理的不好
 	errCode, orderId,oaoFlag,orderErr := new(ReOrderSubmit).Parse(channelId, productId, nil).Send(isoao, param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
 	if orderErr != nil {
@@ -104,10 +115,12 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			this.ExceptionSerive(ctx, errCode.Code(), orderErr.Error())
 			return
 		}
-		this.ExceptionSerive(ctx, this.ParseExcetionCode(errCode, orderErr.Error()).Code(), orderErr.Error())
+		this.ExceptionSeriveWithData(ctx, this.ParseExcetionCode(errCode, orderErr.Error()).Code(), orderErr.Error(),  &api.FtResYdhkApply{orderId,orderNo, oaoFlag})
 	}else{
-		this.Response(ctx, &api.FtResYdhkApply{orderId,oaoFlag})
+		this.Response(ctx, &api.FtResYdhkApply{orderId,orderNo, oaoFlag})
 	}
+
+
 
 	go func(){
 		var  urlValues url.Values
@@ -121,13 +134,10 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			}
 		}
 
-		orderNo := ""
-		oldOrder,_ := new(models.CardOrder).GetByIdcardAndNewPhone(param.CertificateNo, param.NewPhone, &models.SqlPairCondition{"created_at > ?", time.Now().Unix() - 300})
-		if oldOrder != nil { // 老订单
+		if oldOrderFlag { // 老订单
 			this.recordOldOrder(oldOrder, errCode, oaoFlag, orderErr, param.IsRetry )
-			orderNo = *oldOrder.OrderNo
 		}else{
-			orderNo = this.recordNewOrder(ctx, param, orderId, errCode, oaoFlag, orderErr, int(adTp), param.IsRetry)
+			this.recordNewOrder(ctx, orderNo, param, orderId, errCode, oaoFlag, orderErr, int(adTp), param.IsRetry)
 		}
 
 		if !oaoFlag ||(errCode != apibackend.BASERR_SUCCESS) || (param.UrlQueryString == nil) {
@@ -238,8 +248,8 @@ func (this * Ydhk) AdCallback(ctx iris.Context, adTp int64, urlValues url.Values
 
 }
 
-func (this * Ydhk) recordNewOrder(ctx iris.Context, param *api.FtYdhkApply, thirdOrderId string, errCode apibackend.EnumBasErr, oaoFlag bool, orderErr error, adTp int, isRetry *int) string {
-	orderNo := fmt.Sprintf("D%s%s%03d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
+func (this * Ydhk) recordNewOrder(ctx iris.Context, orderNo string, param *api.FtYdhkApply, thirdOrderId string, errCode apibackend.EnumBasErr, oaoFlag bool, orderErr error, adTp int, isRetry *int) string {
+	//orderNo := fmt.Sprintf("D%s%s%03d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
 	modelParam := &models.CardOrder{
 		OrderNo:  &orderNo,
 		TrueName: &param.LeagalName,

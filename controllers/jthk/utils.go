@@ -23,6 +23,8 @@ func (this *Ydhk) ParseFailStatus(errMsg string) int {
 		return models.CONST_OrderStatus_Fail_Retry
 	}else if strings.Contains(errMsg, "锁定号码失败") {
 		return models.CONST_OrderStatus_Fail_Retry
+	}else if strings.Contains(errMsg, "获取新号码失败"){
+		return models.CONST_OrderStatus_Fail_Retry
 	}
 	return models.CONST_OrderStatus_Fail
 }
@@ -32,7 +34,9 @@ func (this *Ydhk) ParseExcetionCode(oldCode apibackend.EnumBasErr, errMsg string
 		return apibackend.BASERR_CARDMARKET_PHONECARD_APPLY_HelpUser
 	}else  if strings.Contains(errMsg, "系统忙") {
 		return apibackend.BASERR_CARDMARKET_PHONECARD_APPLY_HelpUser
-	}else if strings.Contains(errMsg, "无法申请新号卡") {
+	}else if strings.Contains(errMsg, "获取新号码失败"){
+		return apibackend.BASERR_CARDMARKET_PHONECARD_APPLY_HelpUser
+	} else if strings.Contains(errMsg, "无法申请新号卡") {
 		return apibackend.BASERR_CARDMARKET_PHONECARD_FastAPPLY_Dxnbhk
 	}else if strings.Contains(errMsg, "欠费号码") {
 		return apibackend.BASERR_CARDMARKET_PHONECARD_FastAPPLY_Dxnbhk

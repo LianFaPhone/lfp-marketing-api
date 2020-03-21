@@ -66,11 +66,13 @@ func (c *Controllers) ExceptionSerive(
 func (c *Controllers) ExceptionSeriveWithData(
 	ctx context.Context,
 	code int,
+	message string,
 	data interface{}) {
 
 	ctx.JSON(
 		Response{
 			Code: code,
+			Message: message,
 			Data: data,
 		})
 }

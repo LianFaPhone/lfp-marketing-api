@@ -88,7 +88,7 @@ func (this *ReCardSearch) Send(isOao bool, proCode, proName, cityCode, cityName,
 		return nil, err
 	}
 	if res.Ret != "0" {
-		return nil, fmt.Errorf("%s", res.Msg)
+		return nil, fmt.Errorf("%s-%s", res.Ret, res.Msg)
 	}
 	if len(res.Numbers) == 0 {
 		return nil, nil

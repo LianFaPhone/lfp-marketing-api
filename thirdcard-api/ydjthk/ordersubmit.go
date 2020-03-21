@@ -109,7 +109,7 @@ func (this *ReOrderSubmit) Send(isOao bool, token, inPhone, newPhone, LegalName,
 		return apibackend.BASERR_DATA_UNPACK_ERROR,"",false, err
 	}
 	if res.Ret != "0" {
-		return apibackend.BASERR_CARDMARKET_PHONECARD_APPLY_FAID_AND_SHOW,"",false, fmt.Errorf("%s", res.Msg)
+		return apibackend.BASERR_CARDMARKET_PHONECARD_APPLY_FAID_AND_SHOW,"",false, fmt.Errorf("%s-%s", res.Ret,res.Msg)
 	}
 
 	return apibackend.BASERR_SUCCESS, res.OrderId,res.OaoModel, nil

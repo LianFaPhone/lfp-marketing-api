@@ -74,7 +74,7 @@ func (this *ReIdCheckUrl) Send(isOao bool,channelId string, orderId, newPhone, t
 		return  "", err
 	}
 	if res.Ret != "0" {
-		return "", fmt.Errorf("%s",res.Msg)
+		return "", fmt.Errorf("%s-%s",res.Ret, res.Msg)
 	}
 
 	return res.Url, nil
