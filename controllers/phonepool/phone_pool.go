@@ -323,7 +323,7 @@ func (this *PhoneNumberPool) Adds(ctx iris.Context) {
 			//this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 			res.FailCount = len(res.FailNumber)
 			res.SuccCount = len(params) - res.FailCount
-			this.ExceptionSeriveWithData(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), res)
+			this.ExceptionSeriveWithData(ctx, apibackend.BASERR_DATABASE_ERROR.Code(),"", res)
 			return
 		}
 		if !uniqueFlag {
@@ -336,7 +336,7 @@ func (this *PhoneNumberPool) Adds(ctx iris.Context) {
 			//this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
 			res.FailCount = len(res.FailNumber)
 			res.SuccCount = len(params) - res.FailCount
-			this.ExceptionSeriveWithData(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), res)
+			this.ExceptionSeriveWithData(ctx, apibackend.BASERR_DATABASE_ERROR.Code(),"", res)
 			return
 		}
 		res.SuccNumber = append(res.SuccNumber, params[i].Number)
@@ -344,5 +344,5 @@ func (this *PhoneNumberPool) Adds(ctx iris.Context) {
 
 	res.FailCount = len(res.FailNumber)
 	res.SuccCount = len(params) - res.FailCount
-	this.ExceptionSeriveWithData(ctx, apibackend.BASERR_SUCCESS.Code(), res)
+	this.ExceptionSeriveWithData(ctx, apibackend.BASERR_SUCCESS.Code(),"", res)
 }

@@ -423,7 +423,7 @@ func (this * Ydhk) OfflineActive(ctx iris.Context) {
 		this.ExceptionSerive(ctx, errCode.Code(), err.Error())
 		return
 	}
-	this.Response(ctx, &api.FtResYdhkApply{orderId,oaoFlag})
+	this.Response(ctx, &api.FtResYdhkApply{orderId,"", oaoFlag})
 
 	go func() {
 		modelParam := &models.CardOrder{
