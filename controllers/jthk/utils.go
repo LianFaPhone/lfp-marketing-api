@@ -40,6 +40,10 @@ func (this *Ydhk) ParseExcetionCode(oldCode apibackend.EnumBasErr, errMsg string
 		return apibackend.BASERR_CARDMARKET_PHONECARD_FastAPPLY_Dxnbhk
 	}else if strings.Contains(errMsg, "欠费号码") {
 		return apibackend.BASERR_CARDMARKET_PHONECARD_FastAPPLY_Dxnbhk
+	}else if strings.Contains(errMsg, "每月最多申请") {
+		return apibackend.BASERR_CARDMARKET_PHONECARD_FastAPPLY_Dxnbhk
+	}else if strings.Contains(errMsg, "入网资格校验") {
+		return apibackend.BASERR_CARDMARKET_PHONECARD_FastAPPLY_Dxnbhk
 	}
 	return oldCode
 }
