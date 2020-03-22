@@ -66,7 +66,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			}
 		}
 	}
-
+	time.Sleep(time.Millisecond*2000)
 	for q:=0;q<500;q++ {
 		conds := []*models.SqlPairCondition{
 			//&models.SqlPairCondition{"id > ?", startId},
@@ -129,6 +129,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
+			time.Sleep(time.Millisecond*100)
 			token,err := new(ydjthk.ReToken).Send(isOao, channelId)
 			if err != nil {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
@@ -161,6 +162,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
+			time.Sleep(time.Millisecond*100)
 			numbers,err := new(ydjthk.ReCardSearch).Send(isOao, province.ProvinceId, province.ProvinceName, city.CityId, city.CityName, "", 1, 10)
 			if err != nil {
 				*mp.Status = GenFailStatus(orderArr[i], "可重试")
@@ -189,7 +191,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				new(models.CardOrderLog).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
-
+			time.Sleep(time.Millisecond*1000)
 			_, thirdOrderNo,oaoFlag,orderErr := new(ydjthk.ReOrderSubmit).Parse(channelId, productId, nil).Send(isOao, token,  *orderArr[i].Phone, chooseNumber, *orderArr[i].TrueName, *orderArr[i].IdCard, *orderArr[i].Address, *orderArr[i].Province, *orderArr[i].City, province.ProvinceId, city.CityId, area.AreaId)
 			if orderErr != nil {
 				*mp.Status = GenFailStatus(orderArr[i], orderErr.Error())
@@ -227,7 +229,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				return
 			}
 			mp.MaxIdByOrderNo(*orderArr[i].OrderNo) // 这一步是关键，让它重新被检测
-			time.Sleep(time.Second * 2)
+			time.Sleep(time.Second * 1)
 		}
 
 		if len(orderArr) < 10 {

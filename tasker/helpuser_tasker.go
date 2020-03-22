@@ -50,6 +50,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 		}
 	}
 
+	time.Sleep(time.Second*3)
 	startId := int64(0)
 
 	for ;true; {
@@ -113,7 +114,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,  "帮助用户下单失败|额外参数缺失").Add()
 				continue
 			}
-
+			time.Sleep(time.Millisecond*100)
 			token,err := new(ydjthk.ReToken).Send(isOao, channelId)
 			if err != nil {
 				*mp.Status = GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status)
@@ -142,6 +143,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|区（县）匹配不上").Add()
 				continue
 			}
+			time.Sleep(time.Millisecond*100)
 			numbers,err := new(ydjthk.ReCardSearch).Send(isOao, province.ProvinceId, province.ProvinceName, city.CityId, city.CityName, "", 1, 10)
 			if err != nil {
 				*mp.Status = GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status)
@@ -149,7 +151,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|获取新号码失败，"+err.Error()).Add()
 				continue
 			}
-
+			time.Sleep(time.Millisecond*100)
 			chooseNumber := ""
 			for j:=0; j < len(numbers);j++ {
 				flag,_,err := new(ydjthk.ReCloseNumber).Send(isOao, province.ProvinceId,  city.CityId, numbers[j], token)
@@ -168,9 +170,10 @@ func (this *Tasker) jtydhkHelpUserWork() {
 				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,  "帮助用户下单失败|无法锁定新号码").Add()
 				continue
 			}
-
+			time.Sleep(time.Millisecond*1000)
 			_, thirdOrderNo,oaoFlag,orderErr := new(ydjthk.ReOrderSubmit).Parse(channelId, productId, nil).Send(isOao, token,  *orderArr[i].Phone, chooseNumber, *orderArr[i].TrueName, *orderArr[i].IdCard, *orderArr[i].Address, *orderArr[i].Province, *orderArr[i].City, province.ProvinceId, city.CityId, area.AreaId)
 			if orderErr != nil {
+				ZapLog().Error("helpuser ReOrderSubmit err", zap.Error(orderErr), zap.String("channelId", channelId), zap.String("productId", productId), zap.String("other", *orderArr[i].Phone+ chooseNumber+ *orderArr[i].TrueName+ *orderArr[i].IdCard+ *orderArr[i].Address+ *orderArr[i].Province+ *orderArr[i].City+ province.ProvinceId+ city.CityId+ area.AreaId))
 				*mp.Status = GenHelpUserFailStatus(GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status), orderErr.Error())
 				mp.Update()
 				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|下单失败，"+orderErr.Error()).Add()
@@ -199,19 +202,19 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			mp.NewPhone = &chooseNumber
 			mp.ThirdOrderNo = &thirdOrderNo
 			mp.ThirdOrderAt = new(int64)
-			*mp.ThirdOrderAt = time.Now().Unix() -5*60
+			*mp.ThirdOrderAt = time.Now().Unix() -2*60
 			if err = mp.Update(); err != nil {
 				ZapLog().Error("CardOrder Update err", zap.Error(err))
 				return
 			}
 			mp.MaxIdByOrderNo(*orderArr[i].OrderNo) // 这一步是关键，让它重新被检测
-			time.Sleep(time.Second * 2)
+			time.Sleep(time.Second * 1)
 		}
 
 		if len(orderArr) < 10 {
 			break
 		}
-		time.Sleep(time.Second * 5)
+		time.Sleep(time.Second * 3)
 	}
 
 }

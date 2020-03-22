@@ -152,6 +152,7 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 				}
 				*mp.Status = models.CONST_OrderStatus_Fail_Retry
 			}else{
+				new(models.CardOrderLog).FtParseAdd2(nil, orderArr[i].OrderNo, "OAO检测|成功找到订单").Add()
 				*mp.Status = models.CONST_OrderStatus_New
 			}
 
@@ -326,6 +327,7 @@ func (this *Tasker) ydjthkExpressWork(idRecordName string, delay int64) {
 			*mp.Status = models.CONST_OrderStatus_Already_Delivered
 			mp.DeliverAt = new(int64)
 			*mp.DeliverAt = time.Now().Unix()
+			new(models.CardOrderLog).FtParseAdd2(nil, orderArr[i].OrderNo, "快递查询|成功找到快递信息").Add()
 
 			if err = mp.Update(); err != nil {
 				ZapLog().Error("CardOrder Update err", zap.Error(err))
