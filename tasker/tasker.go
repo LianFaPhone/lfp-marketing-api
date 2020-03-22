@@ -89,6 +89,7 @@ func (this *Tasker) run() {
 	//oao测试 和 发短信 都有时效性要求，超过时间就无效了。所以性能不够得时候得加机器
 	go func() {//15分钟处理不完就失效了
 		defer models.PanicPrint()
+		return
 		for {
 			select {
 			case <-jthkNewUnfinishNotifyTicker.C:

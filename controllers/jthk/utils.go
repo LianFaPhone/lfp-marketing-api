@@ -31,9 +31,9 @@ func (this *Ydhk) ParseFailStatus(errMsg string) int {
 
 func (this *Ydhk) ParseExcetionCode(oldCode apibackend.EnumBasErr, errMsg string)  apibackend.EnumBasErr {
 	if strings.Contains(errMsg, "系统错误") {
-		return apibackend.BASERR_CARDMARKET_PHONECARD_APPLY_HelpUser
+		return apibackend.BASERR_CARDMARKET_PHONECARD_FastAPPLY_Dxnbhk
 	}else  if strings.Contains(errMsg, "系统忙") {
-		return apibackend.BASERR_CARDMARKET_PHONECARD_APPLY_HelpUser
+		return apibackend.BASERR_CARDMARKET_PHONECARD_FastAPPLY_Dxnbhk
 	}else if strings.Contains(errMsg, "获取新号码失败"){
 		return apibackend.BASERR_CARDMARKET_PHONECARD_APPLY_HelpUser
 	} else if strings.Contains(errMsg, "无法申请新号卡") {

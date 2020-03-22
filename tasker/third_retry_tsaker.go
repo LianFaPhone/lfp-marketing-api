@@ -223,7 +223,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 			mp.NewPhone = &chooseNumber
 			mp.ThirdOrderNo = &thirdOrderNo
 			mp.ThirdOrderAt = new(int64)
-			*mp.ThirdOrderAt = time.Now().Unix() -6*60
+			*mp.ThirdOrderAt = time.Now().Unix() -2*60
 			if err = mp.Update(); err != nil {
 				ZapLog().Error("CardOrder Update err", zap.Error(err))
 				return
