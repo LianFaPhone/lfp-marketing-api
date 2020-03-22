@@ -157,7 +157,7 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 		return
 	}
 
-	if res.Success == "false" {
+	if res.Success == false {
 		ZapLog().With(zap.String("errMsg", res.Msg)).Error("reOrderSubmit send err")
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|对接电信, "+res.Msg).Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), res.Msg)

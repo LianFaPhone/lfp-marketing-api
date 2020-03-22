@@ -27,7 +27,7 @@ type ReOrderSubmit struct{
 }
 
 type ResOrderSubmit struct{
-	Success   string  `json:"success"`
+	Success   bool  `json:"success"`
 	Msg        string  `json:"msg"`
 	SelectNumber    string  `json:"selectNumber"`
 	OrderNumber     string  `json:"orderNumber"`
