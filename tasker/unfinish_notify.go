@@ -153,7 +153,7 @@ func (this *Tasker) ydjthkNewUnFinishNotify(idRecordName string) {
 	}
 
 	nowTime := time.Now().Unix()
-	platformTp :=2 //chuanglan
+	platformTp :=3 //yunpian
 
 	for true {
 		conds := []*models.SqlPairCondition{
@@ -197,14 +197,26 @@ func (this *Tasker) ydjthkNewUnFinishNotify(idRecordName string) {
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
-			if !strings.HasPrefix(*orderUrl.Url, " ") {
-				*orderUrl.Url = " "+*orderUrl.Url+" " //可生成短链
+			shortUrl := ""
+			TempName := "yd_jthk_new_unfinish"
+			if platformTp == 2{
+				if !strings.HasPrefix(*orderUrl.Url, " ") {
+					*orderUrl.Url = " "+*orderUrl.Url+" " //可生成短链
+				}
+				shortUrl = strings.Replace(*orderUrl.Url, "%", "%25", -1)
+			}else if platformTp == 3{
+				shortUrl,err = sdk.GYunPainSdk.GetShortUrl(*orderUrl.Url)
+				if err != nil {
+					new(models.CardOrderLog).FtParseAdd2(nil, orderArr[i].OrderNo, "短信发送|获取短链失败|"+err.Error()).Add()
+					continue
+				}
+				TempName = "yd_jthk_new_unfinish2"
 			}
-			*orderUrl.Url = strings.Replace(*orderUrl.Url, "%", "%25", -1)
+
 
 			log:= "短信发送：照片上传提醒，发送成功"
 
-			if err := sdk.GNotifySdk.SendSms([]string{*orderUrl.Url}, *orderArr[i].Phone, "yd_jthk_new_unfinish",0, &platformTp); err != nil {
+			if err := sdk.GNotifySdk.SendSms([]string{shortUrl}, *orderArr[i].Phone, TempName,0, &platformTp); err != nil {
 				ZapLog().Error("GNotifySdk.SendSms err", zap.Error(err))
 				//continue
 				log= "短信发送：照片上传提醒，发送失败;"+err.Error()

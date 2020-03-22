@@ -222,7 +222,7 @@ func GethelpUserStatus(orderNo string, oldstatus int) int {
 		ZapLog().Error("new(models.CardOrderRetry).Incr err", zap.Error(err))
 		return oldstatus
 	}
-	if count >= 10 {
+	if count >= 15 {
 		return models.CONST_OrderStatus_Fail_Already_Retry
 	}
 	return oldstatus

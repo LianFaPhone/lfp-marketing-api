@@ -58,6 +58,7 @@ func Loader() error {
 	}
 	os.MkdirAll("./photos",os.ModePerm)
 	rand.Seed(time.Now().Unix())
+	sdk.GYunPainSdk.Init(config.GConfig.YunPian.ApiKey)
 	return nil
 }
 

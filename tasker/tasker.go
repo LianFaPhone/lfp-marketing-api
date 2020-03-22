@@ -92,12 +92,12 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-jthkNewUnfinishNotifyTicker.C:
-				uT:= time.Now()
-				hour := uT.Hour()
-				min := uT.Minute()
-				if (hour >= 8) && ((hour < 21) || ( (hour == 21) && (min <=50)) ){
+				//uT:= time.Now()
+				//hour := uT.Hour()
+				//min := uT.Minute()
+				//if (hour >= 8) && ((hour < 21) || ( (hour == 21) && (min <=50)) ){
 					this.ydjthkNewUnFinishNotify("yd_jt_huaka_NewUnfinishNotify")
-				}
+				//}
 			}
 		}
 	}()
@@ -193,7 +193,7 @@ func (this *Tasker) run() {
 		defer models.PanicPrint()
 		for {
 			hour := time.Now().Hour()
-			if hour >=8 && hour <= 21 {
+			if hour >=8 && hour <= 22 {
 				this.jtyhhkThirdRetryWork()
 			}
 			time.Sleep(time.Minute* 10)
@@ -205,7 +205,7 @@ func (this *Tasker) run() {
 		defer models.PanicPrint()
 		for {
 			hour := time.Now().Hour()
-			if hour >=8 && hour <= 21 {
+			if hour >=8 && hour <= 22 {
 				this.jtydhkHelpUserWork()
 			}
 			time.Sleep(time.Minute* 15)

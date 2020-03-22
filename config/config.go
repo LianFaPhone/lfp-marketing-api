@@ -102,6 +102,7 @@ type Config struct {
 	MarketMain      MarketMain      `yaml:"marketing_main"`
 	IdCardCheck     IdCardCheck     `yaml:"idcard_check"`
 	ChuangLan       ChuangLan       `yaml:"chuanglan"`
+	YunPian        YunPian          `yaml:"yunpian"`
 	Aliyun          Aliyun         `yaml:"aliyun"`
 	Baidu           Baidu          `yaml:"baidu"`
 	Task            Task           `yaml:"task"`
@@ -200,6 +201,10 @@ type ChuangLan struct {
 	IdcardCheck_url string `yaml:"idcardcheck_url"`
 	UnnCheck_url    string `yaml:"unncheck_url"`
 	Host            string `yaml:"host"`
+}
+
+type YunPian struct {
+	ApiKey           string `yaml:"apikey"`
 }
 
 type Baidu struct {
