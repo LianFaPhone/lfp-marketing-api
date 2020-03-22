@@ -87,12 +87,12 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 		return
 	}
 	if city == nil {
-		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|城市匹配不上").Add()
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|城市匹配不上,"+*order.City).Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_UNKNOWN_BUG.Code(), "城市未匹配")
 		return
 	}
 
-	area,err := new(models.DxnbhkArea).GetByCityIdAndName(*city.Id, *order.City)
+	area,err := new(models.DxnbhkArea).GetByCityIdAndName(*city.Id, *order.Area)
 	if err != nil {
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|数据库异常").Add()
 		ZapLog().With(zap.Error(err)).Error("database err")
@@ -100,7 +100,7 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 		return
 	}
 	if area == nil {
-		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|区县匹配不上").Add()
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|区县匹配不上,"+*order.Area).Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_UNKNOWN_BUG.Code(), "区县未匹配")
 		return
 	}
