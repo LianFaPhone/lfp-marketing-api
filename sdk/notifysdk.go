@@ -61,7 +61,7 @@ func (this *NotifySdk) SendSms(Params []string, phone, tempName string, PlayTp i
 		return err
 	}
 	if res.Code != 0 {
-		return fmt.Errorf("%d-%s", res.Code, res.Message)
+		return fmt.Errorf("%s",  res.Message)
 	}
 	return nil
 }
