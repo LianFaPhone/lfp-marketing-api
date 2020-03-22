@@ -169,7 +169,18 @@ func (this *Dxnbhk) aysnFastApply(ctx iris.Context, order *models.CardOrder) {
 			continue
 		}
 
-		if res.Success == false {
+		sucFlag := false
+		switch res.Success.(type) {
+		case bool:
+			sucFlag,_ = res.Success.(bool)
+		case string:
+			sucStr,_ := res.Success.(string)
+			if sucStr == "true" {
+				sucFlag = true
+			}
+		}
+
+		if sucFlag == false {
 			ZapLog().With(zap.String("errMsg", res.Msg)).Error("reOrderSubmit send err")
 			new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|对接电信, "+res.Msg).Add()
 			//this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), res.Msg)
