@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -41,7 +42,7 @@ func (this *ReOrderSubmit) Send() (*ResOrderSubmit, error) {
 	}
 	timeStr :=  time.Now().Format("20060102150405")
 	md5Str := this.Address+this.AgentMark+this.Area+this.City+this.ContactNumber+this.IdNumber+this.ProductId+this.Province+ "submit"+timeStr+this.UserName+"NB@Zt.123"
-	md5Str = md5V(md5Str)
+	md5Str = strings.ToUpper(md5V(md5Str))
 
 	formBody := make(url.Values)
 	formBody.Set("address", this.Address)
