@@ -39,7 +39,7 @@ func (this *Tasker) ydjthkFailNotify(idRecordName string) {
 	}
 
 	nowTime := time.Now().Unix()
-	platformTp :=2
+	platformTp :=3
 
 	for true {
 		conds := []*models.SqlPairCondition{

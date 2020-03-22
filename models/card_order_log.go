@@ -24,6 +24,12 @@ func (this *CardOrderLog) FtParseAdd(orderId *int64, orderNo *string, log *strin
 	this.OrderId = orderId
 	this.OrderNo = orderNo
 	this.Log = log
+	if (this.Log != nil) {
+		temp := []rune(*this.Log)
+		if len(temp) >=100 {
+			*this.Log = string(temp[0:100])
+		}
+	}
 	this.Valid = new(int)
 	*this.Valid = 1
 	return this
@@ -33,6 +39,11 @@ func (this *CardOrderLog) FtParseAdd2(orderId *int64, orderNo *string, log strin
 	this.OrderId = orderId
 	this.OrderNo = orderNo
 	this.Log = &log
+	temp := []rune(log)
+	if len(temp) >=100 {
+		*this.Log = string(temp[0:100])
+	}
+
 	this.Valid = new(int)
 	*this.Valid = 1
 	return this
