@@ -158,7 +158,7 @@ func (this *Tasker) ydjthkNewUnFinishNotify(idRecordName string) {
 	for true {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"Id > ?", startId},
-			&models.SqlPairCondition{"third_order_at <= ?", nowTime-16*60},
+			&models.SqlPairCondition{"third_order_at <= ?", nowTime-5*60},
 			&models.SqlPairCondition{"third_order_at >= ?", nowTime-35*60},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New_UnFinish},
 		}

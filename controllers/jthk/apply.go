@@ -103,7 +103,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 		orderNo = *oldOrder.OrderNo
 		oldOrderFlag = true
 	}else{
-		orderNo = fmt.Sprintf("D%s%s%03d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
+		orderNo = fmt.Sprintf("D%s%s%04d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
 		oldOrderFlag = false
 	}
 
@@ -249,7 +249,7 @@ func (this * Ydhk) AdCallback(ctx iris.Context, adTp int64, urlValues url.Values
 }
 
 func (this * Ydhk) recordNewOrder(ctx iris.Context, orderNo string, param *api.FtYdhkApply, thirdOrderId string, errCode apibackend.EnumBasErr, oaoFlag bool, orderErr error, adTp int, isRetry *int) string {
-	//orderNo := fmt.Sprintf("D%s%s%03d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
+	//orderNo := fmt.Sprintf("D%s%s%04d", config.GConfig.Server.DevId,time.Now().Format("060102030405000"), GIdGener.Gen())
 	modelParam := &models.CardOrder{
 		OrderNo:  &orderNo,
 		TrueName: &param.LeagalName,

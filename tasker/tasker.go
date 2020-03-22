@@ -54,7 +54,7 @@ func (this *Tasker) run() {
 	jthkFailNotifyTicker := time.NewTicker(time.Minute * 25)
 	//cardOrderUnFinishSms1HourTicker.Stop()
 
-	ydhkUnFinishSmallCheckTicker := time.NewTicker(time.Minute * 3)
+	ydhkUnFinishSmallCheckTicker := time.NewTicker(time.Minute * 2)
 	if !config.GConfig.Task.YdhkUnfinishFlag {
 		ydhkUnFinishSmallCheckTicker.Stop()
 	}
@@ -148,7 +148,7 @@ func (this *Tasker) run() {
 		for {
 			select {
 			case <-ydhkUnFinishSmallCheckTicker.C:
-				this.ydjthkOaoWork("yd_jt_huaka_small_oao", 9*60, false)
+				this.ydjthkOaoWork("yd_jt_huaka_small_oao", 3*60, false)
 			}
 		}
 	}()
