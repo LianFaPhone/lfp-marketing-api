@@ -44,8 +44,8 @@ func (this *Tasker) ydjthkFailNotify(idRecordName string) {
 	for true {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
-			&models.SqlPairCondition{"created_at <= ?", nowTime-5*3600},
-			&models.SqlPairCondition{"created_at >= ?", nowTime-30*3600},
+			&models.SqlPairCondition{"third_order_at <= ?", nowTime-5*3600},
+			&models.SqlPairCondition{"third_order_at >= ?", nowTime-30*3600},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_Fail_Retry},
 		}
 
@@ -153,13 +153,13 @@ func (this *Tasker) ydjthkNewUnFinishNotify(idRecordName string) {
 	}
 
 	nowTime := time.Now().Unix()
-	platformTp :=3 //yunpian
+	platformTp :=2 //yunpian
 
 	for true {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"Id > ?", startId},
-			&models.SqlPairCondition{"created_at <= ?", nowTime-16*60},
-			&models.SqlPairCondition{"created_at >= ?", nowTime-35*60},
+			&models.SqlPairCondition{"third_order_at <= ?", nowTime-16*60},
+			&models.SqlPairCondition{"third_order_at >= ?", nowTime-35*60},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_New_UnFinish},
 		}
 		if len(partnerIds) > 0 {
