@@ -153,7 +153,7 @@ func (this *Tasker) ydjthkNewUnFinishNotify(idRecordName string) {
 	}
 
 	nowTime := time.Now().Unix()
-	platformTp :=2 //yunpian
+	platformTp :=3 //yunpian
 
 	for true {
 		conds := []*models.SqlPairCondition{
