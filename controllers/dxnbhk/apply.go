@@ -39,16 +39,19 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 	}
 
 	if order.Province == nil || order.City ==nil || order.Area == nil || len(*order.Province) < 2 || len(*order.City) < 3{
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|数据不完整").Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Code(), "数据不完整")
 		return
 	}
 
 	if order.Status == nil {
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|数据不完整").Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_UNKNOWN_BUG.Code(), "系统错误")
 		return
 	}
 
 	if (*order.Status < models.CONST_OrderStatus_MinFail) && (*order.Status > models.CONST_OrderStatus_MaxFail) {
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|状态不允许").Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_EXISTS.Code(), "订单已完成")
 		return
 	}
@@ -59,41 +62,45 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 	}else if strings.HasPrefix(*order.Province, "黑龙江") {
 		provinceName = "黑龙江"
 	}else{
-		provinceName = (*order.Province)[0:2]
+		temp := []rune(*order.Province)
+		provinceName= string(temp[0:2])
 	}
 
 	province,err := new(models.DxnbhkProvice).GetByName(provinceName)
 	if err != nil {
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|数据库异常").Add()
 		ZapLog().With(zap.Error(err)).Error("database err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), "数据库问题")
 		return
 	}
 	if province == nil {
-		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|省份匹配不上")
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|省份匹配不上").Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_UNKNOWN_BUG.Code(), "省份未匹配")
 		return
 	}
 
 	city,err := new(models.DxnbhkCity).GetByProvinceIdAndName(*province.Id, *order.City)
 	if err != nil {
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|数据库异常").Add()
 		ZapLog().With(zap.Error(err)).Error("database err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), "数据库问题")
 		return
 	}
 	if city == nil {
-		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|城市匹配不上")
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|城市匹配不上").Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_UNKNOWN_BUG.Code(), "城市未匹配")
 		return
 	}
 
 	area,err := new(models.DxnbhkArea).GetByCityIdAndName(*city.Id, *order.City)
 	if err != nil {
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|数据库异常").Add()
 		ZapLog().With(zap.Error(err)).Error("database err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), "数据库问题")
 		return
 	}
 	if area == nil {
-		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|区县匹配不上")
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|区县匹配不上").Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_UNKNOWN_BUG.Code(), "区县未匹配")
 		return
 	}
@@ -123,7 +130,7 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 
 	if partnerGoods == nil || reseller == nil {
 		ZapLog().Error("no find partnerGoods")
-		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|商品未找到")
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|商品未找到").Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_UNKNOWN_BUG.Code(), "商品未匹配")
 		return
 	}
@@ -145,21 +152,21 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 	res,err := reOrderSubmit.Send()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("reOrderSubmit send err")
-		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|对接电信, "+err.Error())
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|对接电信, "+err.Error()).Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), "对接电信失败")
 		return
 	}
 
 	if res.Success == "false" {
 		ZapLog().With(zap.String("errMsg", res.Msg)).Error("reOrderSubmit send err")
-		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|对接电信, "+res.Msg)
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|对接电信, "+res.Msg).Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_INTERNAL_SERVICE_ACCESS_ERROR.Code(), res.Msg)
 		return
 	}
 	this.Response(ctx, nil)
 
-	new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单成功|"+res.Msg)
 	go func(){
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单成功|"+res.Msg).Add()
 		newOrder := &models.CardOrder{
 			OrderNo:          order.OrderNo,
 			Isp:              new(int),
@@ -177,7 +184,7 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 
 		if _,err := newOrder.UpdatesByOrderNo(); err != nil {
 			ZapLog().With(zap.Error(err)).Error("database err")
-			new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单成功|更新状态失败，"+err.Error())
+			new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单成功|更新状态失败，"+err.Error()).Add()
 		}
 	}()
 
