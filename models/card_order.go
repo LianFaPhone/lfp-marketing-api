@@ -370,6 +370,12 @@ func (this *CardOrder) UpdatesByOrderNo() (int64, error) {
 
 }
 
+func (this *CardOrder) UpdatesByOrderNoAndConds(condStr string) (int64, error) {
+	query := db.GDbMgr.Get().Model(this).Where("order_no = ?", this.OrderNo).Where(condStr).Updates(this)
+	return query.RowsAffected, query.Error
+
+}
+
 func (this *CardOrder) UpdatesByNewPhoneAndIdcard(newPhone, idcard ,condStr string) (int64, error) {
 	query := db.GDbMgr.Get().Model(this).Where("new_phone = ? and idcard = ?", newPhone, idcard)
 	if len(condStr) > 0 {

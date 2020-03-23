@@ -8,6 +8,7 @@ import (
 	. "LianFaPhone/lfp-marketing-api/controllers"
 	"LianFaPhone/lfp-marketing-api/models"
 	"LianFaPhone/lfp-marketing-api/thirdcard-api/dxnbhk"
+	"fmt"
 	"github.com/kataras/iris"
 	"go.uber.org/zap"
 	"strings"
@@ -74,7 +75,8 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 	*newOrder.Isp = models.CONST_ISP_Dianxin
 	*newOrder.Status = models.CONST_OrderStatus_New_Apply_Doing
 
-	count,err := newOrder.UpdatesByOrderNo();
+	condStr := fmt.Sprintf("status >= %d and status <= %d ", models.CONST_OrderStatus_MinFail, models.CONST_OrderStatus_MaxFail)
+	count,err := newOrder.UpdatesByOrderNoAndConds(condStr);
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("database err")
 		new(models.CardOrderLog).FtParseAdd2(nil, &param.OrderNo, "电信宁波花卡|快速下单成功|更新状态失败，"+err.Error()).Add()
@@ -82,7 +84,8 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 	}
 
 	if count <=0 {
-		this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_NOT_FOUND.Code(), "订单未找到")
+		this.Response(ctx, nil)
+		//this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_NOT_FOUND.Code(), "订单未找到")
 		return
 	}
 
@@ -120,7 +123,7 @@ func (this *Dxnbhk) aysnFastApply(ctx iris.Context, orderNo string,  partnerGood
 		return
 	}
 
-	if (*order.Status < models.CONST_OrderStatus_MinFail) && (*order.Status > models.CONST_OrderStatus_MaxFail) {
+	if *order.Status != models.CONST_OrderStatus_New_Apply_Doing {
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|状态不允许").Add()
 		//this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_EXISTS.Code(), "订单已完成")
 		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Already_Retry)
