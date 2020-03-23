@@ -304,7 +304,7 @@ func (this *PdPartnerGoods) GetByCodeFromCache(name string) (*PdPartnerGoods, er
 }
 
 func (this *PdPartnerGoods) InnerGetByCode(input interface{}) (interface{}, *time.Duration, error) {
-	expire := time.Second * time.Duration(config.GConfig.Cache.CardClassByNameTimeout+rand.Intn(600))
+	expire := time.Second * time.Duration(config.GConfig.Cache.CardClassByNameTimeout+600+rand.Intn(600))
 	userKey,ok := input.(string)
 	if !ok {
 

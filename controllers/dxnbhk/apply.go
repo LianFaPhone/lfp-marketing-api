@@ -44,6 +44,8 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 					continue
 				}
 				if partnerGoods == nil {
+					ZapLog().Error("fastapply", zap.String("code", reseller.PartnerGoodsCode), zap.Int("len", len(config.GConfig.Dxnbhk.Partners)),zap.Int("i", i))
+
 					continue
 				}
 				break
