@@ -150,7 +150,7 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 				if !SetFailFlag {
 					continue
 				}
-				*mp.Status = models.CONST_OrderStatus_Fail_Retry
+				*mp.Status = models.CONST_OrderStatus_HelpUser_Apply_Doing
 			}else{
 				new(models.CardOrderLog).FtParseAdd2(nil, orderArr[i].OrderNo, "OAO检测|成功找到订单").Add()
 				*mp.Status = models.CONST_OrderStatus_New

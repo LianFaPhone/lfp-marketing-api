@@ -104,6 +104,7 @@ func (this *Tasker) run() {
 	}()
 
 	go func() {
+		return
 		defer models.PanicPrint()
 		for {
 			select {

@@ -56,9 +56,9 @@ func (this *Tasker) jtydhkHelpUserWork() {
 	for ;true; {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
-			&models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 28*3600},
+			&models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 48*3600},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_HelpUser_Apply_Doing},
-			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - 1800},
+			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - 3*3600},
 		}
 		if len(partnerIds) > 0 {
 			conds = append(conds, &models.SqlPairCondition{"partner_id in (?)", partnerIds})
