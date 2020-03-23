@@ -45,7 +45,7 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 				}
 				if partnerGoods == nil {
 					ZapLog().Error("fastapply", zap.String("code", reseller.PartnerGoodsCode), zap.Int("len", len(config.GConfig.Dxnbhk.Partners)),zap.Int("i", i))
-
+					config.GConfig.Dxnbhk.PartnerIndex= (config.GConfig.Dxnbhk.PartnerIndex+1)%len(config.GConfig.Dxnbhk.Partners)
 					continue
 				}
 				break
@@ -56,7 +56,7 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 	}
 
 	if partnerGoods == nil || reseller == nil {
-		ZapLog().Error("no find partnerGoods")
+		ZapLog().Error("no find partnerGoods", zap.Any("pds", partnerGoods), zap.Any("resller", reseller))
 		new(models.CardOrderLog).FtParseAdd2(nil, &param.OrderNo, "电信宁波花卡|快速下单失败|商品未找到").Add()
 		this.ExceptionSerive(ctx, apibackend.BASERR_UNKNOWN_BUG.Code(), "商品未匹配")
 		return
