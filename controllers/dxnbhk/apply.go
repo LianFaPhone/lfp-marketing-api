@@ -39,7 +39,7 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 				//config.GConfig.Dxnbhk.PartnerIndex = i
 				config.GConfig.Dxnbhk.Partners[config.GConfig.Dxnbhk.PartnerIndex].Count++
 				reseller = &config.GConfig.Dxnbhk.Partners[config.GConfig.Dxnbhk.PartnerIndex]
-				partnerGoods,err := new(models.PdPartnerGoods).GetByCodeFromCache(reseller.PartnerGoodsCode)
+				partnerGoods,err = new(models.PdPartnerGoods).GetByCodeFromCache(reseller.PartnerGoodsCode)
 				if err != nil {
 					continue
 				}
