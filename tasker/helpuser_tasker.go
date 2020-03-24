@@ -56,9 +56,9 @@ func (this *Tasker) jtydhkHelpUserWork() {
 	for ;true; {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
-			&models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 48*3600},
+			&models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 52*3600},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_HelpUser_Apply_Doing},
-			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - 3*3600},
+			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - 1800},
 		}
 		if len(partnerIds) > 0 {
 			conds = append(conds, &models.SqlPairCondition{"partner_id in (?)", partnerIds})
@@ -182,18 +182,19 @@ func (this *Tasker) jtydhkHelpUserWork() {
 
 			log := "帮助用户下单成功|新订单已完成"
 			if !oaoFlag {
-				*mp.Status = models.CONST_OrderStatus_New_UnFinish
+				//*mp.Status = models.CONST_OrderStatus_New_UnFinish// 这行无效
 
 				newUrl,err := new(ydjthk.ReIdCheckUrl).Send(isOao, channelId, thirdOrderNo, chooseNumber, token)
 				if err != nil {
 					ZapLog().Error("ReIdCheckUrl send err", zap.Error(err))
-					log = "帮助用户下单失败|获取上传照片网址失败，"+err.Error()
-					*mp.Status = GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status)
+					log = "帮助用户下单成功|获取上传照片网址失败，"+err.Error()
+					//*mp.Status = GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status)
 				}else{
 					//sendUnFinishNotify(newUrl, orderArr[i])
 					log = "帮助用户下单成功|新订单未完成，等待上传照片"
 					new(models.CardOrderUrl).FtParseAdd(orderArr[i].Id, orderArr[i].OrderNo, &newUrl).Add()
 				}
+				*mp.Status = GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status)
 			}else{
 				*mp.Status = models.CONST_OrderStatus_New
 			}
@@ -225,7 +226,7 @@ func GethelpUserStatus(orderNo string, oldstatus int) int {
 		ZapLog().Error("new(models.CardOrderRetry).Incr err", zap.Error(err))
 		return oldstatus
 	}
-	if count >= 15 {
+	if count >= 3 {
 		return models.CONST_OrderStatus_Fail_Already_Retry
 	}
 	return oldstatus

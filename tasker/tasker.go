@@ -206,11 +206,11 @@ func (this *Tasker) run() {
 		//return
 		defer models.PanicPrint()
 		for {
-			hour := time.Now().Hour()
-			if hour >=8 && hour <= 22 {
+			//hour := time.Now().Hour()
+			//if hour >=8 && hour <= 22 {
 				this.jtydhkHelpUserWork()
-			}
-			time.Sleep(time.Minute* 15)
+			//}
+			time.Sleep(time.Minute* 30)
 		}
 	}()
 
