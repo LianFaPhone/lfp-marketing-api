@@ -325,7 +325,7 @@ func (this *CardOrder) UpdateStatusByOrderNo(orderNo string, status int) error {
 }
 
 func (this *CardOrder) MaxIdByOrderNo(orderNo string) error {
-	err := db.GDbMgr.Get().Model(this).Where("order_no = ? ", orderNo).Update("id", gorm.Expr("max(id)+1")).Error
+	err := db.GDbMgr.Get().Model(this).Where("order_no = ? ", orderNo).Update("id", gorm.Expr("max(id) + 1")).Error
 	if err != nil {
 		return err
 
