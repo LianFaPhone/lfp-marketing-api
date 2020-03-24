@@ -556,7 +556,7 @@ func (this *CardOrder) GetJoinLimitByCond(joinStr string, limit int, condPair []
 
 func (this *CardOrder) Exist(condStr string) (bool, error) {
 	var count int
-	query := db.GDbMgr.Get().Where(this)
+	query := db.GDbMgr.Get().Model(this).Where(this)
 	if len(condStr) > 0 {
 		query = query.Where(condStr)
 	}
