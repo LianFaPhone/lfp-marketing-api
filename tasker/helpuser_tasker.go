@@ -5,6 +5,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/config"
 	"LianFaPhone/lfp-marketing-api/models"
 	"LianFaPhone/lfp-marketing-api/thirdcard-api/ydjthk"
+	"fmt"
 	"go.uber.org/zap"
 	"strconv"
 	"strings"
@@ -90,13 +91,22 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			}
 			*mp.ThirdOrderAt = time.Now().Unix()
 
-			if orderArr[i].PartnerGoodsCode == nil || orderArr[i].Province == nil || orderArr[i].City == nil || orderArr[i].Area == nil || orderArr[i].Address == nil || orderArr[i].Phone == nil || orderArr[i].TrueName == nil || orderArr[i].IdCard == nil{
+			if orderArr[i].PartnerGoodsCode == nil || orderArr[i].Province == nil || orderArr[i].City == nil || orderArr[i].Area == nil || orderArr[i].Address == nil || orderArr[i].Phone == nil || orderArr[i].TrueName == nil || orderArr[i].IdCard == nil || orderArr[i].PartnerGoodsCode == nil{
 				*mp.Status = models.CONST_OrderStatus_Fail_Already_Retry
 				mp.Update()
 				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,"帮助用户下单失败|表中数据缺失").Add()
 				continue
 			}
 
+			existFlag,err := HaveHistoryOrderSame(*orderArr[i].IdCard, *orderArr[i].Phone, *orderArr[i].PartnerGoodsCode)
+			if err != nil  {
+				ZapLog().Error("HaveHistoryOrderSame err", zap.Error(err))
+			}else if existFlag {
+				*mp.Status = models.CONST_OrderStatus_Fail_Already_Retry
+				mp.Update()
+				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|关联订单已完成").Add()
+				continue
+			}
 			queryValues,err := GetUrlParam(*orderArr[i].PartnerGoodsCode)
 			if err != nil {
 				*mp.Status = models.CONST_OrderStatus_Fail_Already_Retry
@@ -251,3 +261,13 @@ func GenHelpUserFailStatus(oldStatus int, errMsg string) int {
 	return models.CONST_OrderStatus_Fail_Already_Retry
 }
 
+func HaveHistoryOrderSame(idcard, phone, partnerGoodsCode string) (bool,error){
+	param := &models.CardOrder{
+		IdCard: &idcard,
+		Phone: &phone,
+		PartnerGoodsCode: &partnerGoodsCode,
+	}
+	condStr := fmt.Sprintf("( status = %d or status = %d ) and created_at >= %d", models.CONST_OrderStatus_New, models.CONST_OrderStatus_Already_Delivered, time.Now().Unix() - 10*3600)
+	existFlag,err := param.Exist(condStr)
+	return existFlag,err
+}
