@@ -106,7 +106,7 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 				if !SetFailFlag {
 					continue
 				}
-				*mp.Status = models.CONST_OrderStatus_Fail_Retry
+				*mp.Status = models.CONST_OrderStatus_HelpUser_Apply_Doing
 				if err = mp.Update(); err != nil {
 					ZapLog().Error("CardOrder Update err", zap.Error(err))
 				}
@@ -125,7 +125,7 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 				if !SetFailFlag {
 					continue
 				}
-				*mp.Status = models.CONST_OrderStatus_Fail_Retry
+				*mp.Status = models.CONST_OrderStatus_HelpUser_Apply_Doing
 				if err = mp.Update(); err != nil {
 					ZapLog().Error("CardOrder Update err", zap.Error(err))
 				}
