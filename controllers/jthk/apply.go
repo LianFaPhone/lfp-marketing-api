@@ -33,7 +33,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 
 	param := new(api.FtYdhkApply) //不对过多参数做检测，提高性能，前端必须做好检测。
 	if err := Tools.ShouldBindJSON(ctx, param); err != nil {
-		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), apibackend.BASERR_INVALID_PARAMETER.Desc())
+		this.ExceptionSerive(ctx, apibackend.BASERR_INVALID_PARAMETER.Code(), "信息不完整")
 		ZapLog().Error("param err", zap.Error(err))
 		return
 	}

@@ -228,7 +228,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				ZapLog().Error("CardOrder Update err", zap.Error(err))
 				return
 			}
-			mp.MaxIdByOrderNo(*orderArr[i].OrderNo) // 这一步是关键，让它重新被检测
+			mp.MaxIdByOrderNo(*orderArr[i].OrderNo) // 这一步是关键，让它重新被检测，这个函数有没有问题？？
 			time.Sleep(time.Second * 1)
 		}
 

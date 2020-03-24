@@ -208,7 +208,9 @@ func (this *Tasker) jtydhkHelpUserWork() {
 				ZapLog().Error("CardOrder Update err", zap.Error(err))
 				return
 			}
-			mp.MaxIdByOrderNo(*orderArr[i].OrderNo) // 这一步是关键，让它重新被检测
+			if err:=mp.MaxIdByOrderNo(*orderArr[i].OrderNo); err != nil {
+				ZapLog().Error("helpuser maxIdByorderNo error", zap.Error(err),zap.String("no",  *orderArr[i].OrderNo))
+			} // 这一步是关键，让它重新被检测
 			time.Sleep(time.Second * 1)
 		}
 
