@@ -48,3 +48,14 @@ func (this *Ydhk) ParseExcetionCode(oldCode apibackend.EnumBasErr, errMsg string
 	}
 	return oldCode
 }
+
+func ParseExceptionMsg(errMsg string) string {
+	if strings.Contains(errMsg, "号码不存在") {
+		return errMsg + "。请重新选择号码"
+	}else if strings.Contains(errMsg, "号码已被占用") {
+		return errMsg + "。请重新选择号码"
+	}else if strings.Contains(errMsg, "锁定号码失败") {
+		return errMsg + "。请重新选择号码"
+	}
+	return errMsg
+}

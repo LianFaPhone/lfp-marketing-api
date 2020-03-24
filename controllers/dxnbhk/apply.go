@@ -36,9 +36,11 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 		this.fastApplyLocker.Lock()
 		defer this.fastApplyLocker.Unlock()
 		for i:=0;i< len(config.GConfig.Dxnbhk.Partners); i++{
-			if config.GConfig.Dxnbhk.Partners[config.GConfig.Dxnbhk.PartnerIndex].Count < config.GConfig.Dxnbhk.Partners[config.GConfig.Dxnbhk.PartnerIndex].MaxNum {
-				//config.GConfig.Dxnbhk.PartnerIndex = i
-				config.GConfig.Dxnbhk.Partners[config.GConfig.Dxnbhk.PartnerIndex].Count++
+			config.GConfig.Dxnbhk.PartnerIndex= (config.GConfig.Dxnbhk.PartnerIndex+1)%len(config.GConfig.Dxnbhk.Partners)
+
+			//if config.GConfig.Dxnbhk.Partners[config.GConfig.Dxnbhk.PartnerIndex].Count < config.GConfig.Dxnbhk.Partners[config.GConfig.Dxnbhk.PartnerIndex].MaxNum {
+
+				//config.GConfig.Dxnbhk.Partners[config.GConfig.Dxnbhk.PartnerIndex].Count++
 				reseller = &config.GConfig.Dxnbhk.Partners[config.GConfig.Dxnbhk.PartnerIndex]
 				partnerGoods,err = new(models.PdPartnerGoods).GetByCodeFromCache(reseller.PartnerGoodsCode)
 				if err != nil {
@@ -46,13 +48,13 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 				}
 				if partnerGoods == nil {
 					ZapLog().Error("fastapply", zap.String("code", reseller.PartnerGoodsCode), zap.Int("len", len(config.GConfig.Dxnbhk.Partners)),zap.Int("i", i))
-					config.GConfig.Dxnbhk.PartnerIndex= (config.GConfig.Dxnbhk.PartnerIndex+1)%len(config.GConfig.Dxnbhk.Partners)
+					//config.GConfig.Dxnbhk.PartnerIndex= (config.GConfig.Dxnbhk.PartnerIndex+1)%len(config.GConfig.Dxnbhk.Partners)
 					continue
 				}
 				break
-			}
-			config.GConfig.Dxnbhk.Partners[config.GConfig.Dxnbhk.PartnerIndex].Count = 0
-			config.GConfig.Dxnbhk.PartnerIndex= (config.GConfig.Dxnbhk.PartnerIndex+1)%len(config.GConfig.Dxnbhk.Partners)
+			//}
+			//config.GConfig.Dxnbhk.Partners[config.GConfig.Dxnbhk.PartnerIndex].Count = 0
+			//config.GConfig.Dxnbhk.PartnerIndex= (config.GConfig.Dxnbhk.PartnerIndex+1)%len(config.GConfig.Dxnbhk.Partners)
 		}
 	}
 
@@ -111,14 +113,14 @@ func (this *Dxnbhk) aysnFastApply(ctx iris.Context, orderNo string,  partnerGood
 	if order.Province == nil || order.City ==nil || order.Area == nil || len(*order.Province) < 2 || len(*order.City) < 3{
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|数据不完整").Add()
 		//this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Code(), "数据不完整")
-		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Already_Retry)
+		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Retry)
 		return
 	}
 
 	if order.Status == nil {
-		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|数据不完整").Add()
+		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|状态数据不完整").Add()
 		//this.ExceptionSerive(ctx, apibackend.BASERR_UNKNOWN_BUG.Code(), "系统错误")
-		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Already_Retry)
+		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Retry)
 
 		return
 	}
@@ -126,7 +128,7 @@ func (this *Dxnbhk) aysnFastApply(ctx iris.Context, orderNo string,  partnerGood
 	if *order.Status != models.CONST_OrderStatus_New_Apply_Doing {
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|状态不允许").Add()
 		//this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_EXISTS.Code(), "订单已完成")
-		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Already_Retry)
+		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Retry)
 		return
 	}
 
@@ -144,12 +146,12 @@ func (this *Dxnbhk) aysnFastApply(ctx iris.Context, orderNo string,  partnerGood
 	if err != nil {
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|数据库异常").Add()
 		ZapLog().With(zap.Error(err)).Error("database err")
-		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Already_Retry)
+		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Retry)
 		return
 	}
 	if province == nil {
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|省份匹配不上").Add()
-		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Already_Retry)
+		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Retry)
 		return
 	}
 
@@ -157,12 +159,12 @@ func (this *Dxnbhk) aysnFastApply(ctx iris.Context, orderNo string,  partnerGood
 	if err != nil {
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|数据库异常").Add()
 		//ZapLog().With(zap.Error(err)).Error("database err")
-		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Already_Retry)
+		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Retry)
 		return
 	}
 	if city == nil {
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|城市匹配不上,"+*order.City).Add()
-		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Already_Retry)
+		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Retry)
 		return
 	}
 
@@ -170,12 +172,12 @@ func (this *Dxnbhk) aysnFastApply(ctx iris.Context, orderNo string,  partnerGood
 	if err != nil {
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|数据库异常").Add()
 		//ZapLog().With(zap.Error(err)).Error("database err")
-		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Already_Retry)
+		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Retry)
 		return
 	}
 	if area == nil {
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|区县匹配不上,"+*order.Area).Add()
-		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Already_Retry)
+		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Retry)
 		return
 	}
 
@@ -198,7 +200,7 @@ func (this *Dxnbhk) aysnFastApply(ctx iris.Context, orderNo string,  partnerGood
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("reOrderSubmit send err")
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|对接电信, "+err.Error()).Add()
-		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Already_Retry)
+		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Retry)
 		return
 	}
 

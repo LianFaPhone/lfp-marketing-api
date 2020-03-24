@@ -115,7 +115,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 			this.ExceptionSerive(ctx, errCode.Code(), orderErr.Error())
 			return
 		}
-		this.ExceptionSeriveWithData(ctx, this.ParseExcetionCode(errCode, orderErr.Error()).Code(), orderErr.Error(),  &api.FtResYdhkApply{orderId,orderNo, oaoFlag})
+		this.ExceptionSeriveWithData(ctx, this.ParseExcetionCode(errCode, orderErr.Error()).Code(), ParseExceptionMsg(orderErr.Error()),  &api.FtResYdhkApply{orderId,orderNo, oaoFlag})
 	}else{
 		this.Response(ctx, &api.FtResYdhkApply{orderId,orderNo, oaoFlag})
 	}
