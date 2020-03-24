@@ -192,7 +192,7 @@ func (this *Tasker) jtyhhkThirdRetryWork() {
 				continue
 			}
 			time.Sleep(time.Millisecond*1000)
-			_, thirdOrderNo,oaoFlag,orderErr := new(ydjthk.ReOrderSubmit).Parse(channelId, productId, nil).Send(isOao, token,  *orderArr[i].Phone, chooseNumber, *orderArr[i].TrueName, *orderArr[i].IdCard, *orderArr[i].Address, *orderArr[i].Province, *orderArr[i].City, province.ProvinceId, city.CityId, area.AreaId)
+			_, thirdOrderNo,oaoFlag,orderErr := new(ydjthk.ReOrderSubmit).Parse(channelId, productId, nil).Send(isOao, token,  *orderArr[i].Phone, chooseNumber, *orderArr[i].TrueName, *orderArr[i].IdCard, *orderArr[i].Address, province.ProvinceId, city.CityId, province.ProvinceId, city.CityId, area.AreaId)
 			if orderErr != nil {
 				*mp.Status = GenFailStatus(orderArr[i], orderErr.Error())
 				mp.Update()

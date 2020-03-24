@@ -55,8 +55,8 @@ func (this *ReOrderSubmit) Parse(channelId , productId string, OaoModel *string)
 	return this
 }
 
-//最后三个是码
-func (this *ReOrderSubmit) Send(isOao bool, token, inPhone, newPhone, LegalName,IdCard, address, province, city,  sendprovince, sendcity, sendqu string) (apibackend.EnumBasErr,string,bool, error) {
+//最后五个是码
+func (this *ReOrderSubmit) Send(isOao bool, token, inPhone, newPhone, LegalName,IdCard, address, provinceCode, cityCode,  sendprovinceCode, sendcityCode, sendquCode string) (apibackend.EnumBasErr,string,bool, error) {
 	//return apibackend.BASERR_SUCCESS, "TestOrder112",true, nil
 	this.MsgType = "LiveHKCardTemporaryOrderReq"
 	this.Version = Const_Version
@@ -69,12 +69,12 @@ func (this *ReOrderSubmit) Send(isOao bool, token, inPhone, newPhone, LegalName,
 	this.LeagalName =  base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(LegalName), []byte(token[0:16])))
 	this.CertificateNo = base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(IdCard), []byte(token[0:16])))
 	this.Address = base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(address), []byte(token[0:16])))
-	this.SendProvince =  base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(sendprovince), []byte(token[0:16])))
-	this.SendCity =  base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(sendcity), []byte(token[0:16])))
-	this.SendDistrict =  base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(sendqu), []byte(token[0:16])))
+	this.SendProvince =  base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(sendprovinceCode), []byte(token[0:16])))
+	this.SendCity =  base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(sendcityCode), []byte(token[0:16])))
+	this.SendDistrict =  base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(sendquCode), []byte(token[0:16])))
 
-	this.Province =  base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(province), []byte(token[0:16])))
-	this.City =  base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(city), []byte(token[0:16])))
+	this.Province =  base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(provinceCode), []byte(token[0:16])))
+	this.City =  base64.StdEncoding.EncodeToString(EcbEncrypt([]byte(cityCode), []byte(token[0:16])))
 
 
 	this.AccessToken = token

@@ -108,7 +108,7 @@ func (this * Ydhk) Apply(ctx iris.Context) {
 	}
 
 	//这个函数的错误码处理的不好
-	errCode, orderId,oaoFlag,orderErr := new(ReOrderSubmit).Parse(channelId, productId, nil).Send(isoao, param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity,param.SendDistrict)
+	errCode, orderId,oaoFlag,orderErr := new(ReOrderSubmit).Parse(channelId, productId, nil).Send(isoao, param.AccessToken, param.Phone,  param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.ProvinceCode, param.CityCode, param.SendProvinceCode, param.SendCityCode,param.SendDistrictCode)
 	if orderErr != nil {
 		ZapLog().With(zap.Error(orderErr)).Error("order submit send err")
 		if errCode != apibackend.BASERR_CARDMARKET_PHONECARD_APPLY_FAID_AND_SHOW {
@@ -261,11 +261,11 @@ func (this * Ydhk) recordNewOrder(ctx iris.Context, orderNo string, param *api.F
 		//		CountryCode: p.CountryCode,
 		Phone:        &param.Phone,
 		Province:     &param.SendProvinceName,
-		ProvinceCode: &param.Province,
+		ProvinceCode: &param.ProvinceCode,
 		City:         &param.SendCityName,
-		CityCode:     &param.City,
+		CityCode:     &param.CityCode,
 		Area:         &param.SendDistrictName,
-		AreaCode:     &param.SendDistrict,
+		AreaCode:     &param.SendDistrictCode,
 		//Town:         p.Town,
 		Address:      &param.Address,
 		IP:           param.IP,
@@ -417,7 +417,7 @@ func (this * Ydhk) OfflineActive(ctx iris.Context) {
 
 	oaoModel := new(string)
 	*oaoModel = "2"
-	errCode, orderId, oaoFlag, err := new(ReOrderSubmit).Parse(channelId, productId, oaoModel).OfflineActiveSend(param.AccessToken, param.Phone, param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.Province, param.City, param.SendProvince, param.SendCity, param.SendDistrict)
+	errCode, orderId, oaoFlag, err := new(ReOrderSubmit).Parse(channelId, productId, oaoModel).OfflineActiveSend(param.AccessToken, param.Phone, param.NewPhone, param.LeagalName, param.CertificateNo, param.Address, param.ProvinceCode, param.CityCode, param.SendProvinceCode, param.SendCityCode, param.SendDistrictCode)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("order submit send err")
 		this.ExceptionSerive(ctx, errCode.Code(), err.Error())

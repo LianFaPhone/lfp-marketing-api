@@ -181,7 +181,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 				continue
 			}
 			time.Sleep(time.Millisecond*1000)
-			_, thirdOrderNo,oaoFlag,orderErr := new(ydjthk.ReOrderSubmit).Parse(channelId, productId, nil).Send(isOao, token,  *orderArr[i].Phone, chooseNumber, *orderArr[i].TrueName, *orderArr[i].IdCard, *orderArr[i].Address, *orderArr[i].Province, *orderArr[i].City, province.ProvinceId, city.CityId, area.AreaId)
+			_, thirdOrderNo,oaoFlag,orderErr := new(ydjthk.ReOrderSubmit).Parse(channelId, productId, nil).Send(isOao, token,  *orderArr[i].Phone, chooseNumber, *orderArr[i].TrueName, *orderArr[i].IdCard, *orderArr[i].Address, province.ProvinceId, city.CityId, province.ProvinceId, city.CityId, area.AreaId)
 			if orderErr != nil {
 				ZapLog().Error("helpuser ReOrderSubmit err", zap.Error(orderErr), zap.String("channelId", channelId), zap.String("productId", productId), zap.String("other", *orderArr[i].Phone+ chooseNumber+ *orderArr[i].TrueName+ *orderArr[i].IdCard+ *orderArr[i].Address+ *orderArr[i].Province+ *orderArr[i].City+ province.ProvinceId+ city.CityId+ area.AreaId))
 				*mp.Status = GenHelpUserFailStatus(GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status), orderErr.Error())

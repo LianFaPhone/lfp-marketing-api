@@ -157,16 +157,16 @@ type(
 		LeagalName    string    `valid:"required" json:"true_name"`
 		CertificateNo    string    `valid:"required" json:"idcard"`
 
-		Province    string    `valid:"required" json:"province_code"`
-		City    string        `valid:"required" json:"city_code"`
+		ProvinceCode    string    `valid:"required" json:"province_code"`
+		CityCode    string        `valid:"required" json:"city_code"`
 
 		SendProvinceName    string    `valid:"required" json:"express_province"`
 		SendCityName    string    `valid:"required" json:"express_city"`
 		SendDistrictName    string    `valid:"required" json:"express_district"`
 
-		SendProvince    string    `valid:"optional" json:"express_province_code"`
-		SendCity    string    `valid:"optional" json:"express_city_code"`
-		SendDistrict    string    `valid:"optional" json:"express_district_code"`
+		SendProvinceCode    string    `valid:"optional" json:"express_province_code"`
+		SendCityCode    string    `valid:"optional" json:"express_city_code"`
+		SendDistrictCode    string    `valid:"optional" json:"express_district_code"`
 		Address    string     `valid:"required" json:"express_address"`
 
 		AccessToken     string   `valid:"required" json:"token"`
