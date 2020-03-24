@@ -59,7 +59,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			&models.SqlPairCondition{"id > ?", startId},
 			&models.SqlPairCondition{"created_at >= ?", time.Now().Unix() - 52*3600},
 			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_HelpUser_Apply_Doing},
-			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - 1800},
+			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - 4*3600},
 		}
 		if len(partnerIds) > 0 {
 			conds = append(conds, &models.SqlPairCondition{"partner_id in (?)", partnerIds})
@@ -238,7 +238,7 @@ func GethelpUserStatus(orderNo string, oldstatus int) int {
 		ZapLog().Error("new(models.CardOrderRetry).Incr err", zap.Error(err))
 		return oldstatus
 	}
-	if count >= 3 {
+	if count >= 6 {
 		return models.CONST_OrderStatus_Fail_Already_Retry
 	}
 	return oldstatus
