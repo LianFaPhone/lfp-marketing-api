@@ -81,6 +81,7 @@ type (
 		TrueName *string `valid:"optional" json:"true_name,omitempty"`
 		IdCard   *string `valid:"optional" json:"idcard,omitempty"`
 		Phone    *string `valid:"optional" json:"phone,omitempty"`
+		NewPhone    *string `valid:"optional" json:"new_phone,omitempty"`
 		Province *string `valid:"optional" json:"province,omitempty"`
 		//		DeliverAt 		*int64        `valid:"optional" json:"deliver_at,omitempty" `
 		City       *string `valid:"optional" json:"city,omitempty" `

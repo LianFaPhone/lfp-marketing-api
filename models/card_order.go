@@ -176,6 +176,7 @@ func (this *CardOrder) BkParseList(p *api.BkCardOrderList) *CardOrder {
 		IP:        p.IP,
 		IdCardPicFlag: p.IdCardPicFlag,
 		AdTp: p.AdTp,
+		NewPhone: p.NewPhone,
 	}
 	acty.Valid = p.Valid
 	return acty
