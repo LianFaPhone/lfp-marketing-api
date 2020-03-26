@@ -32,6 +32,15 @@ func (this *DxnbhkArea) GetsByCity(code string) ([]*DxnbhkArea, error) {
 	return arr, err
 }
 
+func (this *DxnbhkArea) GetByCityIdAndLikeName(cid int, name string) (*DxnbhkArea, error) {
+	p := new(DxnbhkArea)
+	err := db.GDbMgr.Get().Model(this).Where("city_id = ?", cid).Where("name like ? or short_name like ?", name+"%", name+"%").Last(p).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return p, err
+}
+
 func (this *DxnbhkArea) GetByCityIdAndName(cid int, name string) (*DxnbhkArea, error) {
 	p := new(DxnbhkArea)
 	err := db.GDbMgr.Get().Model(this).Where("city_id = ?", cid).Where("name = ? or short_name = ?", name, name).Last(p).Error

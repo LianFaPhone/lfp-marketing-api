@@ -21,11 +21,11 @@ import (
 
 const (
 	CONST_ISP_UnKnown      = 0
-	CONST_ISP_Dianxin      = 1
+	CONST_ISP_Dianxin      = 3
 	CONST_ISP_Dianxin_Name = "电信"
-	CONST_ISP_YiDong       = 2
+	CONST_ISP_YiDong       = 1
 	CONST_ISP_YiDong_Name  = "移动"
-	CONST_ISP_LiTong       = 3
+	CONST_ISP_LiTong       = 2
 	CONST_ISP_LiTong_Name  = "联通"
 	CONST_ISP_Ali          = 4
 	CONST_ISP_JD           = 5

@@ -176,9 +176,18 @@ func (this *Dxnbhk) aysnFastApply(ctx iris.Context, orderNo string,  partnerGood
 		return
 	}
 	if area == nil {
-		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|区县匹配不上,"+*order.Area).Add()
-		new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Retry)
-		return
+		prefixArea := strings.TrimSuffix(*order.Area, "市")
+		prefixArea = strings.TrimSuffix(prefixArea, "新区")
+		prefixArea = strings.TrimSuffix(prefixArea, "区")
+		prefixArea = strings.TrimSuffix(prefixArea, "县")
+		if len([]rune(prefixArea)) >= 2 {
+			area,_  =  new(models.DxnbhkArea).GetByCityIdAndLikeName(*city.Id, prefixArea)
+		}
+		if area == nil {
+			new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|区县匹配不上,"+*order.Area).Add()
+			new(models.CardOrder).UpdateStatusByOrderNo(orderNo, models.CONST_OrderStatus_Fail_Retry)
+			return
+		}
 	}
 
 	reOrderSubmit := &dxnbhk.ReOrderSubmit{
