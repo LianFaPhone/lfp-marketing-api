@@ -505,7 +505,7 @@ func (this *CardOrder) GetLimitByCond(limit int, condPair []*SqlPairCondition, n
 		query = query.Select(needFields)
 	}
 
-	err := query.Order("id DESC").Find(&arr).Error
+	err := query.Limit(limit).Order("id DESC").Find(&arr).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	}
@@ -523,7 +523,7 @@ func (this *CardOrder) GetLimitByCond2(limit int, condPair []*SqlPairCondition) 
 		query = query.Where(condPair[i].Key, condPair[i].Value)
 	}
 
-	err := query.Order("id").Find(&arr).Error
+	err := query.Limit(limit).Order("id").Find(&arr).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	}
@@ -548,7 +548,7 @@ func (this *CardOrder) GetJoinLimitByCond(joinStr string, limit int, condPair []
 	}
 
 
-	err := query.Order("id DESC").Find(&arr).Error
+	err := query.Limit(limit).Order("id DESC").Find(&arr).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	}
