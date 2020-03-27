@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 )
-
+//数据其实都在内存，save函数会清理之前存在的文件，然后再次写入。考虑性能的话，save函数用一次就好。
 func NewExcel(sheetName, filePath string) (*Excel, error) {
 	e := new(Excel)
 	err := e.Init(sheetName, filePath)

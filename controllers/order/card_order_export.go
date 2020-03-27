@@ -38,7 +38,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 		ZapLog().Error("create file err", zap.Error(err))
 		return
 	}
-	_,err = db.GRedis.GetConn().Set("filecreate_"+fileName, "", time.Duration(time.Second*1800)).Result()
+	_,err = db.GRedis.GetConn().Set("filecreate_"+fileName, "", time.Duration(time.Second*7200)).Result()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("redis set err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -48,6 +48,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 	this.Response(ctx, fileName)
 
 	go func() {
+		ZapLog().Info("BkFileCreate start "+fileName)
 		if param.Page <= 0 {
 			param.Page = 1
 		}
@@ -84,6 +85,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 		AllPage := total/newSize
 		condStr := ""
 		modelParam := new(models.CardOrder).BkParseList(param)
+		ZapLog().Info("BkFileCreate "+fileName, zap.Int64("pageall", AllPage))
 		for page:= int64(0); page < AllPage ;page ++ {
 			var results []*models.CardOrder
 			if page == 0 {
@@ -206,28 +208,29 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 					ZapLog().With(zap.Error(err)).Error("excel.AppendCache err")
 					return
 				}
-				if page %10 == 9 {
-					if err:= excel.Sync(); err != nil {
-						ZapLog().With(zap.Error(err)).Error("excel.Sync err")
-						return
-					}
-				}
+				//if page %100 == 0 {
+				//	if err:= excel.Sync(); err != nil {
+				//		ZapLog().With(zap.Error(err)).Error("excel.Sync err")
+				//		return
+				//	}
+				//}
 			}
 			if len(results) < int(newSize) {
 				break
 			}
-			if err:= excel.Sync(); err != nil {
-				ZapLog().With(zap.Error(err)).Error("excel.Sync err")
-				return
-			}
+			//if err:= excel.Sync(); err != nil {
+			//	ZapLog().With(zap.Error(err)).Error("excel.Sync err")
+			//	return
+			//}
 			condStr = fmt.Sprintf("id < %d", minId)
 		}
 		if err:= excel.Sync(); err != nil {
 			ZapLog().With(zap.Error(err)).Error("excel.Sync err")
 			return
 		}
+		ZapLog().Info("BkFileCreate success "+fileName)
 		url := "http://file.lfcxwifi.com" + "/" + fileName
-		_,err := db.GRedis.GetConn().Set("filecreate_"+fileName, url, time.Duration(time.Second*1800)).Result()
+		_,err := db.GRedis.GetConn().Set("filecreate_"+fileName, url, time.Duration(time.Second*7200)).Result()
 		if err != nil {
 			ZapLog().With(zap.Error(err)).Error("redis set err")
 		}
