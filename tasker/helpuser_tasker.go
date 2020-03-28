@@ -53,7 +53,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 
 	time.Sleep(time.Second*3)
 	startId := int64(0)
-	maxLimit := 100
+	maxLimit := 10
 
 	for ;true; {
 		conds := []*models.SqlPairCondition{
