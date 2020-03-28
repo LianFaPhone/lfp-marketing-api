@@ -73,7 +73,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 		}
 
 		headers :=[] string{
-			"序号","订单号","套餐名","订单状态","姓名","身份证","手机号","省","市","区县","镇街道","详细地址","新手机号","ICCID","归属地","快递","快递单号","发货时间","照片上传","黑名单","下单时间",
+			"序号","订单号","套餐名","订单状态","姓名","身份证","手机号","省","市","区县","镇街道","详细地址","新手机号","ICCID","归属地","快递","快递单号","发货时间","照片上传","黑名单","下单时间","来源",
 		}
 
 		if err := excel.AddHeader(headers); err != nil {
@@ -203,6 +203,19 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 				}
 				if temp.IsBacklist != nil && *temp.IsBacklist == 1 {
 					appendData[19] = "是"
+				}
+				if temp.AdTp != nil {
+					switch *temp.AdTp {
+					case models.CONST_ADTRACK_Tp_KuaiShou:
+						appendData[21] = "快手"
+						break
+					case models.CONST_ADTRACK_Tp_DouYin:
+						appendData[21] = "抖音"
+						break
+					default:
+						appendData[21] = ""
+						break
+					}
 				}
 				if err := excel.AppendCache(appendData); err != nil {
 					ZapLog().With(zap.Error(err)).Error("excel.AppendCache err")
