@@ -53,6 +53,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 
 	time.Sleep(time.Second*3)
 	startId := int64(0)
+	maxLimit := 100
 
 	for ;true; {
 		conds := []*models.SqlPairCondition{
@@ -65,7 +66,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			conds = append(conds, &models.SqlPairCondition{"partner_id in (?)", partnerIds})
 		}
 
-		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds, nil)
+		orderArr, err := new(models.CardOrder).GetLimitByCond2(maxLimit, conds, nil)
 		if err != nil {
 			ZapLog().Error("CardOrder GetLimitByCond err", zap.Error(err))
 			return
@@ -224,7 +225,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 			time.Sleep(time.Second * 1)
 		}
 
-		if len(orderArr) < 10 {
+		if len(orderArr) < maxLimit {
 			break
 		}
 		time.Sleep(time.Second * 3)

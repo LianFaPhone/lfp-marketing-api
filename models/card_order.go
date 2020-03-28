@@ -4,6 +4,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/api"
 	"LianFaPhone/lfp-marketing-api/common"
 	"LianFaPhone/lfp-marketing-api/db"
+	"fmt"
 	"github.com/jinzhu/gorm"
 )
 
@@ -30,7 +31,7 @@ type CardOrder struct {
 	Area          *string `json:"area,omitempty"     gorm:"column:area;type:varchar(20)"`                   //区
 	AreaCode      *string `json:"area_code,omitempty"     gorm:"column:area_code;type:varchar(15)"`         //区
 	Town          *string `json:"town,omitempty"     gorm:"column:town;type:varchar(20)"`                   //镇街道
-	Address       *string `json:"address,omitempty"     gorm:"column:address;type:varchar(70)"`             //剩余地址
+	Address       *string `json:"address,omitempty"     gorm:"column:address;type:varchar(90)"`             //剩余地址
 
 	//快递信息
 	Express       *string `json:"express,omitempty"     gorm:"column:express;type:varchar(20)"`             //快递名称
@@ -326,11 +327,25 @@ func (this *CardOrder) UpdateStatusByOrderNo(orderNo string, status int) error {
 }
 
 func (this *CardOrder) MaxIdByOrderNo(orderNo string) error {
-	err := db.GDbMgr.Get().Model(this).Where("order_no = ? ", orderNo).Update("id", gorm.Expr("(select max(id)+1 from card_order)")).Error
+	result := &struct{
+		Id int64 `gorm:"column:id`
+	}{}
+	tx := db.GDbMgr.Get().Begin()
+	err := tx.Set("gorm:query_option", "FOR UPDATE").Model(this).Where("order_no = ? ", orderNo).Select("max(id)+1").Scan(result).Error
 	if err != nil {
+		tx.Rollback()
 		return err
-
 	}
+	if result.Id == 0 {
+		tx.Rollback()
+		return fmt.Errorf("nil result")
+	}
+	err = tx.Model(this).Update("id", result.Id).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
 	return nil
 }
 
@@ -512,7 +527,7 @@ func (this *CardOrder) GetLimitByCond(limit int, condPair []*SqlPairCondition, n
 	return arr, err
 }
 
-func (this *CardOrder) GetLimitByCond2(limit int, condPair []*SqlPairCondition) ([]*CardOrder, error) {
+func (this *CardOrder) GetLimitByCond2(limit int, condPair []*SqlPairCondition, needFields []string) ([]*CardOrder, error) {
 	var arr []*CardOrder
 	query := db.GDbMgr.Get().Where(this)
 
@@ -521,6 +536,10 @@ func (this *CardOrder) GetLimitByCond2(limit int, condPair []*SqlPairCondition) 
 			continue
 		}
 		query = query.Where(condPair[i].Key, condPair[i].Value)
+	}
+
+	if len(needFields) > 0 {
+		query = query.Select(needFields)
 	}
 
 	err := query.Limit(limit).Order("id").Find(&arr).Error
