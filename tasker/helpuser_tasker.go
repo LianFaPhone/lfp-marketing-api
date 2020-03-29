@@ -51,9 +51,9 @@ func (this *Tasker) jtydhkHelpUserWork() {
 		}
 	}
 
-	time.Sleep(time.Second*3)
+	time.Sleep(time.Second*1)
 	startId := int64(0)
-	maxLimit := 10
+	maxLimit := 30
 
 	for ;true; {
 		conds := []*models.SqlPairCondition{
@@ -125,7 +125,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,  "帮助用户下单失败|额外参数缺失").Add()
 				continue
 			}
-			time.Sleep(time.Millisecond*100)
+			time.Sleep(time.Millisecond*10)
 			token,err := new(ydjthk.ReToken).Send(isOao, channelId)
 			if err != nil {
 				*mp.Status = GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status)
@@ -154,7 +154,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|区（县）匹配不上").Add()
 				continue
 			}
-			time.Sleep(time.Millisecond*100)
+			time.Sleep(time.Millisecond*10)
 			numbers,err := new(ydjthk.ReCardSearch).Send(isOao, province.ProvinceId, province.ProvinceName, city.CityId, city.CityName, "", 1, 10)
 			if err != nil {
 				*mp.Status = GethelpUserStatus(*orderArr[i].OrderNo, *orderArr[i].Status)
@@ -162,7 +162,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo, "帮助用户下单失败|获取新号码失败，"+err.Error()).Add()
 				continue
 			}
-			time.Sleep(time.Millisecond*100)
+			time.Sleep(time.Millisecond*10)
 			chooseNumber := ""
 			for j:=0; j < len(numbers);j++ {
 				flag,_,err := new(ydjthk.ReCloseNumber).Send(isOao, province.ProvinceId,  city.CityId, numbers[j], token)
@@ -181,7 +181,7 @@ func (this *Tasker) jtydhkHelpUserWork() {
 				new(models.CardOrderLog).FtParseAdd2(orderArr[i].Id, orderArr[i].OrderNo,  "帮助用户下单失败|无法锁定新号码").Add()
 				continue
 			}
-			time.Sleep(time.Millisecond*1000)
+			time.Sleep(time.Millisecond*100)
 			_, thirdOrderNo,oaoFlag,orderErr := new(ydjthk.ReOrderSubmit).Parse(channelId, productId, nil).Send(isOao, token,  *orderArr[i].Phone, chooseNumber, *orderArr[i].TrueName, *orderArr[i].IdCard, *orderArr[i].Address, province.ProvinceId, city.CityId, province.ProvinceId, city.CityId, area.AreaId)
 			if orderErr != nil {
 				ZapLog().Error("helpuser ReOrderSubmit err", zap.Error(orderErr), zap.String("channelId", channelId), zap.String("productId", productId), zap.String("other", *orderArr[i].Phone+ chooseNumber+ *orderArr[i].TrueName+ *orderArr[i].IdCard+ *orderArr[i].Address+ *orderArr[i].Province+ *orderArr[i].City+ province.ProvinceId+ city.CityId+ area.AreaId))
@@ -268,7 +268,7 @@ func HaveHistoryOrderSame(idcard, phone, partnerGoodsCode string) (bool,error){
 		Phone: &phone,
 		PartnerGoodsCode: &partnerGoodsCode,
 	}
-	condStr := fmt.Sprintf("( status = %d or status = %d ) and created_at >= %d", models.CONST_OrderStatus_New, models.CONST_OrderStatus_Already_Delivered, time.Now().Unix() - 10*3600)
+	condStr := fmt.Sprintf("( status = %d or status = %d ) and created_at >= %d", models.CONST_OrderStatus_New, models.CONST_OrderStatus_Already_Delivered, time.Now().Unix() - 24*3600)
 	existFlag,err := param.Exist(condStr)
 	return existFlag,err
 }
