@@ -74,6 +74,8 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 			if orderArr[i] == nil || orderArr[i].Status == nil{
 				continue
 			}
+			new(models.CardOrderLog).FtParseAdd2(nil, orderArr[i].OrderNo, fmt.Sprintf("oao检测：开始+%v",SetFailFlag)).Add()
+
 			if  *orderArr[i].Status != models.CONST_OrderStatus_New_UnFinish {
 				continue
 			}
