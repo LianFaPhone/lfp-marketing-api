@@ -331,7 +331,7 @@ func (this *CardOrder) MaxIdByOrderNo(orderNo string) error {
 		Id int64 `gorm:"column:id`
 	}{}
 	tx := db.GDbMgr.Get().Begin()
-	err := tx.Set("gorm:query_option", "FOR UPDATE").Model(this).Where("order_no = ? ", orderNo).Select("max(id)+1").Scan(result).Error
+	err := tx.Set("gorm:query_option", "FOR UPDATE").Model(this).Select("max(id)+1").Scan(result).Error
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -340,7 +340,7 @@ func (this *CardOrder) MaxIdByOrderNo(orderNo string) error {
 		tx.Rollback()
 		return fmt.Errorf("nil result")
 	}
-	err = tx.Model(this).Update("id", result.Id).Error
+	err = tx.Model(this).Where("order_no = ? ", orderNo).Update("id", result.Id).Error
 	if err != nil {
 		tx.Rollback()
 		return err
