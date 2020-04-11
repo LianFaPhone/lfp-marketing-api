@@ -244,6 +244,9 @@ func (this *Tasker) ydjthkExpressWork(idRecordName string, delay int64) {
 		//记录id, 倒叙
 		haveExpreeFlag := false
 		for i := len(orderArr) - 1; i >= 0; i-- {
+			if *orderArr[i].OrderNo == "D12004101203170004664" {
+				ZapLog().Info("D12004101203170004664 find", zap.Any("status", orderArr[i].Status))
+			}
 			if *orderArr[i].Id > startId {
 				startId = *orderArr[i].Id
 			}
@@ -253,8 +256,11 @@ func (this *Tasker) ydjthkExpressWork(idRecordName string, delay int64) {
 			if  *orderArr[i].Status != models.CONST_OrderStatus_New {
 				continue
 			}
+			new(models.CardOrderLog).FtParseAdd2(nil, orderArr[i].OrderNo, "快递查询|开始").Add()
+
 			if orderArr[i].ExpressNo != nil && len(*orderArr[i].ExpressNo) >= 2 && orderArr[i].Express !=nil && len(*orderArr[i].Express) >= 1{
 				haveExpreeFlag = true
+				new(models.CardOrderLog).FtParseAdd2(nil, orderArr[i].OrderNo, "快递查询|信息库中已存在").Add()
 				continue
 			}
 
