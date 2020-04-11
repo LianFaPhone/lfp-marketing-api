@@ -77,6 +77,9 @@ func (this *ReOrderSerach) Send(phone, idcard string) (*ResOrderSerach, error) {
 	if err != nil {
 		return nil, err
 	}
+	if resData == nil || len(resData) == 0 {
+		return nil, fmt.Errorf("nil msg")
+	}
 	res := new(ResOrderSerach)
 	if err = json.Unmarshal(resData, res); err != nil {
 		return  nil, err
@@ -114,6 +117,9 @@ func (this *ReOrderDetailSerach) Send(phone, idcard, tid, shipmentCompanyCode,sh
 	if err != nil {
 		return nil, err
 	}
+	if resData == nil || len(resData) == 0 {
+		return nil, fmt.Errorf("nil msg")
+	}
 	res := new(ResOrderDetailSerach)
 	if err = json.Unmarshal(resData, res); err != nil {
 		return  nil, err
@@ -148,6 +154,11 @@ func (this *ReOrderShortSerach) Send(phone, idcard string) (*ResOrderShortSerach
 	resData, err := common.HttpFormSend(config.GConfig.Jthk.SearchUrl+"/rwkgzh/youth/youthCard/shortQuery.tv", formBody,"POST", heads)
 	if err != nil {
 		return  nil,err
+	}
+	if resData == nil || len(resData) == 0 {
+		return &ResOrderShortSerach{
+			Ret:200,
+		},nil
 	}
 	res := new(ResOrderShortSerach)
 	if err = json.Unmarshal(resData, res); err != nil {

@@ -150,7 +150,7 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 			}
 
 			if chooseOne == nil {
-				log:= "OAO检测：oao未发现"
+				log:= fmt.Sprintf("OAO检测：oao未发现,%v", SetFailFlag)
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				if !SetFailFlag {
 					continue
