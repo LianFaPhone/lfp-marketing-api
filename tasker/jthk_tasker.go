@@ -138,7 +138,10 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 				if yidongArr[j].Number == nil || orderArr[i].NewPhone == nil{
 					continue
 				}
-				if * yidongArr[j].Number == *orderArr[i].NewPhone {
+				if len(*orderArr[i].NewPhone) < 4 || len(*yidongArr[j].Number) < 4{
+					continue
+				}
+				if (*yidongArr[j].Number)[len(*yidongArr[j].Number)-3:] == (*orderArr[i].NewPhone)[len(*orderArr[i].NewPhone)-3:] {
 					chooseOne = yidongArr[j]
 					break
 				}
@@ -283,7 +286,10 @@ func (this *Tasker) ydjthkExpressWork(idRecordName string, delay int64) {
 				if yidongArr[j].Number == nil || orderArr[i].NewPhone == nil {
 					continue
 				}
-				if * yidongArr[j].Number == *orderArr[i].NewPhone {
+				if len(*orderArr[i].NewPhone) < 4 || len(*yidongArr[j].Number) < 4{
+					continue
+				}
+				if (*yidongArr[j].Number)[len(*yidongArr[j].Number)-3:] == (*orderArr[i].NewPhone)[len(*orderArr[i].NewPhone)-3:] {
 					chooseOne = yidongArr[j]
 					break
 				}
@@ -312,7 +318,7 @@ func (this *Tasker) ydjthkExpressWork(idRecordName string, delay int64) {
 				}
 			}
 
-			if ((mp.Express == nil) || (len(*mp.Express) <= 1)) && (chooseOne.ShipmentNo !=nil) && (len(chooseOne.Tid) > 0) && (chooseOne.ShipmentCompanyCode != nil) {
+			if ((mp.Express == nil) || (len(*mp.Express) <= 3)) && (chooseOne.ShipmentNo !=nil) && (len(chooseOne.Tid) > 0) && (chooseOne.ShipmentCompanyCode != nil) {
 				orderDetail,err := new(ydjthk.ReOrderDetailSerach).Send(*orderArr[i].Phone, *orderArr[i].IdCard, chooseOne.Tid, *chooseOne.ShipmentCompanyCode, *chooseOne.ShipmentNo)
 				if err != nil {
 					log:= "快递详情查询:网络问题，"+err.Error()
