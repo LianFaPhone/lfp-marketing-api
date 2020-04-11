@@ -96,6 +96,7 @@ func (this *ReOrderDetailSerach) Send(phone, idcard, tid, shipmentCompanyCode,sh
 	formBody.Add("mobilephone", phone)
 	formBody.Add("certificateNo", idcard)
 	formBody.Add("tid", tid)
+	formBody.Add("busiType", "02")
 
 	heads := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -104,7 +105,7 @@ func (this *ReOrderDetailSerach) Send(phone, idcard, tid, shipmentCompanyCode,sh
 		"Origin": config.GConfig.Jthk.SearchUrl,
 		"X-Requested-With":"XMLHttpRequest",
 		// http://rwx.mmarket.com/rwkgzh/views/youthCard/order/detailNew.jsp?mobilephone=16637207824&certificateNo=220174&tid=SC19280T19121700402909&shipmentCompanyCode=40&shipmentNo=JDVB02166598201
-		"Referer": config.GConfig.Jthk.SearchUrl+"/rwkgzh/views/youthCard/order/detailNew.jsp?mobilephone="+phone+"&certificateNo="+idcard+"&tid="+tid+"&shipmentCompanyCode="+shipmentCompanyCode+"&shipmentNo="+shipmentNo,
+		"Referer": config.GConfig.Jthk.SearchUrl+"/rwkgzh/views/youthCard/order/detailNew.jsp?mobilephone="+phone+"&certificateNo="+idcard+"&tid="+tid+"&shipmentCompanyCode="+shipmentCompanyCode+"&shipmentNo="+shipmentNo+"&busiType=02",
 	}
 
 

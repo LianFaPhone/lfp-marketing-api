@@ -59,9 +59,9 @@ func (this *Tasker) run() {
 		ydhkUnFinishSmallCheckTicker.Stop()
 	}
 	ydhkUnFinishCheckTicker := time.NewTicker(time.Minute * 20)
-	if !config.GConfig.Task.YdhkUnfinishFlag {
-		ydhkUnFinishCheckTicker.Stop()
-	}
+	//if !config.GConfig.Task.YdhkUnfinishFlag {
+	//	ydhkUnFinishCheckTicker.Stop()
+	//}
 
 	ydhkExpressTicker := time.NewTicker(time.Minute * 60)
 
