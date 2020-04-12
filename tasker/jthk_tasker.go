@@ -54,7 +54,7 @@ func (this *Tasker) ydjthkOaoWork(idRecorderName string, delayTime int64, SetFai
 			conds = append(conds, &models.SqlPairCondition{"partner_id in (?)", partnerIds})
 		}
 
-		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds, nil)
+		orderArr, err := new(models.CardOrder).GetLimitByCond2(10, conds, nil)
 		if err != nil {
 			ZapLog().Error("CardOrder GetLimitByCond err", zap.Error(err))
 			return
@@ -231,7 +231,7 @@ func (this *Tasker) ydjthkExpressWork(idRecordName string, delay int64) {
 			conds = append(conds, &models.SqlPairCondition{"partner_id in (?)", partnerIds})
 		}
 
-		orderArr, err := new(models.CardOrder).GetLimitByCond(10, conds, nil)
+		orderArr, err := new(models.CardOrder).GetLimitByCond2(10, conds, nil)
 		if err != nil {
 			ZapLog().Error("CardOrder GetLimitByCond err", zap.Error(err))
 			return
