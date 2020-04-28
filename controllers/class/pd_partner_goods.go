@@ -170,6 +170,7 @@ func (this *PdPartnerGoods) FtGet(ctx iris.Context) {
 		AdTp: cc.AdTp,
 		PageName: cc.PageName,
 		IcpFlag: cc.IcpFlag,
+		Icp:cc.Icp,
 	}
 
 	if cc.UrlParam != nil && len(*cc.UrlParam) > 0{

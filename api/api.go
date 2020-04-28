@@ -112,6 +112,7 @@ type (
 		BgColor  *string    `json:"bg_color,omitempty"`
 		Name     *string   `json:"name,omitempty"`
 		IcpFlag *int    `json:"icp_flag,omitempty"      gorm:"column:icp_flag;type:tinyint(4)"`
+		Icp *string    `json:"icp,omitempty"      gorm:"column:icp;type:varchar(100)"`
 
 	}
 

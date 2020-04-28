@@ -359,6 +359,7 @@ type (
 		AdTp *int    `valid:"optional" json:"ad_tp,omitempty"      gorm:"column:ad_tp;type:int(11)"`
 		PageName  *string `valid:"optional" json:"page_name,omitempty"     gorm:"column:page_name;type:varchar(20)" `
 		IcpFlag *int    `valid:"optional" json:"icp_flag,omitempty"      gorm:"column:icp_flag;type:tinyint(4)"`
+		Icp *string    `valid:"optional" json:"icp,omitempty"      gorm:"column:icp;type:varchar(100)"`
 
 		Detail *string `valid:"optional" json:"detail,omitempty"     gorm:"column:detail;type:varchar(50)"`
 		ImgUrl *string `valid:"optional" json:"img_url,omitempty"     gorm:"column:img_url;type:varchar(250)"`
@@ -392,6 +393,7 @@ type (
 		HeadImgUrl *string `valid:"optional" json:"head_img_url,omitempty"     gorm:"column:head_img_url;type:varchar(250)"`
 		TailImgUrl *string `valid:"optional" json:"tail_img_url,omitempty"     gorm:"column:tail_img_url;type:varchar(250)"`
 		IcpFlag *int    `valid:"optional" json:"icp_flag,omitempty"      gorm:"column:icp_flag;type:tinyint(4)"`
+		Icp *string    `valid:"optional" json:"icp,omitempty"      gorm:"column:icp;type:varchar(100)"`
 
 		//	FileUrl *string `valid:"optional" json:"file_url,omitempty"     gorm:"column:file_url;type:varchar(250)"`
 		SmsFlag    *int    `valid:"optional" json:"sms_flag,omitempty"       gorm:"column:sms_flag;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效

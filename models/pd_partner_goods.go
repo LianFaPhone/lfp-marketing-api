@@ -57,6 +57,7 @@ type PdPartnerGoods struct{
 	LongChain *string `json:"long_chain,omitempty"     gorm:"column:long_chain;type:varchar(250)"`
 	ThirdLongChain *string `json:"third_long_chain,omitempty"     gorm:"column:third_long_chain;type:varchar(250)"`
 	PartnerName    *string    `json:"partner_name,omitempty"       gorm:"-"` //
+	Icp *string    `json:"icp,omitempty"      gorm:"column:icp;type:varchar(100)"`
 
 	///////////////////////////
 
@@ -91,6 +92,7 @@ func (this * PdPartnerGoods) ParseAdd(p *api.BkPartnerGoodsAdd) *PdPartnerGoods 
 		AdTp: p.AdTp,
 		PageName: p.PageName,
 		IcpFlag: p.IcpFlag,
+		Icp: p.Icp,
 	}
 	cc.Valid = new(int)
 	*cc.Valid = 1
@@ -122,6 +124,7 @@ func (this * PdPartnerGoods) Parse(p *api.BkPartnerGoods) *PdPartnerGoods {
 		UrlParam: p.UrlParam,
 		PageName: p.PageName,
 		IcpFlag: p.IcpFlag,
+		Icp: p.Icp,
 		//MaxLimit: p.MaxLimit,
 		//IdcardDispplay: p.IdcardDispplay,
 
