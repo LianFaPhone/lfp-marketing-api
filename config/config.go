@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ulule/limiter"
 	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"strings"
 )
@@ -249,6 +250,7 @@ type Jthk struct{
 	Referer_path_oao  string   `yaml:"referer_path_oao"`
 	ParterCode    string      `yaml:"partner_code"`
 	ParterCodeArr []string   `yaml:"-"`
+	CkTicket     string      `yaml:"auth_ticket"`
 }
 
 type Dxnbhk struct{

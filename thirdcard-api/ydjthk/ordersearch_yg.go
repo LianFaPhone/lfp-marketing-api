@@ -2,6 +2,10 @@ package ydjthk
 
 import (
 	"LianFaPhone/lfp-marketing-api/common"
+	"LianFaPhone/lfp-marketing-api/config"
+	"net/http"
+	"time"
+
 	//. "LianFaPhone/lfp-tools/autoorder-search-yidonghuaka/config"
 	"encoding/json"
 	"fmt"
@@ -48,7 +52,13 @@ func (this *ReYgOrderSerach) Send(thridOrderNo string, startData, endDate string
 	formBody.Add("params['startTime']", startData)
 	formBody.Add("params['endTime']", endDate)
 
-
+	ckArr := make([]*http.Cookie, 0, 3)
+	cookie1 := &http.Cookie{Name: "AUTH_TICKET",Value: config.GConfig.Jthk.CkTicket, HttpOnly: true, Expires: time.Now().Add(time.Hour*24*365*100)}
+	cookie2 := &http.Cookie{Name: "JSESSIONID",Value: config.GConfig.Jthk.CkTicket, HttpOnly: true, Expires: time.Now().Add(time.Hour*24*365*100)}
+	cookie3 := &http.Cookie{Name: "admin-domain",Value: "%2Fadmin%2F", HttpOnly: true, Expires: time.Now().Add(time.Hour*24*365*100)}
+	ckArr=append(ckArr, cookie1)
+	ckArr=append(ckArr, cookie2)
+	ckArr=append(ckArr, cookie3)
 
 	//heads := map[string]string{
 	////	"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -63,7 +73,7 @@ func (this *ReYgOrderSerach) Send(thridOrderNo string, startData, endDate string
 
 	url:="https://yg.cmicrwx.cn/opesp-portal/fcyrCorderTra/fcyrCorderTraReport.ajax?"
 
-	resData, err := common.HttpSend(url+formBody.Encode(), nil,"GET", nil)
+	resData, err := common.HttpSend3(url+formBody.Encode(), nil,"GET", nil, ckArr)
 	if err != nil {
 		return nil, err
 	}
@@ -72,6 +82,7 @@ func (this *ReYgOrderSerach) Send(thridOrderNo string, startData, endDate string
 	}
 	res := new(ResYgOrderSerach)
 	if err = json.Unmarshal(resData, res); err != nil {
+
 		return  nil, err
 	}
 	//if res.Ret !=200 {
