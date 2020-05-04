@@ -38,6 +38,7 @@ type (
 		OaoModel *int   `json:"oaomodel"`
 		OaoModel2 *string   `json:"oaomodel2"`
 		Status2 *string `json:"status2"`
+		ActiveTime *string `json:"activtime"`  //下单时间
 		//"shipList":null
 	}
 
@@ -92,6 +93,7 @@ func (this *ReYgOrderSerach) Send(thridOrderNo string, startData, endDate string
 }
 
 const(
+	Yg_Status_Already_Activated = "8"  //已激活
 	Yg_Status_Deliver = "5"  //已发货
 	Yg_Status_New     = "4"  //备货
 	Yg_Status_Init    = "0"  //初始状态

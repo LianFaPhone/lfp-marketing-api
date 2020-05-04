@@ -214,6 +214,19 @@ func (this *Tasker) run() {
 		}
 	}()
 
+	go func() {
+		defer models.PanicPrint()
+		for {
+			this.ydjthkActivedWork("yd_jt_huaka_small_actived", 12*3600) //8小时
+			hour := time.Now().Hour()
+			if hour >=2 && hour <= 5 {
+				this.ydjthkActivedWork("yd_jt_huaka_big_actived", 5*24*3600)//5天
+				this.ydjthkActivedWork("yd_jt_huaka_huge_actived", 16*24*3600)//5天
+			}
+			time.Sleep(time.Hour)
+		}
+	}()
+
 }
 
 func (this *Tasker) activeCodeWork() {

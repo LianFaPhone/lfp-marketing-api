@@ -308,6 +308,163 @@ func (this *Tasker) ydjthkExpressWork(idRecordName string, delay int64) {
 
 }
 
+func (this *Tasker) ydjthkActivedWork(idRecordName string, delay int64) {
+	defer models.PanicPrint()
+
+	recoder, err := new(models.IdRecorder).GetByName(idRecordName)
+	if err != nil {
+		ZapLog().Error("IdRecorder GetByName err", zap.Error(err))
+		return
+	}
+
+	if recoder == nil {
+		if recoder, err = new(models.IdRecorder).Add(idRecordName, 0); err != nil {
+			ZapLog().Error("IdRecorder Add card_order_ips err", zap.Error(err))
+			return
+		}
+	}
+
+	startId := int64(0)
+	if recoder.IdTag != nil {
+		startId = *recoder.IdTag
+	}
+
+	if len(config.GConfig.Jthk.ParterCode) <= 0 || len(config.GConfig.Jthk.ParterCodeArr) <= 0{
+		return
+	}
+	partnerIds := GetJtHkPartnerIds()
+
+	if len(partnerIds) <= 0 {
+		return
+	}
+
+	for true {
+		conds := []*models.SqlPairCondition{
+			&models.SqlPairCondition{"id > ?", startId},
+			&models.SqlPairCondition{"status = ?", models.CONST_OrderStatus_Already_Delivered},
+			//&models.SqlPairCondition{"third_order_at >= ?", time.Now().Unix() - 15*24*3600},
+			&models.SqlPairCondition{"third_order_at <= ?", time.Now().Unix() - delay},
+			//条件还得处理下
+			//&models.SqlPairCondition{"partner_id in ?", parter.Id},
+		}
+		if len(partnerIds) > 0 {
+			conds = append(conds, &models.SqlPairCondition{"partner_id in (?)", partnerIds})
+		}
+
+		orderArr, err := new(models.CardOrder).GetLimitByCond2(10, conds, nil)
+		if err != nil {
+			ZapLog().Error("CardOrder GetLimitByCond err", zap.Error(err))
+			return
+		}
+		if orderArr == nil || len(orderArr) <= 0 {
+			//fmt.Println("nil data")
+			return
+		}
+
+
+		//ZapLog().Sugar().Infof("jthktasker express %d", len(orderArr))
+
+		//记录id, 倒叙
+		haveExpreeFlag := false
+		for i := len(orderArr) - 1; i >= 0; i-- {
+			if *orderArr[i].Id > startId {
+				startId = *orderArr[i].Id
+			}
+			if orderArr[i] == nil || orderArr[i].Status == nil || orderArr[i].ThirdOrderNo == nil || len(*orderArr[i].ThirdOrderNo) <= 2 {
+				continue
+			}
+			if  *orderArr[i].Status != models.CONST_OrderStatus_Already_Delivered {
+				continue
+			}
+
+
+			new(models.CardOrderLog).FtParseAdd2(nil, orderArr[i].OrderNo, "激活查询|开始").Add()
+
+			if orderArr[i].ThirdOrderAt == nil || *(orderArr[i].ThirdOrderAt) <= 1  {
+				orderArr[i].ThirdOrderAt = orderArr[i].CreatedAt
+			}
+
+			if orderArr[i].ThirdOrderAt == nil || *(orderArr[i].ThirdOrderAt) <= 1  {
+				log:= "激活查询：信息不全"
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				continue
+			}
+
+			uTime := time.Unix(*orderArr[i].ThirdOrderAt, 0)
+			endTime := uTime.Add(time.Hour * 24 * 8 ).Format("2006-01-02")
+			startTime := uTime.Add(time.Hour * 2).Format("2006-01-02")
+
+			mp := &models.CardOrder{
+				Id: orderArr[i].Id,
+			}
+
+			resOrderSearch,err := new(ydjthk.ReYgOrderSerach).Send(*orderArr[i].ThirdOrderNo, startTime, endTime);
+			if err != nil {
+				log:= "激活查询：网络问题，"+err.Error()
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				continue
+			}
+			if resOrderSearch.Success != true {
+				log:= fmt.Sprintf("激活查询：%v-%v", resOrderSearch.Success, resOrderSearch.Message)
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				continue
+			}
+
+			if resOrderSearch.Total == 0 {
+				log:= "激活查询：未查到相关信息"
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				continue
+			}
+
+			if resOrderSearch.Datas == nil || len(resOrderSearch.Datas) <= 0 {
+				log:= "激活查询：未查到相关信息"
+				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
+				continue
+			}
+			if resOrderSearch.Datas[0].Status == nil {
+				continue
+			}
+			if *resOrderSearch.Datas[0].Status != ydjthk.Yg_Status_Already_Activated {
+				continue
+			}
+
+
+			mp.Status = new(int)
+			*mp.Status = models.CONST_OrderStatus_Already_Activated
+			if resOrderSearch.Datas[0].ActiveTime != nil {
+				tt,_ := time.ParseInLocation("2006-01-02 15:04:05", *resOrderSearch.Datas[0].ActiveTime, time.Local)
+				mp.ActiveAt = new(int64)
+				*mp.ActiveAt = tt.Unix()
+			}
+
+
+			new(models.CardOrderLog).FtParseAdd2(nil, orderArr[i].OrderNo, "激活查询|成功找到激活信息").Add()
+
+			if err = mp.Update(); err != nil {
+				ZapLog().Error("CardOrder Update err", zap.Error(err))
+				return
+			}
+			time.Sleep(time.Second * 1)
+		}
+
+		if ! haveExpreeFlag {
+			//return
+		}
+
+		err = recoder.Update(startId)
+		if err != nil {
+			ZapLog().Error("IdRecorder Update err", zap.Error(err))
+			return
+		}
+		//fmt.Println("startId= ", startId)
+		if len(orderArr) < 10 {
+			break
+		}
+		time.Sleep(time.Second * 2)
+	}
+
+}
+
 
 func GetJtHkPartnerIds() []*int64{
 	if len(config.GConfig.Jthk.ParterCode) <= 0 || len(config.GConfig.Jthk.ParterCodeArr) <= 0 {

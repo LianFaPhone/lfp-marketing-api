@@ -60,6 +60,7 @@ type CardOrder struct {
 	CardOrderLog []*CardOrderLog `json:"order_logs"     gorm:"-"`
 	CardIdcardPic *CardIdcardPic  `json:"idcard_pic"     gorm:"-"`
 	RelateCardOrder []*CardOrder  `json:"relate_card_order" gorm:"-"`
+	ActiveAt *int64 `json:"active_at,omitempty" gorm:"column:active_at;type:bigint(20);"`
 	Table
 }
 
