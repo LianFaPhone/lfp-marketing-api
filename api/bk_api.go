@@ -97,6 +97,8 @@ type (
 		EndCreatedAt   *int64  `valid:"optional" json:"end_created_at,omitempty"`
 		StartDeliverAt *int64  `valid:"optional" json:"start_deliver_at,omitempty"`
 		EndDeliverAt   *int64  `valid:"optional" json:"end_deliver_at,omitempty"`
+		StartActiveAt *int64 `valid:"optional" json:"start_active_at,omitempty"`
+		EndActiveAt *int64 `valid:"optional" json:"end_active_at,omitempty"`
 		LikeStr        *string `valid:"optional" json:"like_str,omitempty"`
 		IdCardPicFlag   *int    `valid:"optional" json:"idcard_pic_flag,omitempty"`
 		BlackSwitch *int `valid:"optional" json:"black_switch,omitempty"`
