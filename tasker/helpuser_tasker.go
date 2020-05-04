@@ -268,7 +268,7 @@ func HaveHistoryOrderSame(idcard, phone, partnerGoodsCode string) (bool,error){
 		Phone: &phone,
 		PartnerGoodsCode: &partnerGoodsCode,
 	}
-	condStr := fmt.Sprintf("( status = %d or status = %d ) and created_at >= %d", models.CONST_OrderStatus_New, models.CONST_OrderStatus_Already_Delivered, time.Now().Unix() - 24*3600)
+	condStr := fmt.Sprintf("( status = %d or status = %d ) and created_at >= %d", models.CONST_OrderStatus_New, models.CONST_OrderStatus_Already_Delivered, time.Now().Unix() - 3*24*3600)
 	existFlag,err := param.Exist(condStr)
 	return existFlag,err
 }
