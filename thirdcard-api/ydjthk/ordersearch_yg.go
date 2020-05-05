@@ -52,10 +52,14 @@ func (this *ReYgOrderSerach) Send(thridOrderNo string, startData, endDate string
 	formBody.Add("params['orderid']", thridOrderNo)
 	formBody.Add("params['startTime']", startData)
 	formBody.Add("params['endTime']", endDate)
+	config.GConfig.Lock.Lock()
+	ticket := config.GConfig.Jthk.CkTicket
+	config.GConfig.Lock.Unlock()
+
 
 	ckArr := make([]*http.Cookie, 0, 3)
-	cookie1 := &http.Cookie{Name: "AUTH_TICKET",Value: config.GConfig.Jthk.CkTicket, HttpOnly: true, Expires: time.Now().Add(time.Hour*24*365*100)}
-	cookie2 := &http.Cookie{Name: "JSESSIONID",Value: config.GConfig.Jthk.CkTicket, HttpOnly: true, Expires: time.Now().Add(time.Hour*24*365*100)}
+	cookie1 := &http.Cookie{Name: "AUTH_TICKET",Value: ticket, HttpOnly: true, Expires: time.Now().Add(time.Hour*24*365*100)}
+	cookie2 := &http.Cookie{Name: "JSESSIONID",Value: ticket, HttpOnly: true, Expires: time.Now().Add(time.Hour*24*365*100)}
 	cookie3 := &http.Cookie{Name: "admin-domain",Value: "%2Fadmin%2F", HttpOnly: true, Expires: time.Now().Add(time.Hour*24*365*100)}
 	ckArr=append(ckArr, cookie1)
 	ckArr=append(ckArr, cookie2)

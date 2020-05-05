@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"github.com/ulule/limiter"
 	"gopkg.in/yaml.v2"
-//	"gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v3"
+	"sync"
+
+	//	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"strings"
 )
@@ -109,6 +112,7 @@ type Config struct {
 	Task            Task           `yaml:"task"`
 	Jthk            Jthk           `yaml:"jthk"`
 	Dxnbhk          Dxnbhk          `yaml:"dxnbhk"`
+	Lock            sync.Mutex          `yaml:"-"`
 }
 
 type System struct {

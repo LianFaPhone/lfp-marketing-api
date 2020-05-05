@@ -5,6 +5,7 @@ import (
 	"LianFaPhone/lfp-marketing-api/controllers/area"
 	"LianFaPhone/lfp-marketing-api/controllers/black"
 	"LianFaPhone/lfp-marketing-api/controllers/class"
+	"LianFaPhone/lfp-marketing-api/controllers/jthk"
 	. "LianFaPhone/lfp-marketing-api/controllers/order"
 	"LianFaPhone/lfp-marketing-api/controllers/phonepool"
 	"LianFaPhone/lfp-marketing-api/controllers/sheet"
@@ -31,6 +32,11 @@ func (this *WebServer) bkroutes() {
 
 	v1bk := app.Party("/v1/bk/market", crs)
 	{
+		ydjthkPy := v1bk.Party("/jtydhk")
+		{
+			bsP := new(jthk.Ydhk)
+			ydjthkPy.Any("/ticket/set", bsP.SetTicket)
+		}
 		areaPy := v1bk.Party("/area")
 		{
 			bsP := new(area.BsProvice)
