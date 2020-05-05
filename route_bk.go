@@ -32,7 +32,7 @@ func (this *WebServer) bkroutes() {
 
 	v1bk := app.Party("/v1/bk/market", crs)
 	{
-		ydjthkPy := v1bk.Party("/jtydhk")
+		ydjthkPy := v1bk.Party("/ydjthk")
 		{
 			bsP := new(jthk.Ydhk)
 			ydjthkPy.Any("/ticket/set", bsP.SetTicket)
