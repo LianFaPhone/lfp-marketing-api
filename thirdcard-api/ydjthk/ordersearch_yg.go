@@ -3,6 +3,7 @@ package ydjthk
 import (
 	"LianFaPhone/lfp-marketing-api/common"
 	"LianFaPhone/lfp-marketing-api/config"
+	"golang.org/x/tools/go/ssa/interp/testdata/src/strings"
 	"net/http"
 	"time"
 
@@ -87,7 +88,9 @@ func (this *ReYgOrderSerach) Send(thridOrderNo string, startData, endDate string
 	}
 	res := new(ResYgOrderSerach)
 	if err = json.Unmarshal(resData, res); err != nil {
-
+		if strings.Contains(string(resData), "无权访问"){
+			return nil, fmt.Errorf("没有权限")
+		}
 		return  nil, err
 	}
 	//if res.Ret !=200 {

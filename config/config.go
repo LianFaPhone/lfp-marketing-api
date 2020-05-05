@@ -113,6 +113,7 @@ type Config struct {
 	Jthk            Jthk           `yaml:"jthk"`
 	Dxnbhk          Dxnbhk          `yaml:"dxnbhk"`
 	Lock            sync.Mutex          `yaml:"-"`
+	DingDing        DingDing       `yaml:"dingding"`
 }
 
 type System struct {
@@ -270,4 +271,8 @@ type DxnbhkReseller struct{
 	MaxNum int                  `yaml:"max_num"`
 	PartnerGoodsCode string                  `yaml:"partnergoods_code"`
 	Count     int   `yaml:"-"`
+}
+
+type DingDing struct{
+	RobToken string `yaml:"rob_token"`
 }

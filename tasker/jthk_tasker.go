@@ -4,10 +4,13 @@ import (
 	. "LianFaPhone/lfp-base/log/zap"
 	"LianFaPhone/lfp-marketing-api/config"
 	"LianFaPhone/lfp-marketing-api/models"
+	"LianFaPhone/lfp-marketing-api/thirdcard-api/ding"
 	"LianFaPhone/lfp-marketing-api/thirdcard-api/ydjthk"
 	"fmt"
 	"go.uber.org/zap"
-//	"strings"
+	"golang.org/x/tools/go/ssa/interp/testdata/src/strings"
+
+	//	"strings"
 	"time"
 )
 
@@ -338,6 +341,8 @@ func (this *Tasker) ydjthkActivedWork(idRecordName string, delay int64) {
 		return
 	}
 
+	firstTicketErrFlag := true
+
 	for true {
 		conds := []*models.SqlPairCondition{
 			&models.SqlPairCondition{"id > ?", startId},
@@ -400,7 +405,11 @@ func (this *Tasker) ydjthkActivedWork(idRecordName string, delay int64) {
 
 			resOrderSearch,err := new(ydjthk.ReYgOrderSerach).Send(*orderArr[i].ThirdOrderNo, startTime, endTime);
 			if err != nil {
-				log:= "激活查询：网络问题，"+err.Error()
+				log:= "激活查询："+err.Error()
+				if firstTicketErrFlag && (strings.Contains(err.Error(), "没有权限") || strings.Contains(err.Error(), "无权访问") ){
+					new(ding.ReDing).Send("移动花卡ticket权限过期，请重新设置")
+					firstTicketErrFlag = false
+				}
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
 				continue
 			}
