@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 
 
-	//	"strings"
+		"strings"
 	"time"
 )
 
@@ -406,7 +406,7 @@ func (this *Tasker) ydjthkActivedWork(idRecordName string, delay int64) {
 			resOrderSearch,err := new(ydjthk.ReYgOrderSerach).Send(*orderArr[i].ThirdOrderNo, startTime, endTime);
 			if err != nil {
 				log:= "激活查询："+err.Error()
-				if firstTicketErrFlag && (strings.Contains(err.Error(), "没有权限") || strings.Contains(err.Error(), "无权访问") ){
+				if firstTicketErrFlag && (strings.Contains(err.Error(), "没有权限") || string.Contains(err.Error(), "无权访问") ){
 					new(ding.ReDing).Send("移动花卡ticket权限过期，请重新设置")
 					firstTicketErrFlag = false
 				}
