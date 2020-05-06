@@ -166,6 +166,7 @@ func (this *Tasker) run() {
 				hour := time.Now().Hour()
 				if hour >=2 && hour <= 6 {
 					this.ydjthkOaoWork("yd_jt_huaka_big_oao", 7210, true)
+					this.ydjthkExpressWork("yd_jt_huaka_fix_express", 16*3600) //修正漏掉的
 					this.ydjthkExpressWork("yd_jt_huaka_big_express", 36*3600) //2天
 					this.ydjthkExpressWork("yd_jt_huaka_large_express", 48*3600) //2天
 					this.ydjthkExpressWork("yd_jt_huaka_huge_express", 120*3600)//5天
@@ -220,6 +221,7 @@ func (this *Tasker) run() {
 			this.ydjthkActivedWork("yd_jt_huaka_small_actived", 24*3600) //8小时
 			hour := time.Now().Hour()
 			if hour >=2 && hour <= 5 {
+				this.ydjthkActivedWork("yd_jt_huaka_fix_actived", 24*3600)//修正账户过期漏掉的
 				this.ydjthkActivedWork("yd_jt_huaka_big_actived", 4*24*3600)//5天
 				this.ydjthkActivedWork("yd_jt_huaka_large_actived", 7*24*3600)//5天
 				this.ydjthkActivedWork("yd_jt_huaka_huge_actived", 16*24*3600)//5天
