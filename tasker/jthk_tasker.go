@@ -407,7 +407,9 @@ func (this *Tasker) ydjthkActivedWork(idRecordName string, delay int64) {
 			if err != nil {
 				log:= "激活查询："+err.Error()
 				if firstTicketErrFlag && (strings.Contains(err.Error(), "没有权限") || strings.Contains(err.Error(), "无权访问") ){
-					new(ding.ReDing).Send("移动花卡ticket权限过期，请重新设置")
+					if err2:=new(ding.ReDing).Send("移动花卡ticket权限过期，请重新设置"); err2 != nil {
+						ZapLog().Error("ding send err", zap.Error(err2))
+					}
 					firstTicketErrFlag = false
 				}
 				new(models.CardOrderLog).FtParseAdd(nil, orderArr[i].OrderNo, &log).Add()
