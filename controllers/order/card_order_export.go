@@ -53,9 +53,9 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 			param.Page = 1
 		}
 		if param.Size <= 0 {
-			param.Size = 20000
+			param.Size = 400000
 		}
-		condPair := make([]*models.SqlPairCondition, 0, 5)
+		condPair := make([]*models.SqlPairCondition, 0, 12)
 		if param.LikeStr != nil && len(*param.LikeStr) > 0 {
 			condPair = append(condPair, &models.SqlPairCondition{"true_name like ?", "%" + *param.LikeStr + "%"})
 		}
@@ -70,6 +70,12 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 		}
 		if param.EndDeliverAt != nil {
 			condPair = append(condPair, &models.SqlPairCondition{"deliver_at <= ?", param.EndDeliverAt})
+		}
+		if param.StartActiveAt != nil {
+			condPair = append(condPair, &models.SqlPairCondition{"active_at >= ?", param.StartActiveAt})
+		}
+		if param.EndActiveAt != nil {
+			condPair = append(condPair, &models.SqlPairCondition{"active_at <= ?", param.EndActiveAt})
 		}
 
 		headers :=[] string{
