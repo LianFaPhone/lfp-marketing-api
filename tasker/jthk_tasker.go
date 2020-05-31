@@ -405,7 +405,7 @@ func (this *Tasker) ydjthkActivedWork(idRecordName string, delay int64) {
 			if err != nil {
 				log:= "激活查询："+err.Error()
 				ZapLog().Error("ReYgOrderSerach err", zap.Error(err))
-				if ((idRecordName == "yd_jt_huaka_small_actived") && firstTicketErrFlag){
+				if (firstTicketErrFlag){
 					if err2:=new(ding.ReDing).Send("移动花卡ticket权限过期，请重新设置, "+ err.Error()); err2 != nil {
 						ZapLog().Error("ding send err", zap.Error(err2))
 					}
