@@ -163,6 +163,7 @@ func (this *Tasker) run() {
 				this.ydjthkExpressWork("yd_jt_huaka_small_express", 8*3600) //8小时
 				this.ydjthkExpressWork("yd_jt_huaka_middle_express", 16*3600) //16小时
 				this.ydjthkExpressWork("yd_jt_huaka_express", 24*3600) //24小时
+				this.ydjthkOaoWork("yd_jt_huaka_middle_oao", 10*3610, true)
 				hour := time.Now().Hour()
 				if hour >=2 && hour <= 6 {
 					this.ydjthkOaoWork("yd_jt_huaka_big_oao", 7210, true)
@@ -219,6 +220,7 @@ func (this *Tasker) run() {
 		defer models.PanicPrint()
 		for {
 			this.ydjthkActivedWork("yd_jt_huaka_small_actived", 24*3600) //8小时
+			this.ydjthkActivedWork("yd_jt_huaka_middle_actived", 36*3600)//修正账户过期漏掉的
 			hour := time.Now().Hour()
 			if hour >=2 && hour <= 5 {
 				this.ydjthkActivedWork("yd_jt_huaka_fix_actived", 24*3600)//修正账户过期漏掉的
