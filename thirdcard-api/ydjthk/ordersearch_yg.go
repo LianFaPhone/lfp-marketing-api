@@ -88,7 +88,7 @@ func (this *ReYgOrderSerach) Send(thridOrderNo string, startData, endDate string
 	}
 	res := new(ResYgOrderSerach)
 	if err = json.Unmarshal(resData, res); err != nil {
-		if strings.Contains(string(resData), "无权访问"){
+		if strings.Contains(string(resData), "权") || strings.Contains(string(resData), "tick") || strings.Contains(string(resData), "签"){
 			return nil, fmt.Errorf("没有权限")
 		}
 		return  nil, err
