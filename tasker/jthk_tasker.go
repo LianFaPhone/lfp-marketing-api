@@ -406,7 +406,7 @@ func (this *Tasker) ydjthkActivedWork(idRecordName string, delay int64) {
 			resOrderSearch,err := new(ydjthk.ReYgOrderSerach).Send(*orderArr[i].ThirdOrderNo, startTime, endTime);
 			if err != nil {
 				log:= "激活查询："+err.Error()
-				if (idRecordName == "yd_jt_huaka_small_actived") && firstTicketErrFlag && (strings.Contains(err.Error(), "没有权限") || strings.Contains(err.Error(), "无权访问") ){
+				if (idRecordName == "yd_jt_huaka_small_actived") && firstTicketErrFlag && (strings.Contains(err.Error(), "没有权限") || strings.Contains(err.Error(), "签") ){
 					if err2:=new(ding.ReDing).Send("移动花卡ticket权限过期，请重新设置"); err2 != nil {
 						ZapLog().Error("ding send err", zap.Error(err2))
 					}
