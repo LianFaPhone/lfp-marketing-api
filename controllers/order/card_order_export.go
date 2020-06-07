@@ -55,7 +55,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 		if param.Size <= 0 {
 			param.Size = 400000
 		}
-		condPair := make([]*models.SqlPairCondition, 0, 12)
+		condPair := make([]*models.SqlPairCondition, 0, 15)
 		if param.LikeStr != nil && len(*param.LikeStr) > 0 {
 			condPair = append(condPair, &models.SqlPairCondition{"true_name like ?", "%" + *param.LikeStr + "%"})
 		}
@@ -77,6 +77,15 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 		if param.EndActiveAt != nil {
 			condPair = append(condPair, &models.SqlPairCondition{"active_at <= ?", param.EndActiveAt})
 		}
+		limitGoodsArr,err := GetsGoodsByUserId(ctx.URLParam("limit_userid"))
+		if err != nil {
+			ZapLog().With(zap.Error(err)).Error("GetsGoodsByUserId err")
+			this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+			return
+		}
+		for i:=0; i < len(limitGoodsArr); i++ {
+			condPair = append(condPair, &models.SqlPairCondition{"partner_goods_code = ?", limitGoodsArr[i].Id})
+		}
 
 		headers :=[] string{
 			"序号","订单号","套餐名","订单状态","姓名","身份证","手机号","省","市","区县","镇街道","详细地址","新手机号","ICCID","归属地","快递","快递单号","发货时间","照片上传","黑名单","下单时间","来源",
@@ -92,6 +101,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 		condStr := ""
 		modelParam := new(models.CardOrder).BkParseList(param)
 		ZapLog().Info("BkFileCreate "+fileName, zap.Int64("pageall", AllPage))
+		//needFields := GetSelectFields(ctx.URLParam("fields"))
 		for page:= int64(0); page < AllPage ;page ++ {
 			var results []*models.CardOrder
 			if page == 0 {
@@ -249,7 +259,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 		}
 		ZapLog().Info("BkFileCreate success "+fileName)
 		url := "http://file.lfcxwifi.com" + "/" + fileName
-		_,err := db.GRedis.GetConn().Set("filecreate_"+fileName, url, time.Duration(time.Second*7200)).Result()
+		_,err = db.GRedis.GetConn().Set("filecreate_"+fileName, url, time.Duration(time.Second*7200)).Result()
 		if err != nil {
 			ZapLog().With(zap.Error(err)).Error("redis set err")
 		}

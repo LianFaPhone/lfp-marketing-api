@@ -457,9 +457,13 @@ func (this *CardOrder) GetsByIdcardAndPartnerGoods(idcard, partnerGoodsCode stri
 	return acty, err
 }
 
-func (this *CardOrder) GetByOrderNo(no string) (*CardOrder, error) {
+func (this *CardOrder) GetByOrderNo(no string, fields []string) (*CardOrder, error) {
 	acty := new(CardOrder)
-	err := db.GDbMgr.Get().Where("order_no = ?", no).Last(acty).Error
+	query := db.GDbMgr.Get().Where("order_no = ?", no)
+	if len(fields) > 0 {
+		query = query.Select(fields)
+	}
+	err := query.Last(acty).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	}

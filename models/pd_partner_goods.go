@@ -33,6 +33,7 @@ const (
 
 type PdPartnerGoods struct{
 	Id    *int64   `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"` //加上type:int(11)后AUTO_INCREMENT无效
+	UserId    *int64    `json:"user_id,omitempty"       gorm:"column:user_id;type:bigint(20); default null"` //
 
 	PartnerId    *int64    `json:"partner_id,omitempty"       gorm:"column:partner_id;type:bigint(20)"` //
 	Code     *string  `json:"code,omitempty"     gorm:"column:code;type:varchar(10);unique" `
@@ -73,6 +74,8 @@ func (this * PdPartnerGoods) ParseAdd(p *api.BkPartnerGoodsAdd) *PdPartnerGoods 
 	cc := &PdPartnerGoods{
 		Name: p.Name,
 		//MaxLimit: p.MaxLimit,
+		UserId:p.UserId,
+
 		Detail: p.Detail,
 		ImgUrl: p.ImgUrl,
 		HeadImgUrl: p.HeadImgUrl,
@@ -102,7 +105,7 @@ func (this * PdPartnerGoods) ParseAdd(p *api.BkPartnerGoodsAdd) *PdPartnerGoods 
 func (this * PdPartnerGoods) Parse(p *api.BkPartnerGoods) *PdPartnerGoods {
 	return &PdPartnerGoods{
 		Id: p.Id,
-
+		UserId:p.UserId,
 		//Tp:  p.Tp,
 		Name: p.Name,
 		Detail: p.Detail,
@@ -198,6 +201,18 @@ func (this *PdPartnerGoods) GetById(tp int64) (*PdPartnerGoods, error) {
 		return nil,err
 	}
 	return this,nil
+}
+
+func (this *PdPartnerGoods) GetsByUserId(userid interface{}) ([]*PdPartnerGoods, error) {
+	var arr []*PdPartnerGoods
+	err := db.GDbMgr.Get().Model(this).Where("user_id = ? ", userid).Find(&arr).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil,nil
+	}
+	if err != nil {
+		return nil,err
+	}
+	return arr,nil
 }
 
 func (this *PdPartnerGoods) Unique() (bool, error) {

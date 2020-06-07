@@ -83,7 +83,7 @@ func (this *CardOrder) bkSubList(ctx iris.Context, status *int) {
 		param.Status = status
 	}
 
-	condPair := make([]*models.SqlPairCondition, 0, 12)
+	condPair := make([]*models.SqlPairCondition, 0, 15)
 	if param.LikeStr != nil && len(*param.LikeStr) > 0 {
 		condPair = append(condPair, &models.SqlPairCondition{"true_name like ?", "%" + *param.LikeStr + "%"})
 		condPair = append(condPair, &models.SqlPairCondition{"order_no like ?", "%" + *param.LikeStr + "%"})
@@ -120,6 +120,16 @@ func (this *CardOrder) bkSubList(ctx iris.Context, status *int) {
 		} else if *param.UploadFlag == 1 {
 			condPair = append(condPair, &models.SqlPairCondition{"dataurl1 != ?", "null"})
 		}
+	}
+
+	limitGoodsArr,err := GetsGoodsByUserId(ctx.URLParam("limit_userid"))
+	if err != nil {
+		ZapLog().With(zap.Error(err)).Error("GetsGoodsByUserId err")
+		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
+		return
+	}
+	for i:=0; i < len(limitGoodsArr); i++ {
+		condPair = append(condPair, &models.SqlPairCondition{"partner_goods_code = ?", limitGoodsArr[i].Id})
 	}
 
 	results, err := new(models.CardOrder).BkParseList(param).ListWithConds(param.Page, param.Size, nil, condPair)
@@ -171,7 +181,7 @@ func (this *CardOrder) BkGet(ctx iris.Context) {
 		return
 	}
 
-	res, err := new(models.CardOrder).BkParse(param).GetByOrderNo(*param.OrderNo)
+	res, err := new(models.CardOrder).BkParse(param).GetByOrderNo(*param.OrderNo, nil)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())

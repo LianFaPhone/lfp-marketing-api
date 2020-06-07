@@ -113,6 +113,7 @@ func (this *WebServer) bkroutes() {
 			simPy.Post("/active-import", ac.BkOrderActiveInport)
 			simPy.Post("/new-import", ac.BkOrderNewInport)
 			simPy.Post("/retry-apply", ac.BkRetryApply)
+			simPy.Post("/field/gets", ac.BkFields)
 		}
 
 		classsheetPy := v1bk.Party("/classsheet")
