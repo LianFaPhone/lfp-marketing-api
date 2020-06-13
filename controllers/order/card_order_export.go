@@ -84,7 +84,7 @@ func (this *CardOrder) BkFileCreate(ctx iris.Context) {
 			return
 		}
 		for i:=0; i < len(limitGoodsArr); i++ {
-			condPair = append(condPair, &models.SqlPairCondition{"partner_goods_code = ?", limitGoodsArr[i].Id})
+			condPair = append(condPair, &models.SqlPairCondition{"partner_goods_code = ?", limitGoodsArr[i].Code})
 		}
 
 		headers :=[] string{

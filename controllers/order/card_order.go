@@ -129,7 +129,7 @@ func (this *CardOrder) bkSubList(ctx iris.Context, status *int) {
 		return
 	}
 	for i:=0; i < len(limitGoodsArr); i++ {
-		condPair = append(condPair, &models.SqlPairCondition{"partner_goods_code = ?", limitGoodsArr[i].Id})
+		condPair = append(condPair, &models.SqlPairCondition{"partner_goods_code = ?", limitGoodsArr[i].Code})
 	}
 
 	results, err := new(models.CardOrder).BkParseList(param).ListWithConds(param.Page, param.Size, nil, condPair)
