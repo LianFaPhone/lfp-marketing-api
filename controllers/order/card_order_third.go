@@ -48,7 +48,7 @@ func (this *CardOrder) BkIdCardCheck(ctx iris.Context) {
 
 	go func() {
 		for i := 0; i < len(param.OrderNo); i++ {
-			cOrder, err := new(models.CardOrder).GetByOrderNo(param.OrderNo[i])
+			cOrder, err := new(models.CardOrder).GetByOrderNo(param.OrderNo[i], nil)
 			if err != nil {
 				ZapLog().With(zap.Error(err)).Error("GetById err")
 				return
