@@ -97,7 +97,7 @@ func (this *Dxnbhk) FastApply(ctx iris.Context) {
 }
 
 func (this *Dxnbhk) aysnFastApply(ctx iris.Context, orderNo string,  partnerGoods *models.PdPartnerGoods, reseller *config.DxnbhkReseller) {
-	order,err := new(models.CardOrder).GetByOrderNo(orderNo)
+	order,err := new(models.CardOrder).GetByOrderNo(orderNo, nil)
 	if err != nil {
 		new(models.CardOrderLog).FtParseAdd2(order.Id, order.OrderNo, "电信宁波花卡|快速下单失败|数据库错误,"+err.Error()).Add()
 		//this.ExceptionSerive(ctx, apibackend.BASERR_OBJECT_DATA_NOT_FOUND.Code(), "数据不完整")

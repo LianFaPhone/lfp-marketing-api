@@ -87,7 +87,7 @@ func (this *NotifyTasker) notifyWork() {
 			if msgs[j].Tp == nil || msgs[j].OrderNo == nil {
 				continue
 			}
-			order, err := new(models.CardOrder).GetByOrderNo(*msgs[j].OrderNo)
+			order, err := new(models.CardOrder).GetByOrderNo(*msgs[j].OrderNo, nil)
 			if err != nil {
 				ZapLog().Error("GetByOrderNo err", zap.Error(err))
 				return

@@ -494,7 +494,7 @@ func (this *Ydhk) FtHelpUserApply(ctx iris.Context) {
 		return
 	}
 
-	order,err := new(models.CardOrder).GetByOrderNo(param.OrderNo)
+	order,err := new(models.CardOrder).GetByOrderNo(param.OrderNo, nil)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("database err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
