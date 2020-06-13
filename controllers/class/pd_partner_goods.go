@@ -27,8 +27,14 @@ func (this *PdPartnerGoods) Gets(ctx iris.Context) {
 		ZapLog().Error("param err", zap.Error(err))
 		return
 	}
+	userid,_ := ctx.URLParamInt64("limit_userid")
 
-	ll, err := new(models.PdPartnerGoods).ParseGet(param).Gets()
+	modelParam := new(models.PdPartnerGoods).ParseGet(param)
+	if userid > 0 {
+		modelParam.UserId = &userid
+	}
+
+	ll, err := modelParam.Gets()
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())
@@ -248,7 +254,14 @@ func (this *PdPartnerGoods) List(ctx iris.Context) {
 		return
 	}
 
-	results, err := new(models.PdPartnerGoods).ParseList(param).ListWithConds(param.Page, param.Size, nil, nil)
+	userid,_ := ctx.URLParamInt64("limit_userid")
+
+	modelParam := new(models.PdPartnerGoods).ParseList(param)
+	if userid > 0 {
+		modelParam.UserId = &userid
+	}
+
+	results, err := modelParam.ListWithConds(param.Page, param.Size, nil, nil)
 	if err != nil {
 		ZapLog().With(zap.Error(err)).Error("Update err")
 		this.ExceptionSerive(ctx, apibackend.BASERR_DATABASE_ERROR.Code(), apibackend.BASERR_DATABASE_ERROR.Desc())

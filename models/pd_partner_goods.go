@@ -34,6 +34,8 @@ const (
 type PdPartnerGoods struct{
 	Id    *int64   `json:"id,omitempty"        gorm:"column:id;primary_key;AUTO_INCREMENT:1;not null"` //加上type:int(11)后AUTO_INCREMENT无效
 	UserId    *int64    `json:"user_id,omitempty"       gorm:"column:user_id;type:bigint(20); default null"` //
+	UserName    *string    `json:"user_name,omitempty"   gorm:"column:user_name;type:varchar(30);default null"` //
+
 
 	PartnerId    *int64    `json:"partner_id,omitempty"       gorm:"column:partner_id;type:bigint(20)"` //
 	Code     *string  `json:"code,omitempty"     gorm:"column:code;type:varchar(10);unique" `
@@ -75,6 +77,7 @@ func (this * PdPartnerGoods) ParseAdd(p *api.BkPartnerGoodsAdd) *PdPartnerGoods 
 		Name: p.Name,
 		//MaxLimit: p.MaxLimit,
 		UserId:p.UserId,
+		UserName:p.UserName,
 
 		Detail: p.Detail,
 		ImgUrl: p.ImgUrl,
@@ -107,6 +110,7 @@ func (this * PdPartnerGoods) Parse(p *api.BkPartnerGoods) *PdPartnerGoods {
 		Id: p.Id,
 		UserId:p.UserId,
 		//Tp:  p.Tp,
+		UserName:p.UserName,
 		Name: p.Name,
 		Detail: p.Detail,
 		ImgUrl: p.ImgUrl,

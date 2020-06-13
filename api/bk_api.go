@@ -349,6 +349,7 @@ type (
 	}
 
 	BkPartnerGoodsAdd struct{
+		UserName    *string    `valid:"optional" json:"user_name,omitempty" ` //
 		UserId    *int64    `valid:"optional" json:"user_id,omitempty"       gorm:"column:user_id;type:bigint(20); default null"` //
 		PartnerId    *int64    `valid:"required" json:"partner_id,omitempty"       gorm:"column:partner_id;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
 		Code     *string  `valid:"optional" json:"code,omitempty"     gorm:"column:code;type:varchar(10)" `
@@ -384,6 +385,7 @@ type (
 	BkPartnerGoods struct{
 		Id    *int64   `valid:"required"  json:"id,omitempty"   "` //加上type:int(11)后AUTO_INCREMENT无效
 		UserId    *int64    `valid:"optional" json:"user_id,omitempty"       gorm:"column:user_id;type:bigint(20); default null"` //
+		UserName    *string    `valid:"optional" json:"user_name,omitempty" ` //
 
 		JdCode  *string  `valid:"optional" json:"jd_code,omitempty"     gorm:"column:jd_code;type:varchar(15)" `
 		PartnerId    *int64    `valid:"optional" json:"partner_id,omitempty"       gorm:"column:partner_id;type:int(11)"` //加上type:int(11)后AUTO_INCREMENT无效
